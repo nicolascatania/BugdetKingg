@@ -17,6 +17,10 @@ public record AppUserDTO(
         @NotBlank
         String password, // plaintext just for create/update
 
+        String name,
+
+        String lastName,
+
         Set<String> roles // just names, for lecture
 
 ) {

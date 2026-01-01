@@ -1,16 +1,22 @@
 package com.veritech.BudgetKing.interfaces;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
-public interface ICrudService<E, ID, FILTER> {
 
-    E getById(ID id);
+public interface ICrudService<D, ID, FILTER> {
 
-    E create(E entity);
+    D getById(ID id);
 
-    E update(ID id, E entity);
+    @Transactional
+    D create(D dto);
 
+    @Transactional
+    D update(ID id, D dto);
+
+    @Transactional
     void deleteById(ID id);
 
-    List<E> search(FILTER filter);
+    List<D> search(FILTER filter);
 }

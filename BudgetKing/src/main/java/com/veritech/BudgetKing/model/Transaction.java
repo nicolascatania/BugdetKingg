@@ -3,7 +3,9 @@ package com.veritech.BudgetKing.model;
 import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
@@ -13,6 +15,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "transactions")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Transaction {
 
     @Id
@@ -40,11 +44,11 @@ public class Transaction {
     @Column(nullable = false)
     private TransactionCategory category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER) //to make it easier, later will change to lazy
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
 }

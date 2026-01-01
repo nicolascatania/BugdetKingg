@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class AppUserController implements
-        ICrudController<AppUser, AppUserDTO, UUID, AppUserFilter> {
+        ICrudController<AppUser, AppUserDTO, UUID, AppUserFilter, Void> {
 
     private final AppUserService service;
     private final AppUserMapper mapper;
@@ -30,7 +30,7 @@ public class AppUserController implements
     }
 
     @Override
-    public ICrudMapper<AppUser, AppUserDTO> getMapper() {
+    public ICrudMapper<AppUser, AppUserDTO, Void> getMapper() {
         return mapper;
     }
 }

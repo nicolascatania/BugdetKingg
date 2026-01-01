@@ -7,24 +7,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-public interface ICrudController<E, D, ID, FILTER> {
 
-    ICrudService<E, ID, FILTER> getService();
-    ICrudMapper<E, D> getMapper();
+public interface ICrudController<D, ID, FILTER> {
+
+    /**
+     * El servicio maneja los DTO directamente
+     */
+    ICrudService<D, ID, FILTER> getService();
 
     @GetMapping("/{id}")
     default ResponseEntity<D> getById(@PathVariable ID id) {
-        E entity = getService().getById(id);
-        return ResponseEntity.ok(getMapper().toDto(entity));
+        D dto = getService().getById(id);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping
     default ResponseEntity<D> create(@Valid @RequestBody D dto) {
-        E entity = getMapper().toEntity(dto);
-        E saved = getService().create(entity);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(getMapper().toDto(saved));
+        D saved = getService().create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
@@ -32,10 +32,8 @@ public interface ICrudController<E, D, ID, FILTER> {
             @PathVariable ID id,
             @Valid @RequestBody D dto
     ) {
-        E existing = getService().getById(id);
-        getMapper().updateEntity(existing, dto);
-        E updated = getService().update(id, existing);
-        return ResponseEntity.ok(getMapper().toDto(updated));
+        D updated = getService().update(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
@@ -46,12 +44,6 @@ public interface ICrudController<E, D, ID, FILTER> {
 
     @PostMapping("/search")
     default ResponseEntity<List<D>> search(@RequestBody FILTER filter) {
-        return ResponseEntity.ok(
-                getService()
-                        .search(filter)
-                        .stream()
-                        .map(getMapper()::toDto)
-                        .toList()
-        );
+        return ResponseEntity.ok(getService().search(filter));
     }
 }

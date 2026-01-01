@@ -9,14 +9,16 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 
 @Component
-public class AppUserMapper implements ICrudMapper<AppUser, AppUserDTO> {
+public class AppUserMapper implements ICrudMapper<AppUser, AppUserDTO, Void> {
 
     @Override
     public AppUserDTO toDto(AppUser entity) {
         return new AppUserDTO(
                 entity.getId(),
                 entity.getEmail(),
-                null, // nunca devolvemos password
+                null,
+                entity.getName(),
+                entity.getLastName(),
                 entity.getRoles()
                         .stream()
                         .map(Role::getName)
@@ -25,18 +27,11 @@ public class AppUserMapper implements ICrudMapper<AppUser, AppUserDTO> {
     }
 
     @Override
-    public AppUser toEntity(AppUserDTO dto) {
+    public AppUser toEntity(AppUserDTO dto, Void unused) {
         AppUser user = new AppUser();
         user.setEmail(dto.email());
-        // password se setea en el service (bcrypt)
+        user.setName(dto.name());
+        user.setLastName(dto.lastName());
         return user;
-    }
-
-    @Override
-    public void updateEntity(AppUser entity, AppUserDTO dto) {
-        if (dto.email() != null) {
-            entity.setEmail(dto.email());
-        }
-        // password también se maneja en el service
     }
 }
