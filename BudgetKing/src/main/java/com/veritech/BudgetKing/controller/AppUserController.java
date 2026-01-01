@@ -18,19 +18,15 @@ import java.util.UUID;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class AppUserController implements
-        ICrudController<AppUser, AppUserDTO, UUID, AppUserFilter, Void> {
+        ICrudController<AppUserDTO, UUID, AppUserFilter> {
 
     private final AppUserService service;
     private final AppUserMapper mapper;
 
 
     @Override
-    public ICrudService<AppUser, UUID, AppUserFilter> getService() {
+    public ICrudService<AppUserDTO, UUID, AppUserFilter> getService() {
         return service;
     }
 
-    @Override
-    public ICrudMapper<AppUser, AppUserDTO, Void> getMapper() {
-        return mapper;
-    }
 }

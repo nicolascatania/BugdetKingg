@@ -18,18 +18,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/transaction")
 @RequiredArgsConstructor
-public class TransactionController implements ICrudController<Transaction, TransactionDTO, UUID, TransactionFilter> {
+public class TransactionController implements ICrudController<TransactionDTO, UUID, TransactionFilter> {
 
     private final TransactionService service;
     private final TransactionMapper mapper;
 
     @Override
-    public ICrudService<Transaction, UUID, TransactionFilter> getService() {
+    public ICrudService<TransactionDTO, UUID, TransactionFilter> getService() {
         return service;
     }
 
-    @Override
-    public ICrudMapper<Transaction, TransactionDTO, TransactionRelatedEntities> getMapper() {
-        return mapper;
-    }
 }
