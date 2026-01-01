@@ -3,6 +3,7 @@ package com.veritech.BudgetKing.model;
 import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "transactions")
+@Data
 public class Transaction {
 
     @Id

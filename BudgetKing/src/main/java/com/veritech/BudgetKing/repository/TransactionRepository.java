@@ -4,11 +4,12 @@ import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
+public interface TransactionRepository extends JpaRepository<Transaction, UUID>, JpaSpecificationExecutor<Transaction> {
 
     List<Transaction> findByUser(AppUser user);
 

@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "accounts")
+@Data
 public class Account {
 
     @Id

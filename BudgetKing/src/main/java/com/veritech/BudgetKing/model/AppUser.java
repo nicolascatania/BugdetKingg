@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
+@Data
 public class AppUser {
 
     @Id
