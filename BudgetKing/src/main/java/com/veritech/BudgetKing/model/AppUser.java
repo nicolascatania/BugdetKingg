@@ -34,6 +34,4 @@ public class AppUser {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<YieldEntity> yields = new HashSet<>();
 }

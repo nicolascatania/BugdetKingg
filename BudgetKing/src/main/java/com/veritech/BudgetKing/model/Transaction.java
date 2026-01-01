@@ -1,5 +1,6 @@
 package com.veritech.BudgetKing.model;
 
+import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -28,9 +29,14 @@ public class Transaction {
     @Column(nullable = false)
     private TransactionType type;
 
+    @Column(nullable = false)
     private String description;
 
     private String counterparty; //who I paid, who paid me
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TransactionCategory category;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
