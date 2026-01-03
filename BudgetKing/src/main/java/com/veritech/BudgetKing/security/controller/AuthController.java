@@ -4,7 +4,6 @@ import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Role;
 import com.veritech.BudgetKing.repository.AppUserRepository;
 import com.veritech.BudgetKing.repository.RoleRepository;
-import com.veritech.BudgetKing.security.dto.AuthRequest;
 import com.veritech.BudgetKing.security.dto.AuthResponse;
 import com.veritech.BudgetKing.security.dto.LoginRequest;
 import com.veritech.BudgetKing.security.dto.RegisterRequest;

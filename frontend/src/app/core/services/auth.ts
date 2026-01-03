@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { LoginRequest, RegisterRequest } from '../../features/login/interfaces/login.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -10,15 +11,24 @@ export class AuthService {
   private tokenKey = 'jwt_token';
   public loggedIn$ = new BehaviorSubject<boolean>(this.isLoggedIn());
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  login(email: string, password: string): Observable<any> {
-    return this.http.post<string>(`${this.apiUrl}/login`, { email, password })
+  login(request: LoginRequest): Observable<any> {
+    return this.http.post<string>(`${this.apiUrl}/login`, request)
       .pipe(tap(token => {
         localStorage.setItem(this.tokenKey, token);
         this.loggedIn$.next(true);
       }));
   }
+
+  register(request: RegisterRequest): Observable<any> {
+    return this.http.post<string>(`${this.apiUrl}/register`, request)
+      .pipe(tap(token => {
+        localStorage.setItem(this.tokenKey, token);
+        this.loggedIn$.next(true);
+      }));
+  }
+
 
   logout() {
     localStorage.removeItem(this.tokenKey);
