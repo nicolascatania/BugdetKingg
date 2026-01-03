@@ -1,6 +1,5 @@
 package com.veritech.BudgetKing.security.filter;
 
-import com.veritech.BudgetKing.security.service.UserDetailsServiceImpl;
 import com.veritech.BudgetKing.security.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

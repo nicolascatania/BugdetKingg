@@ -2,6 +2,7 @@ package com.veritech.BudgetKing.security.service;
 
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.repository.AppUserRepository;
+import com.veritech.BudgetKing.security.UserDetailsImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,20 +22,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) {
-        AppUser user = userRepository.findByEmail(email)
+
+        AppUser user = userRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPasswordHash(),
-                user.isEnabled(),
-                true,
-                true,
-                true,
-                user.getRoles().stream()
-                        .map(r -> new SimpleGrantedAuthority(r.getName()))
-                        .toList()
-        );
+        user.getRoles().size();
+
+        return new UserDetailsImpl(user);
     }
+
 
 }

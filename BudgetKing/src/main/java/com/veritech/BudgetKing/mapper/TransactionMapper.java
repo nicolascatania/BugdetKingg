@@ -24,8 +24,7 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 entity.getCounterparty(),
                 entity.getDescription(),
                 entity.getCategory().name(),
-                entity.getAccount().getName(),
-                entity.getUser().getId()
+                entity.getAccount().getName()
         );
     }
 

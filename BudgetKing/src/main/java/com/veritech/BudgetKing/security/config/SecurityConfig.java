@@ -33,7 +33,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationFilter jwtFilter;
 
     @Bean
