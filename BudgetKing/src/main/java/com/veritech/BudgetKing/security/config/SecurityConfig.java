@@ -1,6 +1,5 @@
 package com.veritech.BudgetKing.security.config;
 
-import com.veritech.BudgetKing.config.CorsConfig;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Role;
 import com.veritech.BudgetKing.repository.AppUserRepository;
@@ -14,8 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

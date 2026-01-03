@@ -8,6 +8,7 @@ import com.veritech.BudgetKing.mapper.AccountMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.repository.AccountRepository;
+import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,12 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
-    private final AppUserService appUserService;
+    private final SecurityUtils securityUtils;
 
     @Override
     public AccountDTO getById(UUID uuid) {
-        return accountRepository.findById(uuid)
+        AppUser user = securityUtils.getCurrentUser();
+        return accountRepository.findByIdAndUser(uuid, user)
                 .map(accountMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
     }
@@ -37,7 +39,7 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
     @Transactional
     public AccountDTO create(AccountDTO dto) {
 
-        AppUser user = appUserService.getEntityById(dto.userId());
+        AppUser user = securityUtils.getCurrentUser();
 
         AccountRelatedEntities accountRelatedEntities = new AccountRelatedEntities(user);
         Account account = accountMapper.toEntity(dto, accountRelatedEntities);
@@ -50,14 +52,15 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
     @Override
     @Transactional
     public AccountDTO update(UUID uuid, AccountDTO dto) {
-        Account existing = accountRepository.findById(uuid)
+
+        AppUser user = securityUtils.getCurrentUser();
+
+        Account existing = accountRepository.findByIdAndUser(uuid, user)
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
         existing.setName(dto.name());
         existing.setDescription(dto.description());
         existing.setBalance(dto.balance());
-
-        existing.setUser(appUserService.getEntityById(dto.userId()));
 
         Account updated = accountRepository.save(existing);
         return accountMapper.toDto(updated);
@@ -66,10 +69,13 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
     @Override
     @Transactional
     public void deleteById(UUID uuid) {
-        if (!accountRepository.existsById(uuid)) {
-            throw new EntityNotFoundException("Account not found");
-        }
-        accountRepository.deleteById(uuid);
+
+        AppUser user = securityUtils.getCurrentUser();
+
+        Account existing = accountRepository.findByIdAndUser(uuid, user)
+                        .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+        accountRepository.delete(existing);
     }
 
     @Override
@@ -87,7 +93,9 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
 
     
     public Account getEntityById(UUID uuid) {
-        return accountRepository.findById(uuid)
+        AppUser user = securityUtils.getCurrentUser();
+
+        return accountRepository.findByIdAndUser(uuid, user)
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
     }
 }

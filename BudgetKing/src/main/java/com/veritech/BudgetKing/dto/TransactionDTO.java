@@ -21,8 +21,6 @@ public record TransactionDTO(
         @NotBlank(message = "Category is mandatory")
         String category,
         @NotBlank(message = "Account is mandatory")
-        String account,
-        @NotNull(message = "User is mandatory")
-        UUID userId
+        String account
 ) {
 }
