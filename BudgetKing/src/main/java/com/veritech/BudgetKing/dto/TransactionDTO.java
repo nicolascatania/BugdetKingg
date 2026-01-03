@@ -20,7 +20,7 @@ public record TransactionDTO(
         String description,
         @NotBlank(message = "Category is mandatory")
         String category,
-        @NotBlank(message = "Account is mandatory")
-        String account
+        @NotNull(message = "Account ID is mandatory")
+        UUID account
 ) {
 }

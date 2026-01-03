@@ -15,8 +15,7 @@ public class AccountMapper implements ICrudMapper<Account, AccountDTO, AccountRe
                 entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
-                entity.getBalance(),
-                entity.getUser().getId()
+                entity.getBalance()
         );
     }
 

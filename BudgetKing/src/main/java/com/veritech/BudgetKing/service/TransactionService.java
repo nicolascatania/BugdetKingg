@@ -5,6 +5,7 @@ import com.veritech.BudgetKing.dto.TransactionRelatedEntities;
 import com.veritech.BudgetKing.filter.TransactionFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.TransactionMapper;
+import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.TransactionRepository;
@@ -39,10 +40,12 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
     public TransactionDTO create(TransactionDTO dto) {
 
         AppUser user = securityUtils.getCurrentUser();
+        Account account = accountService.getEntityById(dto.account());
+
 
         TransactionRelatedEntities related = new TransactionRelatedEntities(
                 user,
-                accountService.getEntityById(dto.id())
+                account
         );
 
         Transaction t = mapper.toEntity(dto, related);

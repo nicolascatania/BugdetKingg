@@ -24,7 +24,7 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 entity.getCounterparty(),
                 entity.getDescription(),
                 entity.getCategory().name(),
-                entity.getAccount().getName()
+                entity.getAccount().getId()
         );
     }
 
@@ -32,7 +32,7 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
     public Transaction toEntity(TransactionDTO dto, TransactionRelatedEntities r) {
         return new Transaction(
                 dto.id(),
-                LocalDateTime.parse(dto.date(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                LocalDateTime.parse(dto.date(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
                 dto.amount(),
                 TransactionType.valueOf(dto.type()),
                 dto.description(),
