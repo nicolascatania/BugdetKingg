@@ -19,5 +19,17 @@ export class AccountService {
     return this.HttpClient.get<AccountDTO[]>(`${this.baseUrl}/by-user`);
   }
 
+  create(account: AccountDTO): Observable<AccountDTO> {
+    return this.HttpClient.post<AccountDTO>(this.baseUrl, account);
+  }
+
+  update(account: AccountDTO): Observable<AccountDTO> {
+    return this.HttpClient.put<AccountDTO>(`${this.baseUrl}/${account.id}`, account);
+  }
+
+  delete(accountId: string): Observable<void> {
+    return this.HttpClient.delete<void>(`${this.baseUrl}/${accountId}`);
+  }
+
 }
 

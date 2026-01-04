@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'heading',
@@ -7,4 +7,16 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './heading.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Heading { }
+export class Heading {
+
+  /**
+   * Fired when the user wants to create a new account.
+   */
+  @Output() newAccount = new EventEmitter<void>();
+
+  openNewAccountModal(): void {
+    this.newAccount.emit();
+  }
+
+
+}

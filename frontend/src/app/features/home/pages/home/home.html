@@ -1,8 +1,7 @@
 <main class="flex-1 p-8">
-<section class="w-full max-w-screen-xl mx-auto">
-
+  <section class="w-full max-w-screen-xl mx-auto">
     <!-- Balance -->
-    <heading></heading>
+    <heading (newAccount)="openNewAccountModal()"></heading>
 
     <!-- Accounts -->
     <accounts [accounts]="accounts()"></accounts>
@@ -14,3 +13,10 @@
     <last-moves></last-moves>
   </section>
 </main>
+
+@if(isAccountModalOpen){
+<app-edit-account-modal
+  [account]="selectedAccount"
+  (closed)="onModalClosed($event)"
+></app-edit-account-modal>
+}
