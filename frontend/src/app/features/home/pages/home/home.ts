@@ -6,18 +6,25 @@ import { LastMoves } from "../../components/last-moves/last-moves";
 import { AccountService } from '../../../accounts/services/AccountService';
 import { AccountDTO } from '../../../accounts/interfaces/AccountDTO.interfaces';
 import { EditAccountModal } from '../../../accounts/components/edit-account-modal/edit-account-modal';
+import { TransactionDTO } from '../../../transactions/interfaces/TransactionDTO.interface';
+import { EditTransaction } from '../../../transactions/components/edit-transaction/edit-transaction';
 
 @Component({
   selector: 'home',
-  imports: [Heading, Accounts, MonthlySummary, LastMoves, EditAccountModal],
+  imports: [Heading, Accounts, MonthlySummary, LastMoves, EditAccountModal, EditTransaction],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
   accounts = signal<AccountDTO[]>([]);
+
   isAccountModalOpen = false;
   selectedAccount: AccountDTO | null = null;
+
+  isTransactionModalOpen = false;
+  selectedTransaction: TransactionDTO | null = null;
+
 
   constructor(private accountService: AccountService) { }
 
@@ -30,7 +37,7 @@ export class Home {
    */
   private loadAccounts(): void {
     this.accountService.getAccountsByUser().subscribe({
-      next: accounts => this.accounts.set(accounts),
+      next: accounts => this.accounts.set(accounts.sort((a, b) => a.name.localeCompare(b.name))),
       error: err => console.error('Failed to load accounts', err),
     });
   }
@@ -54,4 +61,18 @@ export class Home {
       this.loadAccounts();
     }
   }
+
+  openNewTransactionModal(): void {
+    this.selectedTransaction = null;
+    this.isTransactionModalOpen = true;
+  }
+
+  onTransactionModalClosed(success: boolean): void {
+    this.isTransactionModalOpen = false;
+
+    if (success) {
+      // this.loadTransactions();
+    }
+  }
+
 }

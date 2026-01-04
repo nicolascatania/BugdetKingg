@@ -1,0 +1,8 @@
+export enum TransactionCategory {
+    INTEREST = 'INTEREST',
+    SALARY = 'SALARY',
+    TRANSFER = 'TRANSFER',
+    PURCHASE = 'PURCHASE',
+    INVESTMENT = 'INVESTMENT',
+    ADJUSTMENT = 'ADJUSTMENT'
+}

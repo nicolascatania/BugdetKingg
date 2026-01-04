@@ -9,4 +9,5 @@ public record TransactionRelatedEntities(
         @NotNull(message = "User must be provided")
         AppUser user,
         @NotNull(message = "Account must be provided")
-        Account account) {}
+        Account account,
+        Account destinationAccount) {}

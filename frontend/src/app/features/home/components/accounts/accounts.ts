@@ -16,8 +16,5 @@ export class Accounts {
 
   constructor() {}
 
-  ngAfterViewInit() {
-    console.log(this.accounts);
-  }
 
 }

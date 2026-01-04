@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Component
 public class TransactionMapper implements ICrudMapper<Transaction, TransactionDTO, TransactionRelatedEntities> {
@@ -18,13 +19,14 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
     public TransactionDTO toDto(Transaction entity) {
         return new TransactionDTO(
                 entity.getId(),
-                entity.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                entity.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
                 entity.getAmount(),
                 entity.getType().name(),
                 entity.getCounterparty(),
                 entity.getDescription(),
                 entity.getCategory().name(),
-                entity.getAccount().getId()
+                entity.getAccount().getId(),
+                entity.getDestinationAccount() != null ? entity.getDestinationAccount().getId() : null
         );
     }
 
@@ -39,7 +41,10 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 dto.counterparty(),
                 TransactionCategory.valueOf(dto.category()),
                 r.account(),
+                r.destinationAccount(),
                 r.user()
         );
     }
+
+
 }

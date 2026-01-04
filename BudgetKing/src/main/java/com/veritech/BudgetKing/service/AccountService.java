@@ -2,12 +2,16 @@ package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.AccountDTO;
 import com.veritech.BudgetKing.dto.AccountRelatedEntities;
+import com.veritech.BudgetKing.enumerator.TransactionCategory;
+import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.filter.AccountFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.AccountMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.AccountRepository;
+import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +32,7 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
     private final SecurityUtils securityUtils;
+    private final TransactionRepository transactionRepository;
 
     @Override
     public AccountDTO getById(UUID uuid) {
@@ -44,8 +50,19 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
 
         AccountRelatedEntities accountRelatedEntities = new AccountRelatedEntities(user);
         Account account = accountMapper.toEntity(dto, accountRelatedEntities);
-
         Account saved = accountRepository.save(account);
+
+        Transaction firstTransaction = new Transaction();
+        firstTransaction.setAccount(account);
+        firstTransaction.setAmount(account.getBalance());
+        firstTransaction.setDescription("First transaction generating a new account");
+        firstTransaction.setCounterparty("None");
+        firstTransaction.setType(TransactionType.INCOME);
+        firstTransaction.setCategory(TransactionCategory.ADJUSTMENT);
+        firstTransaction.setDate(LocalDateTime.now());
+        firstTransaction.setUser(user);
+
+        transactionRepository.save(firstTransaction);
 
         return accountMapper.toDto(saved);
     }
@@ -61,7 +78,7 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
 
         existing.setName(dto.name());
         existing.setDescription(dto.description());
-        existing.setBalance(dto.balance());
+        // existing.setBalance(dto.balance()); it should just change name and description, not balance
 
         Account updated = accountRepository.save(existing);
         return accountMapper.toDto(updated);

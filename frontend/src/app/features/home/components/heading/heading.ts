@@ -13,10 +13,14 @@ export class Heading {
    * Fired when the user wants to create a new account.
    */
   @Output() newAccount = new EventEmitter<void>();
+  @Output() newTransaction = new EventEmitter<void>();
 
   openNewAccountModal(): void {
     this.newAccount.emit();
   }
 
+  openNewTransactionModal(): void {
+    this.newTransaction.emit();
+  }
 
 }

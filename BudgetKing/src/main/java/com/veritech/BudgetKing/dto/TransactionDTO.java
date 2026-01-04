@@ -1,5 +1,7 @@
 package com.veritech.BudgetKing.dto;
 
+import com.veritech.BudgetKing.enumerator.TransactionType;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -21,6 +23,14 @@ public record TransactionDTO(
         @NotBlank(message = "Category is mandatory")
         String category,
         @NotNull(message = "Account ID is mandatory")
-        UUID account
+        UUID account,
+        UUID destinationAccount
 ) {
+        @AssertTrue(message = "destinationAccount is mandatory when transaction type is TRANSFER")
+        public boolean isdestinationAccountValid() {
+                if (!TransactionType.TRANSFER.equals(type)) {
+                        return true;
+                }
+                return destinationAccount != null;
+        }
 }

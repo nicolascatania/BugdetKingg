@@ -51,7 +51,12 @@ public class Transaction {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "destination_account_id")
+    private Account destinationAccount;
+
     @ManyToOne(fetch = FetchType.EAGER) //to make it easier, later will change to lazy
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
+
 }

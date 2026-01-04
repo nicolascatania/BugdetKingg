@@ -1,0 +1,114 @@
+<ui-modal
+  [open]="true"
+  [title]="transaction ? 'Edit Transaction' : 'New Transaction'"
+  (closed)="close(false)"
+>
+  <!-- BODY -->
+  <div modal-body>
+    <form [formGroup]="form" class="space-y-4">
+      <!-- Description -->
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Description</label>
+        <input
+          type="text"
+          formControlName="description"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
+        />
+      </div>
+
+      <!-- Amount -->
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Amount</label>
+        <input
+          type="number"
+          formControlName="amount"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Account</label>
+        <select
+          formControlName="account"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
+        >
+          @for (account of accounts(); track account.id) {
+          <option [value]="account.id">{{ account.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Type -->
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Type</label>
+        <select
+          formControlName="type"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
+        >
+          <option value="">Select account</option>
+          @for (type of transactionTypes; track type) {
+          <option [value]="type">{{ type }}</option>
+          }
+        </select>
+      </div>
+
+      @if(form.get('type')?.value === 'TRANSFER') {
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">
+          Destination Account
+        </label>
+        <select
+          formControlName="destinationAccount"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
+        >
+          @for (account of filteredDestinationAccounts(); track account.id) {
+          <option [value]="account.id">{{ account.name }}</option>
+          }
+        </select>
+      </div>
+      }
+
+      <!-- Category -->
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Category</label>
+        <select
+          formControlName="category"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
+        >
+          <option value="">Select account</option>
+          @for (category of transactionCategories; track category) {
+          <option [value]="category">{{ category }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Counterparty -->
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Counterparty</label>
+        <input
+          type="text"
+          formControlName="counterparty"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
+        />
+      </div>
+    </form>
+  </div>
+
+  <!-- FOOTER -->
+  <div modal-footer>
+    <button
+      class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600"
+      (click)="close(false)"
+    >
+      Cancel
+    </button>
+
+    <button
+      class="px-4 py-2 ms-2 rounded-lg bg-accent-green hover:bg-green-600"
+      (click)="submit()"
+      [disabled]="form.invalid"
+    >
+      {{ transaction ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</ui-modal>

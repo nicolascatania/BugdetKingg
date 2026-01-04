@@ -3,18 +3,27 @@
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Ingresos</p>
-      <p class="text-2xl font-semibold text-accent-green mt-2">$550.000</p>
+      <p class="text-slate-400 text-sm">Income</p>
+      <p class="text-2xl font-semibold text-accent-green mt-2">
+        {{ monthlyReport()?.income }}
+      </p>
     </div>
 
     <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Gastos</p>
-      <p class="text-2xl font-semibold text-accent-red mt-2">$430.000</p>
+      <p class="text-slate-400 text-sm">Outcome</p>
+      <p class="text-2xl font-semibold text-accent-red mt-2">
+        {{ monthlyReport()?.outcome }}
+      </p>
     </div>
 
     <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Balance mensual</p>
-      <p class="text-2xl font-semibold text-accent-green mt-2">+$120.000</p>
+      <p class="text-slate-400 text-sm">Balance</p>
+      <p
+        class="text-2xl font-semibold mt-2"
+        [ngClass]="balance > 0 ? 'text-accent-green' : 'text-accent-red'"
+      >
+        {{ balance }}
+      </p>
     </div>
   </div>
 </div>

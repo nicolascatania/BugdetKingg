@@ -1,7 +1,10 @@
 <main class="flex-1 p-8">
   <section class="w-full max-w-screen-xl mx-auto">
     <!-- Balance -->
-    <heading (newAccount)="openNewAccountModal()"></heading>
+    <heading
+      (newAccount)="openNewAccountModal()"
+      (newTransaction)="openNewTransactionModal()"
+    ></heading>
 
     <!-- Accounts -->
     <accounts [accounts]="accounts()"></accounts>
@@ -19,4 +22,12 @@
   [account]="selectedAccount"
   (closed)="onModalClosed($event)"
 ></app-edit-account-modal>
+
+} @if (isTransactionModalOpen) {
+<app-edit-transaction
+  [transaction]="selectedTransaction"
+  [accounts]="accounts()"
+  (closed)="onTransactionModalClosed($event)"
+>
+</app-edit-transaction>
 }
