@@ -1,25 +1,40 @@
-<div class="mb-10">
-  <p class="text-slate-400 text-sm">Balance total</p>
-  <h1 class="text-4xl font-semibold text-accent-green mt-1">$1.250.000</h1>
+<div class="mb-12">
+  <p class="text-slate-400 text-sm uppercase tracking-wide">Total Balance</p>
+
+  <h1
+    class="text-4xl font-semibold text-accent-green mt-2 flex items-center gap-3"
+  >
+    <i class="fa-solid fa-wallet text-3xl opacity-80"></i>
+    $1.250.000
+  </h1>
 </div>
 
-<!-- Action buttons -->
-<div class="flex gap-4 mb-14">
+<div class="flex flex-wrap gap-4 mb-14">
   <button
-    class="px-5 py-2 rounded-lg bg-accent-green/90 hover:bg-accent-green text-sm font-medium transition-colors"
+    class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent-green/90 hover:bg-accent-green text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent-green/50"
   >
-    + Ingreso
+    <i class="fa-solid fa-plus"></i>
+    Income
   </button>
 
   <button
-    class="px-5 py-2 rounded-lg bg-accent-red/90 hover:bg-accent-red text-sm font-medium transition-colors"
+    class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent-red/90 hover:bg-accent-red text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent-red/50"
   >
-    − Egreso
+    <i class="fa-solid fa-minus"></i>
+    Outcome
   </button>
 
   <button
-    class="px-5 py-2 rounded-lg bg-accent-blue/90 hover:bg-accent-blue text-sm font-medium transition-colors"
+    class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent-blue/90 hover:bg-accent-blue text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent-blue/50"
   >
-    ⇄ Transferir
+    <i class="fa-solid fa-right-left"></i>
+    Transfer
+  </button>
+
+  <button
+    class="flex items-center gap-2 px-5 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
+  >
+    <i class="fa-solid fa-building-columns"></i>
+    New Account
   </button>
 </div>
