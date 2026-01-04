@@ -1,3 +1,68 @@
 :host {
   display: block;
 }
+/* Chrome, Edge, Safari */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(2);
+}
+
+/* Firefox */
+input[type="date"]::-moz-calendar-picker-indicator {
+  filter: invert(1) brightness(2);
+}
+
+/* Contenedor principal */
+.ts-wrapper {
+  width: 100%;
+  font-size: 0.875rem; /* text-sm */
+}
+
+/* Input / control */
+.ts-control {
+  background-color: #1e293b; /* bg-card oscuro */
+  color: white;
+  border: 1px solid #334155; /* border-border */
+  border-radius: 0.75rem; /* rounded-lg / xl */
+  padding: 0.5rem 0.75rem;
+}
+
+/* Placeholder */
+.ts-control input::placeholder {
+  color: #94a3b8; /* text-slate-400 */
+  opacity: 1;
+}
+
+/* Dropdown */
+.ts-dropdown {
+  background-color: #1e293b; /* mismo bg que tus cards */
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+/* Cada opción */
+.ts-option {
+  color: white;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.ts-option:hover {
+  background-color: #334155; /* hover suave */
+}
+
+/* Tags cuando seleccionas varios */
+.ts-item {
+  background-color: #2563eb; /* acento suave, podés usar bg-accent-green si querés */
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0 0.5rem;
+  margin-right: 0.25rem;
+}
+
+/* Botón para quitar tag */
+.ts-item .remove {
+  color: white;
+}

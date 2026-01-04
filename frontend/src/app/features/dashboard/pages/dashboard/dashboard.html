@@ -1,37 +1,33 @@
 <div class="space-y-6">
   <!-- Filters -->
-  <div class="bg-card p-4 rounded-lg border">
-    <form>
+  <div class="p-4 rounded-xl border border-border bg-card">
+    <form class="space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
         <!-- Date from -->
         <div>
-          <label class="block text-sm/6 font-medium text-white mb-1"
-            >From</label
-          >
+          <label class="block text-sm text-slate-300 mb-1">From</label>
           <input
             type="date"
             [value]="fromDate"
-            class="w-full rounded-md bg-white/5 py-1.5 pr-4 pl-3 text-base text-white outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
           />
         </div>
 
         <!-- Date to -->
         <div>
-          <label class="block text-sm/6 font-medium text-white mb-1">To</label>
+          <label class="block text-sm text-slate-300 mb-1">To</label>
           <input
             type="date"
             [value]="toDate"
-            class="w-full rounded-md bg-white/5 py-1.5 pr-4 pl-3 text-base text-white outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
           />
         </div>
 
         <!-- Account -->
         <div>
-          <label class="block text-sm/6 font-medium text-white mb-1"
-            >Account</label
-          >
+          <label class="block text-sm text-slate-300 mb-1">Account</label>
           <select
-            class="w-full rounded-md bg-white/5 py-1.5 pr-8 pl-3 text-base text-white outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
           >
             <option>All</option>
             <option>Cash</option>
@@ -42,29 +38,25 @@
 
         <!-- Category -->
         <div>
-          <label class="block text-sm/6 font-medium text-white mb-1"
-            >Category</label
+          <label class="block text-sm text-slate-300 mb-1">Category</label>
+          <select
+            id="category-select"
+            multiple
+            placeholder="Select categories..."
+            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
           >
-          <div class="mt-2 relative">
-            <select
-              class="w-full rounded-md bg-white/5 py-1.5 pr-8 pl-3 text-base text-white outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-            >
-              <option>All</option>
-              <option>Food</option>
-              <option>Transport</option>
-              <option>Services</option>
-              <option>Investment</option>
-            </select>
-          </div>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Services">Services</option>
+            <option value="Investment">Investment</option>
+          </select>
         </div>
 
         <!-- Type -->
         <div>
-          <label class="block text-sm/6 font-medium text-white mb-1"
-            >Type</label
-          >
+          <label class="block text-sm text-slate-300 mb-1">Type</label>
           <select
-            class="w-full rounded-md bg-white/5 py-1.5 pr-8 pl-3 text-base text-white outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
           >
             <option>All</option>
             <option>Income</option>
@@ -75,7 +67,8 @@
         <!-- Apply -->
         <div>
           <button
-            class="w-full bg-accent-green text-black rounded-md px-3 py-1.5 text-sm font-medium hover:opacity-90"
+            class="w-full bg-accent-green text-black rounded-lg px-3 py-2 text-sm font-medium hover:opacity-90"
+            type="submit"
           >
             Apply
           </button>
@@ -86,40 +79,39 @@
 
   <!-- KPIs -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div class="bg-card p-4 rounded-lg border">
-      <p class="text-xs text-slate-400">Total Balance</p>
-      <p class="text-xl font-semibold text-accent-green mt-1">$120.000</p>
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <p class="text-slate-400 text-sm">Total Balance</p>
+      <p class="text-2xl font-semibold text-accent-green mt-2">$120.000</p>
     </div>
 
-    <div class="bg-card p-4 rounded-lg border">
-      <p class="text-xs text-slate-400">Expenses (Month)</p>
-      <p class="text-xl font-semibold text-accent-red mt-1">$45.000</p>
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <p class="text-slate-400 text-sm">Expenses (Month)</p>
+      <p class="text-2xl font-semibold text-accent-red mt-2">$45.000</p>
     </div>
 
-    <div class="bg-card p-4 rounded-lg border">
-      <p class="text-xs text-slate-400">Income (Month)</p>
-      <p class="text-xl font-semibold text-accent-green mt-1">$70.000</p>
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <p class="text-slate-400 text-sm">Income (Month)</p>
+      <p class="text-2xl font-semibold text-accent-green mt-2">$70.000</p>
     </div>
 
-    <div class="bg-card p-4 rounded-lg border">
-      <p class="text-xs text-slate-400">Monthly Balance</p>
-      <p class="text-xl font-semibold mt-1">$25.000</p>
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <p class="text-slate-400 text-sm">Monthly Balance</p>
+      <p class="text-2xl font-semibold mt-2 text-white">$25.000</p>
     </div>
   </div>
 
   <!-- Main content -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     <!-- Pie chart -->
-    <div class="lg:col-span-2 bg-card p-4 rounded-lg border">
+    <div class="lg:col-span-2 bg-card rounded-xl p-5 border border-border">
       <h3 class="text-base font-medium mb-3">Expenses by Category</h3>
-
       <div class="h-56">
         <canvas id="expensePie"></canvas>
       </div>
     </div>
 
     <!-- Last moves -->
-    <div class="bg-card p-4 rounded-lg border">
+    <div class="bg-card rounded-xl p-5 border border-border">
       <h3 class="text-base font-medium mb-3">Last Movements</h3>
       <!-- lista simple -->
     </div>

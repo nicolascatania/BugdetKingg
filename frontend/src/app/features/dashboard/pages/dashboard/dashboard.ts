@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
+
+declare var TomSelect: any;
+
 
 Chart.register(PieController, ArcElement, Tooltip, Legend);
 @Component({
@@ -9,7 +12,7 @@ Chart.register(PieController, ArcElement, Tooltip, Legend);
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Dashboard {
+export class Dashboard implements AfterViewInit {
 
 
   fromDate!: string;
@@ -26,6 +29,14 @@ export class Dashboard {
   }
 
   ngAfterViewInit() {
+
+    new TomSelect('#category-select', {
+      plugins: ['remove_button'], // Botón para quitar cada tag
+      persist: false,
+      create: false,
+      placeholder: 'Select categories...',
+    });
+
     new Chart('expensePie', {
       type: 'pie',
       data: {
