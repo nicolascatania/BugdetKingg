@@ -37,19 +37,51 @@
         </div>
 
         <!-- Category -->
-        <div>
+        <div class="w-full category-dropdown">
           <label class="block text-sm text-slate-300 mb-1">Category</label>
-          <select
-            id="category-select"
-            multiple
-            placeholder="Select categories..."
-            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
-          >
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="Services">Services</option>
-            <option value="Investment">Investment</option>
-          </select>
+
+          <div class="relative">
+            <!-- Input simulado para mostrar los tags -->
+            <div
+              class="flex flex-wrap gap-1 p-2 border border-border rounded-lg bg-card cursor-text"
+              (click)="toggleDropdown()"
+            >
+              <span
+                *ngFor="let cat of selectedCategories"
+                class="bg-accent-green text-black px-2 py-1 rounded flex items-center gap-1"
+              >
+                {{ cat }}
+                <button
+                  type="button"
+                  (click)="removeCategory(cat)"
+                  class="ml-1"
+                >
+                  &times;
+                </button>
+              </span>
+              <span
+                *ngIf="selectedCategories.length === 0"
+                class="text-slate-400"
+              >
+                Select categories...
+              </span>
+            </div>
+
+            <!-- Dropdown -->
+            <ul
+              *ngIf="dropdownOpen"
+              class="absolute z-10 mt-1 w-full max-h-60 overflow-auto border border-border rounded-lg bg-card shadow-lg"
+            >
+              <li
+                *ngFor="let cat of categories"
+                (click)="selectCategory(cat)"
+                class="px-3 py-2 cursor-pointer hover:bg-accent-green/20"
+                [ngClass]="{ 'bg-accent-green/30': selectedCategories.includes(cat) }"
+              >
+                {{ cat }}
+              </li>
+            </ul>
+          </div>
         </div>
 
         <!-- Type -->
