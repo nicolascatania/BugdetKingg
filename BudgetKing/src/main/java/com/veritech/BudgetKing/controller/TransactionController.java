@@ -1,5 +1,6 @@
 package com.veritech.BudgetKing.controller;
 
+import com.veritech.BudgetKing.dto.LastMovesDTO;
 import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.dto.TransactionDTO;
 import com.veritech.BudgetKing.filter.TransactionFilter;
@@ -28,7 +29,7 @@ public class TransactionController implements ICrudController<TransactionDTO, UU
     }
 
     @GetMapping("/movements-this-month")
-    public ResponseEntity<List<TransactionDTO>> movementsOfThisMonth() {
+    public ResponseEntity<List<LastMovesDTO>> movementsOfThisMonth() {
         return ResponseEntity.ok(service.movementsOfThisMonth());
     }
 

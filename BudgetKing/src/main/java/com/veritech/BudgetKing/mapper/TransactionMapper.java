@@ -1,10 +1,12 @@
 package com.veritech.BudgetKing.mapper;
 
+import com.veritech.BudgetKing.dto.LastMovesDTO;
 import com.veritech.BudgetKing.dto.TransactionDTO;
 import com.veritech.BudgetKing.dto.TransactionRelatedEntities;
 import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.interfaces.ICrudMapper;
+import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.Transaction;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +45,20 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 r.account(),
                 r.destinationAccount(),
                 r.user()
+        );
+    }
+
+    public LastMovesDTO toLastMovesDTO(Transaction entity) {
+        return new LastMovesDTO(
+                entity.getId(),
+                entity.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                entity.getAmount(),
+                entity.getType().name(),
+                entity.getCounterparty(),
+                entity.getDescription(),
+                entity.getCategory().name(),
+                entity.getAccount().getName()
+
         );
     }
 

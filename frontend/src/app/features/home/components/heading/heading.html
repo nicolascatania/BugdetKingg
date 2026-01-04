@@ -2,10 +2,15 @@
   <p class="text-slate-400 text-sm uppercase tracking-wide">Total Balance</p>
 
   <h1
-    class="text-4xl font-semibold text-accent-green mt-2 flex items-center gap-3"
+    class="text-4xl font-semibold mt-2 flex items-center gap-3"
+    [ngClass]="{
+    'text-accent-green': totalBalance() > 0,
+    'text-accent-red': totalBalance() < 0,
+    'text-slate-300': totalBalance() === 0
+  }"
   >
     <i class="fa-solid fa-wallet text-3xl opacity-80"></i>
-    $1.250.000
+    {{ totalBalance() | currency:'ARS':'symbol':'1.2-2' }}
   </h1>
 </div>
 
@@ -15,7 +20,7 @@
     class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent-blue/90 hover:bg-accent-blue text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent-blue/50"
   >
     <i class="fa-solid fa-right-left"></i>
-    Transfer
+    Transaction
   </button>
 
   <button

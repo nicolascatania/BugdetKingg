@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/cor
 import { TransactionService } from '../../../transactions/services/transaction-service';
 import { MonthlyTransactionReportDTO } from '../../../transactions/interfaces/MonthlyTransactionReportDTO.interface';
 import { CommonModule } from '@angular/common';
+import { AccountService } from '../../../accounts/services/AccountService';
 
 @Component({
   selector: 'monthly-summary',

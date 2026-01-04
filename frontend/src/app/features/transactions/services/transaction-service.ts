@@ -4,6 +4,7 @@ import { environment } from '../../../../environments/environment';
 import { TransactionDTO } from '../interfaces/TransactionDTO.interface';
 import { HttpClient } from '@angular/common/http';
 import { MonthlyTransactionReportDTO } from '../interfaces/MonthlyTransactionReportDTO.interface';
+import { LastMovesDTO } from '../interfaces/LastMovesDTO.interface';
 
 
 @Injectable({
@@ -30,8 +31,8 @@ export class TransactionService {
     return this.HttpClient.get<TransactionDTO[]>(`${this.baseUrl}/by-user`);
   }
 
-  getMovementsOfThisMonth(): Observable<TransactionDTO[]> {
-    return this.HttpClient.get<TransactionDTO[]>(`${this.baseUrl}/movements-this-month`);
+  getMovementsOfThisMonth(): Observable<LastMovesDTO[]> {
+    return this.HttpClient.get<LastMovesDTO[]>(`${this.baseUrl}/movements-this-month`);
   }
 
   getCurrentMonthlyReport(): Observable<MonthlyTransactionReportDTO> {

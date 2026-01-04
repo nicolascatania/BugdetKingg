@@ -7,7 +7,7 @@
     ></heading>
 
     <!-- Accounts -->
-    <accounts [accounts]="accounts()"></accounts>
+    <accounts></accounts>
 
     <!-- Monthly summary -->
     <monthly-summary></monthly-summary>
@@ -23,11 +23,10 @@
   (closed)="onModalClosed($event)"
 ></app-edit-account-modal>
 
-} @if (isTransactionModalOpen) {
+}@if (isTransactionModalOpen) {
 <app-edit-transaction
   [transaction]="selectedTransaction"
   [accounts]="accounts()"
   (closed)="onTransactionModalClosed($event)"
->
-</app-edit-transaction>
+/>
 }

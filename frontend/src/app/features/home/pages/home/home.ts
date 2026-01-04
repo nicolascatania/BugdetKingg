@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { Heading } from "../../components/heading/heading";
 import { Accounts } from '../../components/accounts/accounts';
 import { MonthlySummary } from "../../components/monthly-summary/monthly-summary";
@@ -17,30 +17,20 @@ import { EditTransaction } from '../../../transactions/components/edit-transacti
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
-  accounts = signal<AccountDTO[]>([]);
+
+  private accountService = inject(AccountService);
+  accounts = this.accountService.accounts;
 
   isAccountModalOpen = false;
-  selectedAccount: AccountDTO | null = null;
-
   isTransactionModalOpen = false;
-  selectedTransaction: TransactionDTO | null = null;
 
+  selectedAccount = null;
+  selectedTransaction = null;
 
-  constructor(private accountService: AccountService) { }
-
-  ngOnInit(): void {
-    this.loadAccounts();
+  constructor() {
+    this.accountService.loadAccounts();
   }
 
-  /**
-   * Loads all accounts for the current user.
-   */
-  private loadAccounts(): void {
-    this.accountService.getAccountsByUser().subscribe({
-      next: accounts => this.accounts.set(accounts.sort((a, b) => a.name.localeCompare(b.name))),
-      error: err => console.error('Failed to load accounts', err),
-    });
-  }
 
   /**
    * Opens the modal to create a new account.
@@ -56,10 +46,6 @@ export class Home {
    */
   onModalClosed(success: boolean): void {
     this.isAccountModalOpen = false;
-
-    if (success) {
-      this.loadAccounts();
-    }
   }
 
   openNewTransactionModal(): void {
@@ -69,10 +55,6 @@ export class Home {
 
   onTransactionModalClosed(success: boolean): void {
     this.isTransactionModalOpen = false;
-
-    if (success) {
-      // this.loadTransactions();
-    }
   }
 
 }

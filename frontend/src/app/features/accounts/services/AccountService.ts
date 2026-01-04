@@ -1,35 +1,62 @@
-import { Injectable } from '@angular/core';
+import { computed, effect, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { AccountDTO } from '../interfaces/AccountDTO.interfaces';
+import { TransactionService } from '../../transactions/services/transaction-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
 
-
   private readonly baseUrl = `${environment.apiUrl}/account`;
 
-  constructor(private HttpClient: HttpClient) { }
+  private _accounts = signal<AccountDTO[]>([]);
+  readonly accounts = this._accounts.asReadonly();
 
-
-  getAccountsByUser(): Observable<AccountDTO[]> {
-    return this.HttpClient.get<AccountDTO[]>(`${this.baseUrl}/by-user`);
+  constructor(
+    private http: HttpClient,
+    private transactionService: TransactionService
+  ) {
+    effect(() => {
+      transactionService.refresh$();
+      this.loadAccounts();
+    });
   }
 
-  create(account: AccountDTO): Observable<AccountDTO> {
-    return this.HttpClient.post<AccountDTO>(this.baseUrl, account);
+  totalBalance = computed(() =>
+    this._accounts().reduce(
+      (sum, acc) => sum + acc.balance,
+      0
+    )
+  );
+
+  loadAccounts(): void {
+    this.http
+      .get<AccountDTO[]>(`${this.baseUrl}/by-user`)
+      .subscribe(accs => this._accounts.set(accs));
   }
 
-  update(account: AccountDTO): Observable<AccountDTO> {
-    return this.HttpClient.put<AccountDTO>(`${this.baseUrl}/${account.id}`, account);
+  create(account: AccountDTO) {
+    return this.http.post<AccountDTO>(this.baseUrl, account).pipe(
+      tap(() => {
+        this.loadAccounts(),
+          this.transactionService.notifyRefresh();
+      }
+      )
+    );
   }
 
-  delete(accountId: string): Observable<void> {
-    return this.HttpClient.delete<void>(`${this.baseUrl}/${accountId}`);
+  update(account: AccountDTO) {
+    return this.http.put<AccountDTO>(`${this.baseUrl}/${account.id}`, account).pipe(
+      tap(() => this.loadAccounts())
+    );
   }
 
+  delete(id: string) {
+    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
+      tap(() => this.loadAccounts())
+    );
+  }
 }
-

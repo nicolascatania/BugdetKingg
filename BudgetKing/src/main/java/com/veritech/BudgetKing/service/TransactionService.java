@@ -1,5 +1,6 @@
 package com.veritech.BudgetKing.service;
 
+import com.veritech.BudgetKing.dto.LastMovesDTO;
 import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.dto.TransactionDTO;
 import com.veritech.BudgetKing.dto.TransactionRelatedEntities;
@@ -102,7 +103,7 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
      * Gets the list of the last movements of the month of the user
      * @return
      */
-    public List<TransactionDTO> movementsOfThisMonth() {
+    public List<LastMovesDTO> movementsOfThisMonth() {
         AppUser user = securityUtils.getCurrentUser();
         LocalDateTime now = LocalDateTime.now();
 
@@ -112,7 +113,7 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
         return transactionRepository
                 .findByUserAndDateBetween(user, start, end)
                 .stream()
-                .map(mapper::toDto)
+                .map(mapper::toLastMovesDTO)
                 .toList();
     }
 
