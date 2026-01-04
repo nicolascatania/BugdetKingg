@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AccountDTO } from '../interfaces/AccountDTO.interfaces';
 import { TransactionService } from '../../transactions/services/transaction-service';
+import { OptionDTO } from '../../../shared/models/OptionDTO.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -58,5 +59,10 @@ export class AccountService {
     return this.http.delete(`${this.baseUrl}/${id}`).pipe(
       tap(() => this.loadAccounts())
     );
+  }
+
+
+  getOptions(): Observable<OptionDTO[]> {
+    return this.http.get<OptionDTO[]>(`${this.baseUrl}/options`);
   }
 }

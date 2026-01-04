@@ -5,6 +5,7 @@ import com.veritech.BudgetKing.dto.AccountRelatedEntities;
 import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.filter.AccountFilter;
+import com.veritech.BudgetKing.dto.OptionDTO;
 import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.AccountMapper;
 import com.veritech.BudgetKing.model.Account;
@@ -15,7 +16,6 @@ import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,5 +120,15 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
     public List<AccountDTO> getByUser() {
         AppUser user = securityUtils.getCurrentUser();
         return accountRepository.findAllByUser(user);
+    }
+
+    public List<OptionDTO> getOptions() {
+        AppUser user = securityUtils.getCurrentUser();
+
+        return accountRepository.findAllByUser(user)
+                .stream().map( a ->
+                        new OptionDTO(a.id().toString(), a.name())
+                ).toList();
+
     }
 }

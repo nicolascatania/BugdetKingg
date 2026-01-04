@@ -1,68 +1,115 @@
 <div class="space-y-6">
   <!-- Filters -->
-  <div class="p-4 rounded-xl border border-border bg-card">
-    <form class="space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-        
-        <!-- Date from -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-1">From</label>
-          <input
-            type="date"
-            [value]="fromDate"
-            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
-          />
+  <div class="space-y-6">
+    <!-- Filters -->
+    <div class="p-4 rounded-xl border border-border bg-card">
+      <form
+        [formGroup]="filterForm"
+        (ngSubmit)="applyFilters()"
+        class="space-y-4"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+          <!-- Date from -->
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">From</label>
+            <input
+              type="date"
+              formControlName="dateFrom"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
+          </div>
+
+          <!-- Date to -->
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">To</label>
+            <input
+              type="date"
+              formControlName="dateTo"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
+          </div>
+
+          <!-- Account -->
+          <app-multiselect
+            label="Account"
+            [options]="accounts"
+            labelField="value"
+            valueField="id"
+            placeholder="Select account..."
+            (selectedChange)="onAccountsSelected($event)"
+          ></app-multiselect>
+
+          <!-- Category -->
+          <app-multiselect
+            label="Categories"
+            [options]="categories"
+            labelField="name"
+            valueField="id"
+            placeholder="Select categories..."
+            (selectedChange)="onCategoriesSelected($event)"
+          ></app-multiselect>
+
+          <!-- Type -->
+          <app-multiselect
+            label="Type"
+            [options]="types"
+            labelField="name"
+            valueField="id"
+            placeholder="Select type..."
+            (selectedChange)="onTypesSelected($event)"
+          ></app-multiselect>
+
+          <!-- Apply -->
+          <div>
+            <button
+              type="submit"
+              class="w-full bg-accent-green text-black rounded-lg px-3 py-2 text-sm font-medium hover:opacity-90"
+            >
+              Apply
+            </button>
+          </div>
         </div>
+      </form>
+    </div>
+  </div>
 
-        <!-- Date to -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-1">To</label>
-          <input
-            type="date"
-            [value]="toDate"
-            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
-          />
-        </div>
+  <!-- KPIs -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <p class="text-slate-400 text-sm">Total Balance</p>
+      <p class="text-2xl font-semibold text-accent-green mt-2">$120.000</p>
+    </div>
 
-        <!-- Account -->
-        <app-multiselect
-          label="Account"
-          [options]="accounts"
-          labelField="name"
-          valueField="id"
-          placeholder="Select account..."
-          (selectedChange)="onAccountsSelected($event)"
-        ></app-multiselect>
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <p class="text-slate-400 text-sm">Expenses (Month)</p>
+      <p class="text-2xl font-semibold text-accent-red mt-2">$45.000</p>
+    </div>
 
-        <!-- Category -->
-        <app-multiselect
-          label="Categories"
-          [options]="categories"
-          labelField="name"
-          valueField="id"
-          placeholder="Select categories..."
-          (selectedChange)="onCategoriesSelected($event)"
-        ></app-multiselect>
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <p class="text-slate-400 text-sm">Income (Month)</p>
+      <p class="text-2xl font-semibold text-accent-green mt-2">$70.000</p>
+    </div>
 
-        <!-- Type -->
-        <app-multiselect
-          label="Type"
-          [options]="types"
-          labelField="name"
-          valueField="id"
-          placeholder="Select type..."
-          (selectedChange)="onTypesSelected($event)"
-        ></app-multiselect>
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <p class="text-slate-400 text-sm">Monthly Balance</p>
+      <p class="text-2xl font-semibold mt-2 text-white">$25.000</p>
+    </div>
+  </div>
 
-        <!-- Apply -->
-        <div>
-          <button
-            class="w-full bg-accent-green text-black rounded-lg px-3 py-2 text-sm font-medium hover:opacity-90"
-          >
-            Apply
-          </button>
-        </div>
+  <!-- Main content -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <!-- Pie chart -->
+    <div class="lg:col-span-2 bg-card rounded-xl p-5 border border-border">
+      <h3 class="text-base font-medium mb-3">Expenses by Category</h3>
+      <div class="h-56">
+        <canvas id="expensePie"></canvas>
       </div>
-    </form>
+    </div>
+
+    <!-- Last moves -->
+    <div class="bg-card rounded-xl p-5 border border-border">
+      <h3 class="text-base font-medium mb-3">Last Movements</h3>
+      <!-- lista simple -->
+    </div>
   </div>
 </div>
