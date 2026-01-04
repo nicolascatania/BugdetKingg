@@ -1,15 +1,12 @@
-:host {
-  display: block;
-}
 
 .multi-select-dropdown input {
   min-width: 100px;
 }
 
-.multi-select-wrapper {
-  transition: border-color 0.2s;
+.multi-select-dropdown .border-accent-green {
+  border-color: green;
 }
 
-.multi-select-wrapper.border-accent-green {
-  border-color: green;
+.multi-select-dropdown .border-border {
+  border-color: theme('colors.border');
 }

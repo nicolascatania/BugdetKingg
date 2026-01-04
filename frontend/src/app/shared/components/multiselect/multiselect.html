@@ -5,16 +5,22 @@
   <label *ngIf="label" class="block text-sm text-slate-300 mb-1">{{ label }}</label>
 
   <div
-    class="flex flex-wrap gap-1 p-2 border border-border rounded-lg bg-card cursor-text multi-select-wrapper"
-    [class.border-accent-green]="dropdownOpen() || focused"
-    (click)="toggleDropdown()"
+    class="flex flex-wrap gap-1 p-2 border rounded-lg bg-card cursor-text w-full min-h-[38px] items-center"
+    [class.border-border]="!isFocused()"
+    [class.border-accent-green]="isFocused()"
   >
     @for(item of selectedItems(); track $index) {
       <span
         class="bg-accent-green text-black px-2 py-1 rounded flex items-center gap-1"
       >
         {{ item[labelField] }}
-        <button type="button" (click)="removeItem(item)" class="ml-1">&times;</button>
+        <button
+          type="button"
+          (click)="$event.stopPropagation(); removeItem(item)"
+          class="ml-1"
+        >
+          &times;
+        </button>
       </span>
     }
 
@@ -23,24 +29,22 @@
       placeholder="{{ selectedItems().length ? '' : placeholder }}"
       class="flex-1 bg-card text-white outline-none"
       [(ngModel)]="searchTerm"
-      (click)="$event.stopPropagation()"
       (focus)="onFocus()"
-      (blur)="onBlur()"
     />
   </div>
 
-  <!-- Dropdown -->
   <ul
     *ngIf="dropdownOpen()"
     class="absolute z-10 mt-1 w-full max-h-60 overflow-auto border border-border rounded-lg bg-card shadow-lg"
   >
-    <li
-      *ngFor="let item of filteredOptions()"
-      (click)="selectItem(item)"
-      class="px-3 py-2 cursor-pointer hover:bg-accent-green/20"
-      [ngClass]="isSelected(item) ? 'bg-accent-green/30' : ''"
-    >
-      {{ item[labelField] }}
-    </li>
+    @for(item of filteredOptions(); track $index) {
+      <li
+        (click)="selectItem(item)"
+        class="px-3 py-2 cursor-pointer hover:bg-accent-green/20"
+        [ngClass]="isSelected(item) ? 'bg-accent-green/30' : ''"
+      >
+        {{ item[labelField] }}
+      </li>
+    }
   </ul>
 </div>

@@ -14,10 +14,9 @@ export interface MultiSelectOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultiSelectComponent implements AfterViewInit {
-
-  @Input() options: MultiSelectOption[] = [];      // Lista de objetos
-  @Input() labelField: string = 'name';           // Campo a mostrar
-  @Input() valueField: string = 'id';             // Campo que identifica
+  @Input() options: MultiSelectOption[] = [];
+  @Input() labelField: string = 'name';
+  @Input() valueField: string = 'id';
   @Input() placeholder: string = 'Select items...';
   @Input() label?: string;
   @Output() selectedChange = new EventEmitter<MultiSelectOption[]>();
@@ -26,12 +25,14 @@ export class MultiSelectComponent implements AfterViewInit {
   dropdownOpen = signal(false);
   searchTerm = signal('');
 
-  focused = signal(false);
+
+  isFocused = signal(false);
 
   ngAfterViewInit() { }
 
   toggleDropdown() {
     this.dropdownOpen.update(v => !v);
+    this.isFocused.set(true);
   }
 
   selectItem(item: MultiSelectOption) {
@@ -55,26 +56,19 @@ export class MultiSelectComponent implements AfterViewInit {
     return this.options.filter(opt => opt[this.labelField].toLowerCase().includes(term));
   }
 
+  onFocus() {
+    this.isFocused.set(true);
+    this.dropdownOpen.set(true);
+  }
+
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
     if (!target.closest('.multi-select-dropdown')) {
       this.dropdownOpen.set(false);
+      this.isFocused.set(false);
     }
   }
-
   isSelected(item: MultiSelectOption): boolean {
     return this.selectedItems().some(i => i[this.valueField] === item[this.valueField]);
   }
-
-  onFocus() {
-    this.focused.set(true);
-    this.dropdownOpen.set(true); // Abrir dropdown al poner foco
-  }
-
-  onBlur() {
-    this.focused.set(false);
-    // No cerramos el dropdown aquí, lo maneja onDocumentClick
-  }
-
-
 }
