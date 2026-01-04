@@ -2,29 +2,30 @@
   class="w-full multi-select-dropdown relative"
   (document:click)="onDocumentClick($event)"
 >
-  <label *ngIf="label" class="block text-sm text-slate-300 mb-1"
-    >{{ label }}</label
-  >
+  <label *ngIf="label" class="block text-sm text-slate-300 mb-1">{{ label }}</label>
+
   <div
-    class="flex flex-wrap gap-1 p-2 border border-border rounded-lg bg-card cursor-text"
+    class="flex flex-wrap gap-1 p-2 border border-border rounded-lg bg-card cursor-text multi-select-wrapper"
+    [class.border-accent-green]="dropdownOpen() || focused"
     (click)="toggleDropdown()"
   >
     @for(item of selectedItems(); track $index) {
-    <span
-      class="bg-accent-green text-black px-2 py-1 rounded flex items-center gap-1"
-    >
-      {{ item[labelField] }}
-      <button type="button" (click)="removeItem(item)" class="ml-1">
-        &times;
-      </button>
-    </span>
+      <span
+        class="bg-accent-green text-black px-2 py-1 rounded flex items-center gap-1"
+      >
+        {{ item[labelField] }}
+        <button type="button" (click)="removeItem(item)" class="ml-1">&times;</button>
+      </span>
     }
+
     <input
       type="text"
       placeholder="{{ selectedItems().length ? '' : placeholder }}"
       class="flex-1 bg-card text-white outline-none"
       [(ngModel)]="searchTerm"
       (click)="$event.stopPropagation()"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
     />
   </div>
 

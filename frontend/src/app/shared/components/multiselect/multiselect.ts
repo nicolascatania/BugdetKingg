@@ -26,6 +26,8 @@ export class MultiSelectComponent implements AfterViewInit {
   dropdownOpen = signal(false);
   searchTerm = signal('');
 
+  focused = signal(false);
+
   ngAfterViewInit() { }
 
   toggleDropdown() {
@@ -63,5 +65,16 @@ export class MultiSelectComponent implements AfterViewInit {
   isSelected(item: MultiSelectOption): boolean {
     return this.selectedItems().some(i => i[this.valueField] === item[this.valueField]);
   }
+
+  onFocus() {
+    this.focused.set(true);
+    this.dropdownOpen.set(true); // Abrir dropdown al poner foco
+  }
+
+  onBlur() {
+    this.focused.set(false);
+    // No cerramos el dropdown aquí, lo maneja onDocumentClick
+  }
+
 
 }
