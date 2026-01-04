@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'transactions',
+  selector: 'app-account-list',
   imports: [],
-  templateUrl: './transactions.html',
-  styleUrl: './transactions.css',
+  templateUrl: './account-list.html',
+  styleUrl: './account-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Transactions { }
+export class AccountList { }

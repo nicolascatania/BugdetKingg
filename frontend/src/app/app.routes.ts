@@ -1,15 +1,19 @@
 import { Routes } from '@angular/router';
 import { Home } from './features/home/pages/home/home';
-import { Transactions } from './features/transactions/pages/transactions/transactions';
 import { Dashboard } from './features/dashboard/pages/dashboard/dashboard';
 import { Login } from './features/login/login/login';
 import { Register } from './features/login/register/register';
 import { MainLayout } from './core/layouts/main-layout/main-layout';
 import { AuthLayout } from './core/layouts/auth-layout/auth-layout';
+import { AuthGuard } from './core/guard/auth-guard';
+import { Accounts } from './features/home/components/accounts/accounts';
+import { TransactionList } from './features/transactions/pages/transaction-list/transaction-list';
+import { AccountList } from './features/accounts/pages/account-list/account-list';
 
 export const routes: Routes = [
 
-    // 🔓 
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+
     {
         path: '',
         component: AuthLayout,
@@ -19,18 +23,16 @@ export const routes: Routes = [
         ]
     },
 
-    // 🔐 
     {
         path: '',
         component: MainLayout,
-        // canActivate: [authGuard],
         children: [
-            { path: 'home', component: Home },
-            { path: 'transactions', component: Transactions },
-            { path: 'dashboard', component: Dashboard },
+            { path: 'home', component: Home, canActivate: [AuthGuard] },
+            { path: 'transactions', component: TransactionList, canActivate: [AuthGuard] },
+            { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] },
+            { path: 'accounts', component: AccountList, canActivate: [AuthGuard] },
         ]
     },
 
-    // fallback
     { path: '**', redirectTo: 'login' }
 ];

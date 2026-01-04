@@ -1,5 +1,6 @@
 package com.veritech.BudgetKing.repository;
 
+import com.veritech.BudgetKing.dto.AccountDTO;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID>, JpaSpec
     List<Account> findByUser(AppUser user);
 
     Optional<Account> findByIdAndUser(UUID uuid, AppUser user);
+
+    List<AccountDTO> findAllByUser(AppUser user);
 }

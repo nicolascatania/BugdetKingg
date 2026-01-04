@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoginRequest, RegisterRequest } from '../../features/login/interfaces/login.interface';
+import { AuthResponse } from '../interfaces/AuthResponse.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -13,13 +14,16 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(request: LoginRequest): Observable<any> {
-    return this.http.post<string>(`${this.apiUrl}/login`, request)
-      .pipe(tap(token => {
-        localStorage.setItem(this.tokenKey, token);
-        this.loggedIn$.next(true);
-      }));
+  login(request: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request)
+      .pipe(
+        tap(res => {
+          localStorage.setItem(this.tokenKey, res.token);
+          this.loggedIn$.next(true);
+        })
+      );
   }
+
 
   register(request: RegisterRequest): Observable<any> {
     return this.http.post<string>(`${this.apiUrl}/register`, request)

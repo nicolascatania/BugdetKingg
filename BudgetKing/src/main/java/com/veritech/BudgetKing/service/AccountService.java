@@ -11,6 +11,7 @@ import com.veritech.BudgetKing.repository.AccountRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,5 +98,10 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
 
         return accountRepository.findByIdAndUser(uuid, user)
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+    }
+
+    public List<AccountDTO> getByUser() {
+        AppUser user = securityUtils.getCurrentUser();
+        return accountRepository.findAllByUser(user);
     }
 }
