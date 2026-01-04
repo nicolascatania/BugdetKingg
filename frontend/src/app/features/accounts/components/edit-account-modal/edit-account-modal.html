@@ -1,68 +1,54 @@
-<!-- Overlay -->
-<div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+<ui-modal
+  [open]="true"
+  title="Create Account"
+  (closed)="close(false)"
 >
-  <!-- Modal -->
-  <div
-    class="w-full max-w-md rounded-xl bg-slate-900 border border-slate-700 shadow-xl p-6"
-  >
-    <!-- Header -->
-    <h2 class="text-lg font-semibold text-white mb-6">
-      {{ account ? 'Edit Account' : 'Create Account' }}
-    </h2>
-
-    <!-- Form -->
-    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5">
-
-      <!-- Name -->
+  <!-- BODY -->
+  <div modal-body>
+    <form [formGroup]="form" class="space-y-4">
       <div>
-        <label class="block text-sm text-slate-400 mb-1">Name</label>
+        <label class="block text-sm text-slate-300 mb-1">Name</label>
         <input
           type="text"
           formControlName="name"
-          class="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-green"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
         />
       </div>
 
-      <!-- Description -->
       <div>
-        <label class="block text-sm text-slate-400 mb-1">Description</label>
+        <label class="block text-sm text-slate-300 mb-1">Description</label>
         <textarea
-          rows="3"
           formControlName="description"
-          class="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-accent-green"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
         ></textarea>
       </div>
 
-      <!-- Balance -->
       <div>
-        <label class="block text-sm text-slate-400 mb-1">Initial Balance</label>
+        <label class="block text-sm text-slate-300 mb-1">Balance</label>
         <input
           type="number"
           formControlName="balance"
-          class="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-green"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
         />
       </div>
-
-      <!-- Actions -->
-      <div class="flex justify-end gap-3 pt-4">
-        <button
-          type="button"
-          (click)="close()"
-          class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm text-white transition"
-        >
-          Cancel
-        </button>
-
-        <button
-          type="submit"
-          [disabled]="form.invalid"
-          class="px-4 py-2 rounded-lg bg-accent-green hover:bg-accent-green/90 text-sm font-medium text-black transition disabled:opacity-50"
-        >
-          Save
-        </button>
-      </div>
-
     </form>
   </div>
-</div>
+
+  <!-- FOOTER -->
+  <div modal-footer>
+    <button
+      class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600"
+      (click)="close(false)"
+    >
+      Cancel
+    </button>
+
+    <button
+      class="px-4 py-2 rounded-lg ms-2 bg-accent-green hover:bg-green-600"
+      (click)="submit()"
+      [disabled]="form.invalid"
+    >
+      Save
+    </button>
+  </div>
+</ui-modal>

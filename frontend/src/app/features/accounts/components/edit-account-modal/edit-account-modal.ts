@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { AccountDTO } from '../../interfaces/AccountDTO.interfaces';
 import { AccountService } from '../../services/AccountService';
+import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
 
 /**
  * Modal used to create or edit an account.
@@ -23,7 +24,7 @@ import { AccountService } from '../../services/AccountService';
 @Component({
   selector: 'app-edit-account-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, UiModalComponent],
   templateUrl: './edit-account-modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
