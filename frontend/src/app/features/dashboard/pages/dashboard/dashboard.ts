@@ -1,23 +1,41 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
 import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
+import { MultiSelectComponent } from '../../../../shared/components/multiselect/multiselect';
 
 
 
 Chart.register(PieController, ArcElement, Tooltip, Legend);
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, MultiSelectComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard implements AfterViewInit {
-  categories = ['Food', 'Transport', 'Services', 'Investment'];
-  selectedCategories: string[] = [];
-  dropdownOpen = false;
+
+  accounts = [
+    { id: 1, name: 'All' },
+    { id: 2, name: 'Cash' },
+    { id: 3, name: 'Bank' },
+    { id: 4, name: 'Credit Card' }
+  ];
+
+  types = [
+    { id: 1, name: 'All' },
+    { id: 2, name: 'Income' },
+    { id: 3, name: 'Expense' }
+  ];
 
 
+
+  categories = [
+    { id: 1, name: 'Food' },
+    { id: 2, name: 'Transport' },
+    { id: 3, name: 'Services' },
+    { id: 4, name: 'Investment' }
+  ];
 
   fromDate!: string;
   toDate!: string;
@@ -60,28 +78,16 @@ export class Dashboard implements AfterViewInit {
   }
 
 
-  toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen;
+  onCategoriesSelected(selected: any[]) {
+    console.log('Seleccionados:', selected);
   }
 
-  selectCategory(cat: string) {
-    if (!this.selectedCategories.includes(cat)) {
-      this.selectedCategories.push(cat);
-    } else {
-      this.removeCategory(cat);
-    }
+
+  onAccountsSelected(selected: any[]) {
+    console.log('Accounts selected:', selected);
   }
 
-  removeCategory(cat: string) {
-    this.selectedCategories = this.selectedCategories.filter(c => c !== cat);
-  }
-
-  @HostListener('document:click', ['$event'])
-  handleClickOutside(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    // Si el click no fue dentro de tu dropdown, cerralo
-    if (!target.closest('.category-dropdown')) {
-      this.dropdownOpen = false;
-    }
+  onTypesSelected(selected: any[]) {
+    console.log('Types selected:', selected);
   }
 }

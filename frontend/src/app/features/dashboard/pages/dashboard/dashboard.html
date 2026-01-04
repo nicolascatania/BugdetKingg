@@ -3,6 +3,7 @@
   <div class="p-4 rounded-xl border border-border bg-card">
     <form class="space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+        
         <!-- Date from -->
         <div>
           <label class="block text-sm text-slate-300 mb-1">From</label>
@@ -24,77 +25,34 @@
         </div>
 
         <!-- Account -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-1">Account</label>
-          <select
-            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
-          >
-            <option>All</option>
-            <option>Cash</option>
-            <option>Bank</option>
-            <option>Credit Card</option>
-          </select>
-        </div>
+        <app-multiselect
+          label="Account"
+          [options]="accounts"
+          labelField="name"
+          valueField="id"
+          placeholder="Select account..."
+          (selectedChange)="onAccountsSelected($event)"
+        ></app-multiselect>
 
         <!-- Category -->
-        <div class="w-full category-dropdown">
-          <label class="block text-sm text-slate-300 mb-1">Category</label>
-
-          <div class="relative">
-            <!-- Input simulado para mostrar los tags -->
-            <div
-              class="flex flex-wrap gap-1 p-2 border border-border rounded-lg bg-card cursor-text"
-              (click)="toggleDropdown()"
-            >
-              <span
-                *ngFor="let cat of selectedCategories"
-                class="bg-accent-green text-black px-2 py-1 rounded flex items-center gap-1"
-              >
-                {{ cat }}
-                <button
-                  type="button"
-                  (click)="removeCategory(cat)"
-                  class="ml-1"
-                >
-                  &times;
-                </button>
-              </span>
-              <span
-                *ngIf="selectedCategories.length === 0"
-                class="text-slate-400"
-              >
-                Select categories...
-              </span>
-            </div>
-
-            <!-- Dropdown -->
-            <ul
-              *ngIf="dropdownOpen"
-              class="absolute z-10 mt-1 w-full max-h-60 overflow-auto border border-border rounded-lg bg-card shadow-lg"
-            >
-              <li
-                *ngFor="let cat of categories"
-                (click)="selectCategory(cat)"
-                class="px-3 py-2 cursor-pointer hover:bg-accent-green/20"
-                [ngClass]="{ 'bg-accent-green/30': selectedCategories.includes(cat) }"
-              >
-                {{ cat }}
-              </li>
-            </ul>
-          </div>
-        </div>
+        <app-multiselect
+          label="Categories"
+          [options]="categories"
+          labelField="name"
+          valueField="id"
+          placeholder="Select categories..."
+          (selectedChange)="onCategoriesSelected($event)"
+        ></app-multiselect>
 
         <!-- Type -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-1">Type</label>
-          <select
-            class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
-          >
-            <option>All</option>
-            <option>Income</option>
-            <option>Expense</option>
-          </select>
-        </div>
+        <app-multiselect
+          label="Type"
+          [options]="types"
+          labelField="name"
+          valueField="id"
+          placeholder="Select type..."
+          (selectedChange)="onTypesSelected($event)"
+        ></app-multiselect>
 
         <!-- Apply -->
         <div>
@@ -107,45 +65,5 @@
         </div>
       </div>
     </form>
-  </div>
-
-  <!-- KPIs -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Total Balance</p>
-      <p class="text-2xl font-semibold text-accent-green mt-2">$120.000</p>
-    </div>
-
-    <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Expenses (Month)</p>
-      <p class="text-2xl font-semibold text-accent-red mt-2">$45.000</p>
-    </div>
-
-    <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Income (Month)</p>
-      <p class="text-2xl font-semibold text-accent-green mt-2">$70.000</p>
-    </div>
-
-    <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Monthly Balance</p>
-      <p class="text-2xl font-semibold mt-2 text-white">$25.000</p>
-    </div>
-  </div>
-
-  <!-- Main content -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-    <!-- Pie chart -->
-    <div class="lg:col-span-2 bg-card rounded-xl p-5 border border-border">
-      <h3 class="text-base font-medium mb-3">Expenses by Category</h3>
-      <div class="h-56">
-        <canvas id="expensePie"></canvas>
-      </div>
-    </div>
-
-    <!-- Last moves -->
-    <div class="bg-card rounded-xl p-5 border border-border">
-      <h3 class="text-base font-medium mb-3">Last Movements</h3>
-      <!-- lista simple -->
-    </div>
   </div>
 </div>

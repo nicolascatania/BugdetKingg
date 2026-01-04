@@ -1,0 +1,6 @@
+:host {
+  display: block;
+}
+.multi-select-dropdown input {
+  min-width: 100px;
+}
