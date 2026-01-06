@@ -1,12 +1,16 @@
 package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.CategoryDTO;
+import com.veritech.BudgetKing.dto.CategoryRelatedEntities;
 import com.veritech.BudgetKing.dto.OptionDTO;
 import com.veritech.BudgetKing.filter.CategoryFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
+import com.veritech.BudgetKing.mapper.CategoryMapper;
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.repository.CategoryRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,25 +23,48 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
 
     private final CategoryRepository categoryRepository;
     private final SecurityUtils securityUtils;
+    private final CategoryMapper categoryMapper;
 
     @Override
     public CategoryDTO getById(UUID uuid) {
-        return null;
+        AppUser user = securityUtils.getCurrentUser();
+        return categoryRepository.findByIDAndUser(uuid, user).map(categoryMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
     }
 
     @Override
     public CategoryDTO create(CategoryDTO dto) {
-        return null;
+        AppUser user = securityUtils.getCurrentUser();
+        CategoryRelatedEntities relatedEntities = new CategoryRelatedEntities(user);
+
+        Category category = categoryMapper.toEntity(dto, relatedEntities);
+
+        Category saved = categoryRepository.save(category);
+
+        return categoryMapper.toDto(saved);
     }
 
     @Override
     public CategoryDTO update(UUID uuid, CategoryDTO dto) {
-        return null;
+        AppUser user = securityUtils.getCurrentUser();
+        Category found = categoryRepository.findByIDAndUser(uuid, user)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+
+        found.setName(dto.name());
+        found.setDescription(dto.description());
+
+        Category saved = categoryRepository.save(found);
+        return categoryMapper.toDto(saved);
+
     }
 
     @Override
     public void deleteById(UUID uuid) {
+        AppUser user = securityUtils.getCurrentUser();
+        Category found = categoryRepository.findByIDAndUser(uuid, user)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
+        categoryRepository.delete(found);
     }
 
     @Override
