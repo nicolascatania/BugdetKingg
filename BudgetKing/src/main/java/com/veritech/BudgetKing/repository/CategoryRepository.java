@@ -12,8 +12,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSpecificationExecutor<Category> {
+public interface CategoryRepository extends JpaRepository<Category, UUID>, JpaSpecificationExecutor<Category> {
+
     List<Category> findByUser(AppUser user);
 
-    Optional<Category> findByIDAndUser(UUID uuid, AppUser user);
+    Optional<Category> findByIdAndUser(UUID uuid, AppUser user);
 }

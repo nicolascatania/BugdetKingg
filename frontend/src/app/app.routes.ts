@@ -9,6 +9,7 @@ import { AuthGuard } from './core/guard/auth-guard';
 import { Accounts } from './features/home/components/accounts/accounts';
 import { TransactionList } from './features/transactions/pages/transaction-list/transaction-list';
 import { AccountList } from './features/accounts/pages/account-list/account-list';
+import { CategoryList } from './features/categories/pages/category-list/category-list';
 
 export const routes: Routes = [
 
@@ -31,6 +32,7 @@ export const routes: Routes = [
             { path: 'transactions', component: TransactionList, canActivate: [AuthGuard] },
             { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] },
             { path: 'accounts', component: AccountList, canActivate: [AuthGuard] },
+            { path: 'categories', component: CategoryList, canActivate: [AuthGuard] },
         ]
     },
 

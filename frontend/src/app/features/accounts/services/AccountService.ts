@@ -11,6 +11,7 @@ import { OptionDTO } from '../../../shared/models/OptionDTO.interface';
 })
 export class AccountService {
 
+
   private readonly baseUrl = `${environment.apiUrl}/account`;
 
   private _accounts = signal<AccountDTO[]>([]);
@@ -64,5 +65,9 @@ export class AccountService {
 
   getOptions(): Observable<OptionDTO[]> {
     return this.http.get<OptionDTO[]>(`${this.baseUrl}/options`);
+  }
+
+  userHasAccounts(): boolean {
+    return this._accounts().length > 0;
   }
 }

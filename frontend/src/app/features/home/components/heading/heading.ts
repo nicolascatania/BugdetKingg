@@ -29,4 +29,8 @@ export class Heading {
     this.newTransaction.emit();
   }
 
+  get userHasAccounts(): boolean {
+    return this.accountService.userHasAccounts();
+  }
+
 }

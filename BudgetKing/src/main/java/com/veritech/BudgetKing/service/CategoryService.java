@@ -28,7 +28,7 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
     @Override
     public CategoryDTO getById(UUID uuid) {
         AppUser user = securityUtils.getCurrentUser();
-        return categoryRepository.findByIDAndUser(uuid, user).map(categoryMapper::toDto)
+        return categoryRepository.findByIdAndUser(uuid, user).map(categoryMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
     }
 
@@ -47,7 +47,7 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
     @Override
     public CategoryDTO update(UUID uuid, CategoryDTO dto) {
         AppUser user = securityUtils.getCurrentUser();
-        Category found = categoryRepository.findByIDAndUser(uuid, user)
+        Category found = categoryRepository.findByIdAndUser(uuid, user)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
         found.setName(dto.name());
@@ -61,7 +61,7 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
     @Override
     public void deleteById(UUID uuid) {
         AppUser user = securityUtils.getCurrentUser();
-        Category found = categoryRepository.findByIDAndUser(uuid, user)
+        Category found = categoryRepository.findByIdAndUser(uuid, user)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
         categoryRepository.delete(found);
