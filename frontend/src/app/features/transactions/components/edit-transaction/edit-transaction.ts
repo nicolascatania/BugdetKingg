@@ -11,7 +11,7 @@ import { formatDate } from '../../../../shared/utils/datesUtils';
 import { CategoryService } from '../../../categories/service/category-service';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
-
+import { CommonModule } from '@angular/common';
 
 
 type AccountLike = AccountDTO | OptionDTO;
@@ -24,7 +24,7 @@ function isAccountDTO(acc: AccountLike): acc is AccountDTO {
 
 @Component({
   selector: 'app-edit-transaction',
-  imports: [UiModalComponent, ReactiveFormsModule],
+  imports: [UiModalComponent, ReactiveFormsModule, CommonModule],
   templateUrl: './edit-transaction.html',
   styleUrl: './edit-transaction.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -92,7 +92,10 @@ export class EditTransaction {
 
 
   submit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.ns.error('Please fill in all required fields correctly.');
+      return;
+    };
 
     const payload: TransactionDTO = {
       id: this.transaction?.id ?? '',

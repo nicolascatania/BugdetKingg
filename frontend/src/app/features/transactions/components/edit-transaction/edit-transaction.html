@@ -104,9 +104,15 @@
     </button>
 
     <button
-      class="px-4 py-2 ms-2 rounded-lg bg-accent-green hover:bg-green-600"
+      class="px-4 py-2 ms-2 rounded-lg transition-colors duration-150"
       (click)="submit()"
       [disabled]="form.invalid"
+      [ngClass]="{
+    'bg-accent-green hover:bg-green-600 cursor-pointer': !form.invalid,
+    'bg-gray-500 cursor-not-allowed': form.invalid
+  }"
+      [title]="form.invalid ? 'Form is invalid. Please complete all required fields.' : null"
+      tooltipClass="tooltip-invalid"
     >
       {{ transaction ? 'Update' : 'Create' }}
     </button>
