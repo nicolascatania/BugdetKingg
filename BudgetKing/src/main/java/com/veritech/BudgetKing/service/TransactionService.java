@@ -10,13 +10,13 @@ import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.TransactionMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.AccountRepository;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +34,7 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
     private final TransactionMapper mapper;
     private final SecurityUtils securityUtils;
     private final AccountService accountService;
-    private final AccountRepository accountRepository;
+    private final CategoryService categoryService;
 
 
     @Override
@@ -52,6 +52,7 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
         AppUser user = securityUtils.getCurrentUser();
         Account sourceAccount = accountService.getEntityById(dto.account());
         Account destinationAccount = resolveDestinationAccount(dto);
+        Category category = categoryService.getEntityById(dto.category());
 
         validateTransaction(dto, sourceAccount, destinationAccount);
 
@@ -60,7 +61,9 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
         TransactionRelatedEntities related = new TransactionRelatedEntities(
                 user,
                 sourceAccount,
-                destinationAccount
+                destinationAccount,
+                category
+
         );
 
         Transaction transaction = mapper.toEntity(dto, related);
@@ -82,9 +85,14 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
 
     @Override
     public List<TransactionDTO> search(TransactionFilter filter) {
-        return transactionRepository.findAll().stream()
-                .map(mapper::toDto)
-                .toList();
+
+        List<Transaction> transactions;
+        if (filter == null)
+            transactions = transactionRepository.findAll();
+        else
+            transactions = transactionRepository.findAll(filter.toSpecification());
+
+        return transactions.stream().map(mapper::toDto).toList();
     }
 
     /**

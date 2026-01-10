@@ -8,6 +8,8 @@ import { TransactionCategory } from '../../../../shared/models/TransactionCatego
 import { AccountService } from '../../../accounts/services/AccountService';
 import { AccountDTO } from '../../../accounts/interfaces/AccountDTO.interfaces';
 import { formatDate } from '../../../../shared/utils/datesUtils';
+import { CategoryService } from '../../../categories/service/category-service';
+import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 
 @Component({
   selector: 'app-edit-transaction',
@@ -22,6 +24,8 @@ export class EditTransaction {
   @Output() closed = new EventEmitter<boolean>();
 
   accounts = input<AccountDTO[]>();
+  categories: OptionDTO[] = [];
+
 
   transactionTypes = Object.values(TransactionType);
   transactionCategories = Object.values(TransactionCategory);
@@ -31,7 +35,8 @@ export class EditTransaction {
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private categoryService: CategoryService
   ) {
     this.form = this.fb.group({
       account: ['', Validators.required],
@@ -55,6 +60,9 @@ export class EditTransaction {
   }
 
   ngOnInit(): void {
+
+    this.loadCategories();
+
     if (this.transaction) {
       this.form.patchValue({
         description: this.transaction.description,
@@ -94,6 +102,15 @@ export class EditTransaction {
     request$.subscribe({
       next: () => this.close(true),
       error: () => alert('Something went wrong'),
+    });
+  }
+
+  private loadCategories(): void {
+    this.categoryService.getOptions().subscribe({
+      next: categories => {
+        this.categories = categories;
+      },
+      error: () => alert('Error loading categories'),
     });
   }
 

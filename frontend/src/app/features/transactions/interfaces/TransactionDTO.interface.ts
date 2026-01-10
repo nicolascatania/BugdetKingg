@@ -5,7 +5,9 @@ export interface TransactionDTO {
     date: string;
     description: string;
     category: string;
+    categoryName: string;
     type: string;
     counterparty: string;
     destinationAccount?: string;
+    accountName?: string;
 }

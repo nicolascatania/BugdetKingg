@@ -11,10 +11,12 @@ import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.repository.CategoryRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -79,5 +81,24 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
                 .stream()
                 .map(c -> new OptionDTO(c.getId().toString(), c.getName()))
                 .toList();
+    }
+
+    public Category getEntityById(UUID id) {
+        AppUser user = securityUtils.getCurrentUser();
+        return categoryRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+    }
+
+    public Category getDefaultCategory(AppUser user) {
+        Category def = categoryRepository.getByNameAndUser("DEFAULT", user)
+                .orElse(new Category());
+
+        if(def.getId() == null){
+            def.setDescription("Default Category");
+            def.setName("DEFAULT");
+            def.setUser(user);
+        }
+        return def;
+
     }
 }

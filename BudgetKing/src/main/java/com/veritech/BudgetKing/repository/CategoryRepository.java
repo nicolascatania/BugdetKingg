@@ -1,6 +1,5 @@
 package com.veritech.BudgetKing.repository;
 
-import com.veritech.BudgetKing.dto.CategoryDTO;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +16,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID>, JpaSp
     List<Category> findByUser(AppUser user);
 
     Optional<Category> findByIdAndUser(UUID uuid, AppUser user);
+
+    Optional<Category> getByNameAndUser(String aDefault, AppUser user);
 }

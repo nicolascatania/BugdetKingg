@@ -45,7 +45,7 @@
           formControlName="type"
           class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
         >
-          <option value="">Select account</option>
+          <option value="">Select Type</option>
           @for (type of transactionTypes; track type) {
           <option [value]="type">{{ type }}</option>
           }
@@ -75,9 +75,9 @@
           formControlName="category"
           class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
         >
-          <option value="">Select account</option>
-          @for (category of transactionCategories; track category) {
-          <option [value]="category">{{ category }}</option>
+          <option value="">Select Category</option>
+          @for (category of categories; track category) {
+          <option [value]="category.id">{{ category.value }}</option>
           }
         </select>
       </div>

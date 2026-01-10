@@ -60,4 +60,8 @@ export class TransactionService {
       );
   }
 
+  search(filter: any): Observable<TransactionDTO[]> {
+    return this.HttpClient.post<TransactionDTO[]>(`${this.baseUrl}/search`, filter);
+  }
+
 }

@@ -3,6 +3,7 @@ import { TransactionService } from '../../../transactions/services/transaction-s
 import { TransactionDTO } from '../../../transactions/interfaces/TransactionDTO.interface';
 import { CommonModule } from '@angular/common';
 import { LastMovesDTO } from '../../../transactions/interfaces/LastMovesDTO.interface';
+import { TransactionType } from '../../../../shared/models/TransactionType.enum';
 
 @Component({
   selector: 'last-moves',
@@ -12,6 +13,8 @@ import { LastMovesDTO } from '../../../transactions/interfaces/LastMovesDTO.inte
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LastMoves {
+
+  TRANSACTION_TYPES = TransactionType;
 
   txs = signal<LastMovesDTO[]>([]);
 

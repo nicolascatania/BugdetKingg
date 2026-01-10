@@ -10,8 +10,10 @@ import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.AccountMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.AccountRepository;
+import com.veritech.BudgetKing.repository.CategoryRepository;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,6 +35,7 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
     private final AccountMapper accountMapper;
     private final SecurityUtils securityUtils;
     private final TransactionRepository transactionRepository;
+    private final CategoryService categoryService;
 
     @Override
     public AccountDTO getById(UUID uuid) {
@@ -52,13 +55,15 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
         Account account = accountMapper.toEntity(dto, accountRelatedEntities);
         Account saved = accountRepository.save(account);
 
+        Category category = categoryService.getDefaultCategory(user);
+
         Transaction firstTransaction = new Transaction();
         firstTransaction.setAccount(account);
         firstTransaction.setAmount(account.getBalance());
         firstTransaction.setDescription("First transaction generating a new account");
         firstTransaction.setCounterparty("None");
         firstTransaction.setType(TransactionType.INCOME);
-        firstTransaction.setCategory(TransactionCategory.ADJUSTMENT);
+        firstTransaction.setCategory(category);
         firstTransaction.setDate(LocalDateTime.now());
         firstTransaction.setUser(user);
 

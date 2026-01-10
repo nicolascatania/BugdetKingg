@@ -1,8 +1,10 @@
 package com.veritech.BudgetKing.security.config;
 
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.model.Role;
 import com.veritech.BudgetKing.repository.AppUserRepository;
+import com.veritech.BudgetKing.repository.CategoryRepository;
 import com.veritech.BudgetKing.repository.RoleRepository;
 import com.veritech.BudgetKing.security.enumerator.Roles;
 import com.veritech.BudgetKing.security.filter.JwtAuthenticationFilter;
@@ -26,6 +28,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -99,7 +102,7 @@ public class SecurityConfig {
 
 
     @Bean
-    CommandLineRunner init(AppUserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
+    CommandLineRunner init(AppUserRepository userRepository, RoleRepository roleRepository, CategoryRepository categoryRepository, PasswordEncoder encoder) {
         return args -> {
             if (userRepository.findByEmail("admin@mail.com").isEmpty()) {
                 com.veritech.BudgetKing.model.Role roleAdmin = new Role();
@@ -111,6 +114,7 @@ public class SecurityConfig {
                 roleRepository.save(roleUser);
                 Role newROle = roleRepository.save(roleAdmin);
 
+
                 var user = AppUser.builder()
                         .name("admin")
                         .lastName("admin")
@@ -118,8 +122,21 @@ public class SecurityConfig {
                         .passwordHash(encoder.encode("admin123"))
                         .enabled(true)
                         .roles(Set.of(newROle))
+                        .categories(new HashSet<>())
                         .build();
                 userRepository.save(user);
+
+                Category newCategory = new Category();
+                newCategory.setName("DEFAULT");
+                newCategory.setDescription("Default category");
+                newCategory.setUser(user);
+
+                categoryRepository.save(newCategory);
+
+                user.getCategories().add(newCategory);
+                userRepository.save(user);
+
+
             }
         };
     }

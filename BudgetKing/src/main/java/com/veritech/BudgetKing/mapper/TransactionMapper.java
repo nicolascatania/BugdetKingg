@@ -6,13 +6,11 @@ import com.veritech.BudgetKing.dto.TransactionRelatedEntities;
 import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.interfaces.ICrudMapper;
-import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.Transaction;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 @Component
 public class TransactionMapper implements ICrudMapper<Transaction, TransactionDTO, TransactionRelatedEntities> {
@@ -26,9 +24,11 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 entity.getType().name(),
                 entity.getCounterparty(),
                 entity.getDescription(),
-                entity.getCategory().name(),
+                entity.getCategory().getId(),
+                entity.getCategory().getName(),
                 entity.getAccount().getId(),
-                entity.getDestinationAccount() != null ? entity.getDestinationAccount().getId() : null
+                entity.getDestinationAccount() != null ? entity.getDestinationAccount().getId() : null,
+                entity.getAccount().getName()
         );
     }
 
@@ -41,7 +41,7 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 TransactionType.valueOf(dto.type()),
                 dto.description(),
                 dto.counterparty(),
-                TransactionCategory.valueOf(dto.category()),
+                r.Category(),
                 r.account(),
                 r.destinationAccount(),
                 r.user()
@@ -56,7 +56,7 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 entity.getType().name(),
                 entity.getCounterparty(),
                 entity.getDescription(),
-                entity.getCategory().name(),
+                entity.getCategory().getName(),
                 entity.getAccount().getName()
 
         );

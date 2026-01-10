@@ -1,1 +1,174 @@
-<p>transaction-list works!</p>,
+<div class="w-full px-4 py-6">
+  <h1 class="text-2xl font-semibold mb-6">Transactions List</h1>
+
+  <div class="space-y-6 my-5">
+    <!-- Filters -->
+    <div class="p-4 rounded-xl border border-border bg-card">
+      <form [formGroup]="form" (ngSubmit)="onSearch()" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+          <!-- Date from -->
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">From</label>
+            <input
+              type="date"
+              formControlName="dateFrom"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
+          </div>
+
+          <!-- Date to -->
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">To</label>
+            <input
+              type="date"
+              formControlName="dateTo"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
+          </div>
+
+          <!-- Account -->
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Account</label>
+            <select
+              formControlName="account"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            >
+              <option value="">All</option>
+
+              @for (account of accounts; track account.id) {
+              <option [value]="account.id">{{ account.value }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Category -->
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Category</label>
+            <select
+              formControlName="category"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            >
+              <option value="">All</option>
+
+              @for (category of categories; track category.id) {
+              <option [value]="category.id">{{ category.value }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Type -->
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Type</label>
+            <select
+              formControlName="type"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            >
+              <option value="">All</option>
+              @for (type of transactionTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Secondary filters -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Min amount</label>
+            <input
+              type="number"
+              formControlName="minAmount"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Max amount</label>
+            <input
+              type="number"
+              formControlName="maxAmount"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Search</label>
+            <input
+              type="text"
+              formControlName="description"
+              placeholder="Description / Counterparty"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
+          </div>
+        </div>
+
+        <!-- Apply -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+          <button
+            type="button"
+            class="w-full bg-border text-black rounded-lg px-3 py-2 text-sm font-medium hover:opacity-90"
+            (click)="onClear()"
+          >
+            Clear
+          </button>
+          <button
+            type="submit"
+            class="w-full bg-accent-green text-black rounded-lg px-3 py-2 text-sm font-medium hover:opacity-90"
+          >
+            Apply
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Card -->
+  <div class="bg-card border border-border rounded-lg shadow-sm p-4">
+    <!-- Table wrapper -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full border-collapse">
+        <thead>
+          <tr
+            class="border-b text-left text-sm font-medium text-muted-foreground"
+          >
+            <th class="px-4 py-3">Date</th>
+            <th class="px-4 py-3">Account</th>
+            <th class="px-4 py-3">Type</th>
+            <th class="px-4 py-3">Category</th>
+            <th class="px-4 py-3">Amount</th>
+            <th class="px-4 py-3">Description</th>
+            <th class="px-4 py-3">Counterparty</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-border text-sm">
+          @for (transaction of transactions(); track transaction.id) {
+          <tr class="hover:bg-muted/50 transition-colors">
+            <td class="px-4 py-3">{{ transaction.date | date:'shortDate' }}</td>
+
+            <td class="px-4 py-3">{{ transaction.accountName }}</td>
+
+            <td class="px-4 py-3">{{ transaction.type }}</td>
+
+            <td class="px-4 py-3">{{ transaction.categoryName }}</td>
+
+            <td
+              class="px-4 py-3 text-right font-medium"
+              [ngClass]="{
+                  'text-accent-green': transaction.type === TRANSACTION_TYPE.INCOME,
+                  'text-accent-red': transaction.type === TRANSACTION_TYPE.EXPENSE
+                }"
+            >
+              {{ transaction.amount | currency:'ARS':'symbol':'1.2-2' }}
+            </td>
+
+            <td class="px-4 py-3">{{ transaction.description }}</td>
+
+            <td class="px-4 py-3">{{ transaction.counterparty }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

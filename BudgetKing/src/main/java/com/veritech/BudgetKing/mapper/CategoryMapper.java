@@ -6,6 +6,8 @@ import com.veritech.BudgetKing.interfaces.ICrudMapper;
 import com.veritech.BudgetKing.model.Category;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+
 @Component
 public class CategoryMapper implements ICrudMapper<Category, CategoryDTO, CategoryRelatedEntities> {
     @Override
@@ -19,7 +21,8 @@ public class CategoryMapper implements ICrudMapper<Category, CategoryDTO, Catego
                 dto.id(),
                 dto.name(),
                 dto.description(),
-                relatedEntities.user()
+                relatedEntities.user(),
+                new HashSet<>()
         );
     }
 }

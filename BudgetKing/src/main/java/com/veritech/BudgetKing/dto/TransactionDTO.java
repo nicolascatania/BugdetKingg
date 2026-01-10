@@ -20,11 +20,13 @@ public record TransactionDTO(
         String counterparty,
         @NotBlank(message = "Description is mandatory")
         String description,
-        @NotBlank(message = "Category is mandatory")
-        String category,
+        @NotNull(message = "Category is mandatory")
+        UUID category,
+        String categoryName,
         @NotNull(message = "Account ID is mandatory")
         UUID account,
-        UUID destinationAccount
+        UUID destinationAccount,
+        String accountName
 ) {
         @AssertTrue(message = "destinationAccount is mandatory when transaction type is TRANSFER")
         public boolean isdestinationAccountValid() {

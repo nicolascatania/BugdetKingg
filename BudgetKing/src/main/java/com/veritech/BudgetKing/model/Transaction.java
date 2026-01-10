@@ -43,9 +43,9 @@ public class Transaction {
 
     private String counterparty; //who I paid, who paid me
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TransactionCategory category;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id", nullable = false)
