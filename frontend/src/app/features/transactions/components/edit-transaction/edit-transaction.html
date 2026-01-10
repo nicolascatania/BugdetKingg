@@ -33,7 +33,7 @@
           class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
         >
           @for (account of accounts(); track account.id) {
-          <option [value]="account.id">{{ account.name }}</option>
+          <option [value]="account.id">{{ getAccountLabel(account) }}</option>
           }
         </select>
       </div>
@@ -62,7 +62,7 @@
           class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
         >
           @for (account of filteredDestinationAccounts(); track account.id) {
-          <option [value]="account.id">{{ account.name }}</option>
+          <option [value]="account.id">{{ getAccountLabel(account) }}</option>
           }
         </select>
       </div>

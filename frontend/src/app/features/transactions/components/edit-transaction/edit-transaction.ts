@@ -11,6 +11,16 @@ import { formatDate } from '../../../../shared/utils/datesUtils';
 import { CategoryService } from '../../../categories/service/category-service';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 
+
+
+type AccountLike = AccountDTO | OptionDTO;
+
+function isAccountDTO(acc: AccountLike): acc is AccountDTO {
+  return 'name' in acc;
+}
+
+
+
 @Component({
   selector: 'app-edit-transaction',
   imports: [UiModalComponent, ReactiveFormsModule],
@@ -23,12 +33,11 @@ export class EditTransaction {
   @Input() transaction: TransactionDTO | null = null;
   @Output() closed = new EventEmitter<boolean>();
 
-  accounts = input<AccountDTO[]>();
+  accounts = input<AccountLike[]>();
   categories: OptionDTO[] = [];
 
 
   transactionTypes = Object.values(TransactionType);
-  transactionCategories = Object.values(TransactionCategory);
 
   form: FormGroup;
 
@@ -166,6 +175,12 @@ export class EditTransaction {
     });
   }
 
+  getAccountLabel(account: AccountLike): string {
+    if (isAccountDTO(account)) {
+      return account.name;
+    }
+    return account.value;
+  }
 
 
 

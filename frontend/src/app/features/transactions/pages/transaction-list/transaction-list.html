@@ -92,11 +92,23 @@
           </div>
 
           <div>
-            <label class="block text-sm text-slate-300 mb-1">Search</label>
+            <label class="block text-sm text-slate-300 mb-1">Description</label>
             <input
               type="text"
               formControlName="description"
-              placeholder="Description / Counterparty"
+              placeholder="Description"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm text-slate-300 mb-1"
+              >CounterParty</label
+            >
+            <input
+              type="text"
+              formControlName="counterparty"
+              placeholder="Counterparty"
               class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
             />
           </div>
@@ -120,6 +132,20 @@
         </div>
       </form>
     </div>
+  </div>
+
+  <div class="flex flex-wrap gap-4 mb-14">
+    <button
+      (click)="openNewTransactionModal()"
+      class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent-blue/90 hover:bg-accent-blue text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent-blue/50"
+      [disabled]="!userHasAccounts"
+      [ngClass]="{ 'opacity-50 cursor-not-allowed': !userHasAccounts }"
+      [title]="
+      !userHasAccounts ? 'You need to have at least one account to create a transaction.' : ''"
+    >
+      <i class="fa-solid fa-right-left"></i>
+      Transaction
+    </button>
   </div>
 
   <!-- Card -->
@@ -172,3 +198,11 @@
     </div>
   </div>
 </div>
+
+@if (isTransactionModalOpen) {
+<app-edit-transaction
+  [transaction]="null"
+  [accounts]="accounts"
+  (closed)="onTransactionModalClosed($event)"
+/>
+}

@@ -8,15 +8,17 @@ import { CategoryService } from '../../../categories/service/category-service';
 import { forkJoin } from 'rxjs';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { TransactionType } from '../../../../shared/models/TransactionType.enum';
+import { EditTransaction } from '../../components/edit-transaction/edit-transaction';
 
 @Component({
   selector: 'app-transaction-list',
-  imports: [DatePipe, CommonModule, ReactiveFormsModule],
+  imports: [DatePipe, CommonModule, ReactiveFormsModule, EditTransaction],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionList {
+
 
   TRANSACTION_TYPE = TransactionType;
 
@@ -29,6 +31,7 @@ export class TransactionList {
   accounts: OptionDTO[] = [];
   categories: OptionDTO[] = [];
 
+  isTransactionModalOpen = false;
 
   constructor(private transactionService: TransactionService,
     private fb: FormBuilder,
@@ -103,4 +106,17 @@ export class TransactionList {
     this.onSearch();
   }
 
+  onTransactionModalClosed($event: boolean) {
+    this.isTransactionModalOpen = false;
+    this.onSearch();
+  }
+
+
+  openNewTransactionModal(): void {
+    this.isTransactionModalOpen = true;
+  }
+
+  get userHasAccounts(): boolean {
+    return this.accountsService.userHasAccounts();
+  }
 }
