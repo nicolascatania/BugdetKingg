@@ -4,9 +4,7 @@ import { Accounts } from '../../components/accounts/accounts';
 import { MonthlySummary } from "../../components/monthly-summary/monthly-summary";
 import { LastMoves } from "../../components/last-moves/last-moves";
 import { AccountService } from '../../../accounts/services/AccountService';
-import { AccountDTO } from '../../../accounts/interfaces/AccountDTO.interfaces';
 import { EditAccountModal } from '../../../accounts/components/edit-account-modal/edit-account-modal';
-import { TransactionDTO } from '../../../transactions/interfaces/TransactionDTO.interface';
 import { EditTransaction } from '../../../transactions/components/edit-transaction/edit-transaction';
 
 @Component({

@@ -10,6 +10,7 @@ import { AccountDTO } from '../../../accounts/interfaces/AccountDTO.interfaces';
 import { formatDate } from '../../../../shared/utils/datesUtils';
 import { CategoryService } from '../../../categories/service/category-service';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
+import { NotificationService } from '../../../../core/services/NotificationService';
 
 
 
@@ -45,7 +46,8 @@ export class EditTransaction {
     private fb: FormBuilder,
     private transactionService: TransactionService,
     private accountService: AccountService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private ns: NotificationService
   ) {
     this.form = this.fb.group({
       account: ['', Validators.required],
@@ -100,7 +102,7 @@ export class EditTransaction {
     };
 
     if (payload.type === TransactionType.TRANSFER && !payload.destinationAccount) {
-      alert('Please select a destination account for the transfer.');
+      this.ns.info('Please select a destination account for the transfer.');
       return;
     }
 
@@ -110,7 +112,7 @@ export class EditTransaction {
 
     request$.subscribe({
       next: () => this.close(true),
-      error: () => alert('Something went wrong'),
+      error: () => this.ns.error('Something went wrong while creating the transaction. Please try again.'),
     });
   }
 
@@ -119,7 +121,7 @@ export class EditTransaction {
       next: categories => {
         this.categories = categories;
       },
-      error: () => alert('Error loading categories'),
+      error: (err) => this.ns.error(err),
     });
   }
 

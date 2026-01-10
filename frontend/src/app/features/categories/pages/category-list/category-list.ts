@@ -48,7 +48,12 @@ export class CategoryList {
   deleteCategory(category: CategoryDTO) {
     this.categoryService.delete(category.id).subscribe({
       next: () => this.loadCategories(),
-      error: (err) => this.notificationService.error(err)
+      error: (err) => {
+        const message =
+          err?.error?.message ?? 'Error deleting category';
+
+        this.notificationService.error(message);
+      }
     });
   }
 

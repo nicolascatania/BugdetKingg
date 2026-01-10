@@ -3,6 +3,7 @@ import { TransactionService } from '../../../transactions/services/transaction-s
 import { MonthlyTransactionReportDTO } from '../../../transactions/interfaces/MonthlyTransactionReportDTO.interface';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../../../accounts/services/AccountService';
+import { NotificationService } from '../../../../core/services/NotificationService';
 
 @Component({
   selector: 'monthly-summary',
@@ -15,13 +16,15 @@ export class MonthlySummary {
 
   monthlyReport = signal<MonthlyTransactionReportDTO | null>(null);
 
-  constructor(private transactionService: TransactionService) {
+  constructor(private transactionService: TransactionService,
+    private ns: NotificationService
+  ) {
     effect(() => {
       this.transactionService.refresh$();
 
       this.transactionService.getCurrentMonthlyReport().subscribe({
         next: report => this.monthlyReport.set(report),
-        error: err => console.error(err)
+        error: err => this.ns.error(err)
       });
     });
   }

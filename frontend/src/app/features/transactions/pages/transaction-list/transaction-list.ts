@@ -9,6 +9,7 @@ import { forkJoin } from 'rxjs';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { TransactionType } from '../../../../shared/models/TransactionType.enum';
 import { EditTransaction } from '../../components/edit-transaction/edit-transaction';
+import { NotificationService } from '../../../../core/services/NotificationService';
 
 @Component({
   selector: 'app-transaction-list',
@@ -37,7 +38,8 @@ export class TransactionList {
     private fb: FormBuilder,
     private accountsService: AccountService,
     private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private ns: NotificationService
   ) {
     this.form = this.fb.group({
       dateFrom: [''],
@@ -70,7 +72,7 @@ export class TransactionList {
         this.onSearch();
       },
       error: err => {
-        console.error('Error loading filters', err);
+        this.ns.error(err);
       }
     });
   }
@@ -83,7 +85,7 @@ export class TransactionList {
         this.transactions.set(data);
       },
       error: (err) => {
-        console.error('Error fetching transactions', err);
+        this.ns.error(err);
       }
     });
   }
