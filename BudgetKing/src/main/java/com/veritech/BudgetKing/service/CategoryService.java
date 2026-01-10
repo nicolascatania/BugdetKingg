@@ -3,6 +3,7 @@ package com.veritech.BudgetKing.service;
 import com.veritech.BudgetKing.dto.CategoryDTO;
 import com.veritech.BudgetKing.dto.CategoryRelatedEntities;
 import com.veritech.BudgetKing.dto.OptionDTO;
+import com.veritech.BudgetKing.exception.CategoryRuntimeException;
 import com.veritech.BudgetKing.filter.CategoryFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.CategoryMapper;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,12 +68,20 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
         Category found = categoryRepository.findByIdAndUser(uuid, user)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
+        if(categoryRepository.countTransactionsByCategory(found.getId(), user) > 0) {
+            throw new CategoryRuntimeException("This category has transactions associated, cannot delete it");
+        }
+
+        if(categoryRepository.countByUser(user) < 2)
+            throw new CategoryRuntimeException("Can`t delete this category, you have only one, create new ones and then delete this.");
+
         categoryRepository.delete(found);
     }
 
     @Override
     public List<CategoryDTO> search(CategoryFilter categoryFilter) {
-        return List.of();
+        AppUser user = securityUtils.getCurrentUser();
+        return categoryRepository.findByUser(user).stream().map(categoryMapper::toDto).collect(Collectors.toList());
     }
 
     public List<OptionDTO> getOptions() {
