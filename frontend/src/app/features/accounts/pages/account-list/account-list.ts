@@ -36,8 +36,8 @@ export class AccountList {
       next: () => {
         this.ns.success('Account deleted successfully');
       },
-      error: (err: string) => {
-        this.ns.error(err);
+      error: (err) => {
+        this.ns.error(err.error.message);
       }
     });
   }

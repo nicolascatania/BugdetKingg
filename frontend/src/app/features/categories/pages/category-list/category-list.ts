@@ -4,6 +4,7 @@ import { CategoryService } from '../../service/category-service';
 import { CategoryDTO } from '../../interfaces/CategoryDTO.interface';
 import { EditCategory } from '../../components/edit-category/edit-category';
 import { NotificationService } from '../../../../core/services/NotificationService';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-category-list',
@@ -48,10 +49,10 @@ export class CategoryList {
   deleteCategory(category: CategoryDTO) {
     this.categoryService.delete(category.id).subscribe({
       next: () => this.loadCategories(),
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         const message =
           err?.error?.message ?? 'Error deleting category';
-
+        
         this.notificationService.error(message);
       }
     });

@@ -4,6 +4,7 @@ import com.veritech.BudgetKing.dto.AccountDTO;
 import com.veritech.BudgetKing.dto.AccountRelatedEntities;
 import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
+import com.veritech.BudgetKing.exception.AccountRuntimeException;
 import com.veritech.BudgetKing.filter.AccountFilter;
 import com.veritech.BudgetKing.dto.OptionDTO;
 import com.veritech.BudgetKing.interfaces.ICrudService;
@@ -97,6 +98,10 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
 
         Account existing = accountRepository.findByIdAndUser(uuid, user)
                         .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+        if(accountRepository.countTransactionsByAccountAndUser(existing.getId(), user) > 0)
+            throw new AccountRuntimeException("This account has transactions associated, can`t be deleted");
+
 
         accountRepository.delete(existing);
     }
