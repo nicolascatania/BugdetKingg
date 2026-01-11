@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, signal } from '@angular/core';
 import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
 import { MultiSelectComponent } from '../../../../shared/components/multiselect/multiselect';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -8,38 +8,36 @@ import { forkJoin } from 'rxjs';
 import { AccountService } from '../../../accounts/services/AccountService';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { CategoryService } from '../../../categories/service/category-service';
+import { TransactionService } from '../../../transactions/services/transaction-service';
+import { DashBoardDTO } from '../../interfaces/DashBoardDTO.interface';
+import { NotificationService } from '../../../../core/services/NotificationService';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 
 Chart.register(PieController, ArcElement, Tooltip, Legend);
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, MultiSelectComponent, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Dashboard implements AfterViewInit {
-
-  accounts: OptionDTO[] = [];
-  categories: OptionDTO[] = [];
-  
-  types = [
-    { id: 2, name: 'Income' },
-    { id: 3, name: 'Expense' }
-  ];
+export class Dashboard  {
 
 
-
+  private expenseChart?: Chart;
 
 
   fromDate!: string;
   toDate!: string;
-
   filterForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private accountService: AccountService,
-    private categoryService: CategoryService
+  dashboardData = signal<DashBoardDTO | null>(null);
+
+  constructor(private fb: FormBuilder, private ns: NotificationService,
+    private transactionService: TransactionService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -53,48 +51,27 @@ export class Dashboard implements AfterViewInit {
     this.filterForm = this.fb.group({
       dateFrom: [this.fromDate],
       dateTo: [this.toDate],
-      accountIds: [[]],        // multiselect accounts
-      categoryIds: [[]],       // multiselect categories
-      transactionTypes: [[]]   // multiselect types
     });
 
 
-    forkJoin({
-      accountsOptions: this.accountService.getOptions(),
-      categoriesOptions: this.categoryService.getOptions()
-    }).subscribe(({ accountsOptions, categoriesOptions }) => {
-      this.accounts = accountsOptions;
-      this.categories = categoriesOptions;
-    })
-  }
 
-  ngAfterViewInit() {
+    this.transactionService.dashboard(this.filterForm.value).subscribe({
+      next: (data) => {
+        this.dashboardData.set(data);
 
-    new Chart('expensePie', {
-      type: 'pie',
-      data: {
-        labels: ['Purchase', 'Investment', 'Transfer', 'Adjustment'],
-        datasets: [{
-          data: [45000, 30000, 15000, 10000],
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              boxWidth: 12,
-              padding: 12
-            }
-          }
+        if (data.expensesByCategory) {
+          this.renderExpenseChart(data.expensesByCategory);
         }
+
+        this.cdr.markForCheck();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.ns.error(err.error.message);
       }
     });
 
-  }
 
+  }
 
   onAccountsSelected(selected: any[]) {
     this.filterForm.get('accountIds')?.setValue(selected.map(s => s.id));
@@ -113,4 +90,59 @@ export class Dashboard implements AfterViewInit {
     const filters: DashboardFilter = this.filterForm.value;
     console.log('Filters applied:', filters);
   }
+
+  private renderExpenseChart(data: Record<string, number>) {
+    const labels = Object.keys(data);
+    const values = Object.values(data);
+
+    if (this.expenseChart) {
+      this.expenseChart.data.labels = labels;
+      this.expenseChart.data.datasets[0].data = values;
+      this.expenseChart.update();
+      return;
+    }
+
+    this.expenseChart = new Chart('expensePie', {
+      type: 'pie',
+      data: {
+        labels,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: [
+              '#22c55e',
+              '#ef4444',
+              '#3b82f6',
+              '#f59e0b',
+              '#8b5cf6',
+              '#ec4899'
+            ],
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const label = context.label ?? '';
+                const value = context.raw as number;
+                const total = values.reduce((a, b) => a + b, 0);
+                const percentage = ((value / total) * 100).toFixed(1);
+
+                return `${label}: $${value} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
 }

@@ -29,8 +29,7 @@
             />
           </div>
 
-          <!-- Account -->
-          <app-multiselect
+          <!-- Account          <app-multiselect
             label="Account"
             [options]="accounts"
             labelField="value"
@@ -38,26 +37,7 @@
             placeholder="Select account..."
             (selectedChange)="onAccountsSelected($event)"
           ></app-multiselect>
-
-          <!-- Category -->
-          <app-multiselect
-            label="Categories"
-            [options]="categories"
-            labelField="name"
-            valueField="id"
-            placeholder="Select categories..."
-            (selectedChange)="onCategoriesSelected($event)"
-          ></app-multiselect>
-
-          <!-- Type -->
-          <app-multiselect
-            label="Type"
-            [options]="types"
-            labelField="name"
-            valueField="id"
-            placeholder="Select type..."
-            (selectedChange)="onTypesSelected($event)"
-          ></app-multiselect>
+ -->
 
           <!-- Apply -->
           <div>
@@ -77,22 +57,29 @@
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <div class="bg-card rounded-xl p-5 border border-border">
       <p class="text-slate-400 text-sm">Total Balance</p>
-      <p class="text-2xl font-semibold text-accent-green mt-2">$120.000</p>
+      <p
+        class="text-2xl font-semibold"
+        [ngClass]="{
+    'text-accent-green': (dashboardData()?.totalBalance ?? 0) >= 0,
+    'text-accent-red':   (dashboardData()?.totalBalance ?? 0) < 0
+  }"
+      >
+        {{ dashboardData()?.totalBalance ?? 0 }}
+      </p>
     </div>
 
     <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Expenses (Month)</p>
-      <p class="text-2xl font-semibold text-accent-red mt-2">$45.000</p>
+      <p class="text-slate-400 text-sm">Expenses</p>
+      <p class="text-2xl font-semibold text-accent-red mt-2">
+        {{dashboardData()?.expense}}
+      </p>
     </div>
 
     <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Income (Month)</p>
-      <p class="text-2xl font-semibold text-accent-green mt-2">$70.000</p>
-    </div>
-
-    <div class="bg-card rounded-xl p-5 border border-border">
-      <p class="text-slate-400 text-sm">Monthly Balance</p>
-      <p class="text-2xl font-semibold mt-2 text-white">$25.000</p>
+      <p class="text-slate-400 text-sm">Income</p>
+      <p class="text-2xl font-semibold text-accent-green mt-2">
+        {{dashboardData()?.income}}
+      </p>
     </div>
   </div>
 

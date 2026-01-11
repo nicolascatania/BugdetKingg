@@ -1,10 +1,8 @@
 package com.veritech.BudgetKing.service;
 
-import com.veritech.BudgetKing.dto.LastMovesDTO;
-import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
-import com.veritech.BudgetKing.dto.TransactionDTO;
-import com.veritech.BudgetKing.dto.TransactionRelatedEntities;
+import com.veritech.BudgetKing.dto.*;
 import com.veritech.BudgetKing.enumerator.TransactionType;
+import com.veritech.BudgetKing.filter.DashBoardFilter;
 import com.veritech.BudgetKing.filter.TransactionFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.TransactionMapper;
@@ -15,14 +13,19 @@ import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.AccountRepository;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
+import com.veritech.BudgetKing.utils.DateUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.veritech.BudgetKing.enumerator.TransactionType.*;
 
@@ -186,5 +189,38 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
     }
 
 
+    /**
+     * Gets the proper data to show in the dashboard
+     * @param filter
+     * @return
+     */
+    public DashBoardDTO getDataForDashBoard(DashBoardFilter filter) {
+        AppUser user = securityUtils.getCurrentUser();
+
+        LocalDateTime start = DateUtils.parseStart(filter.getDateFrom());
+        LocalDateTime end = DateUtils.parseEnd(filter.getDateTo());
+
+        IncomeExpenseDTO totals = transactionRepository.getIncomeAndExpense(user, start, end);
+
+        Map<String, BigDecimal> byCategory =
+                transactionRepository.getExpensesByCategory(user, start, end)
+                        .stream()
+                        .collect(Collectors.toMap(
+                                r -> (String) r[0],
+                                r -> (BigDecimal) r[1]
+                        ));
+
+        BigDecimal balance = accountService.getAccounts().stream()
+                .map(Account::getBalance)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new DashBoardDTO(
+                balance,
+                totals.expense(),
+                totals.income(),
+                byCategory
+        );
+    }
 
 }

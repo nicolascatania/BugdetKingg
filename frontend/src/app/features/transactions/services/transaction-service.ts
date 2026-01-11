@@ -1,10 +1,12 @@
 import { Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, forkJoin } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { TransactionDTO } from '../interfaces/TransactionDTO.interface';
 import { HttpClient } from '@angular/common/http';
 import { MonthlyTransactionReportDTO } from '../interfaces/MonthlyTransactionReportDTO.interface';
 import { LastMovesDTO } from '../interfaces/LastMovesDTO.interface';
+import { DashboardFilter } from '../../dashboard/interfaces/dashboardFilter.interface';
+import { DashBoardDTO } from '../../dashboard/interfaces/DashBoardDTO.interface';
 
 
 @Injectable({
@@ -62,6 +64,11 @@ export class TransactionService {
 
   search(filter: any): Observable<TransactionDTO[]> {
     return this.HttpClient.post<TransactionDTO[]>(`${this.baseUrl}/search`, filter);
+  }
+
+
+  dashboard(filter: DashboardFilter): Observable<DashBoardDTO> {
+    return this.HttpClient.post<DashBoardDTO>(`${this.baseUrl}/dashboard`, filter);
   }
 
 }

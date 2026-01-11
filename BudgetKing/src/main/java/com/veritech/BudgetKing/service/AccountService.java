@@ -141,4 +141,9 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
                 ).toList();
 
     }
+
+    public List<Account> getAccounts() {
+        AppUser user = securityUtils.getCurrentUser();
+        return accountRepository.findByUser(user);
+    }
 }

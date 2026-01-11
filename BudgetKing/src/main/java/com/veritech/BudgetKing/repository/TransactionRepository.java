@@ -1,5 +1,6 @@
 package com.veritech.BudgetKing.repository;
 
+import com.veritech.BudgetKing.dto.IncomeExpenseDTO;
 import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.model.AppUser;
@@ -54,4 +55,51 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
+
+
+    @Query("""
+                SELECT new com.veritech.BudgetKing.dto.IncomeExpenseDTO(
+                    COALESCE(SUM(
+                        CASE WHEN t.type = com.veritech.BudgetKing.enumerator.TransactionType.INCOME
+                             THEN t.amount
+                             ELSE CAST(0 AS bigdecimal)
+                        END
+                    ), CAST(0 AS bigdecimal)),
+                    COALESCE(SUM(
+                        CASE WHEN t.type = com.veritech.BudgetKing.enumerator.TransactionType.EXPENSE
+                             THEN t.amount
+                             ELSE CAST(0 AS bigdecimal)
+                        END
+                    ), CAST(0 AS bigdecimal))
+                )
+                FROM Transaction t
+                WHERE t.user = :user
+                  AND t.date >= :start
+                  AND t.date < :end
+            """)
+    IncomeExpenseDTO getIncomeAndExpense(
+            @Param("user") AppUser user,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+
+
+    @Query("""
+                SELECT c.name, COALESCE(SUM(t.amount), 0)
+                FROM Transaction t
+                JOIN t.category c
+                WHERE t.user = :user
+                  AND t.type = com.veritech.BudgetKing.enumerator.TransactionType.EXPENSE
+                  AND t.date >= :start
+                  AND t.date < :end
+                GROUP BY c.name
+            """)
+    List<Object[]> getExpensesByCategory(
+            @Param("user") AppUser user,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+
 }
