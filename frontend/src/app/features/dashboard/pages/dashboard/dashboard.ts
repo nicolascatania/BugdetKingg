@@ -12,13 +12,14 @@ import { TransactionService } from '../../../transactions/services/transaction-s
 import { DashBoardDTO } from '../../interfaces/DashBoardDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LastMoves } from "../../../home/components/last-moves/last-moves";
 
 
 
 Chart.register(PieController, ArcElement, Tooltip, Legend);
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LastMoves],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
