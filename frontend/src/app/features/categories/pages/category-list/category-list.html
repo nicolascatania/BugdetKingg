@@ -22,8 +22,7 @@
           >
             <th class="px-4 py-3">Name</th>
             <th class="px-4 py-3">Description</th>
-            <th class="px-4 py-3"></th>
-            <th class="px-4 py-3"></th>
+            <th class="px-4 py-3 text-center">Actions</th>
           </tr>
         </thead>
 
@@ -33,14 +32,11 @@
             <td class="px-4 py-3">{{ category.name }}</td>
 
             <td class="px-4 py-3">{{ category.description }}</td>
-            <td class="px-4 py-3">
+            <td class="px-4 py-3 flex flex-wrap justify-center align-middle gap-2">
               <i
                 (click)="openCategoryModal(category)"
                 class="fa-solid fa-pen-to-square text-accent-blue hover:text-accent-blue/80 cursor-pointer"
               ></i>
-            </td>
-
-            <td class="px-4 py-3">
               <i
                 class="fa-solid fa-trash text-accent-blue hover:text-accent-blue/80 cursor-pointer"
                 (click)="deleteCategory(category)"

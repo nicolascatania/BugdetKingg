@@ -1,8 +1,4 @@
-<ui-modal
-  [open]="true"
-  title="Create Account"
-  (closed)="close(false)"
->
+<ui-modal [open]="true" title="Create Account" (closed)="close(false)">
   <!-- BODY -->
   <div modal-body>
     <form [formGroup]="form" class="space-y-4">
@@ -23,6 +19,7 @@
         ></textarea>
       </div>
 
+      @if(!account){
       <div>
         <label class="block text-sm text-slate-300 mb-1">Balance</label>
         <input
@@ -31,6 +28,7 @@
           class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
         />
       </div>
+      }
     </form>
   </div>
 
