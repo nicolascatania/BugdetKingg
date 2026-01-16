@@ -126,14 +126,6 @@ public class SecurityConfig {
                         .build();
                 userRepository.save(user);
 
-                Category newCategory = new Category();
-                newCategory.setName("DEFAULT");
-                newCategory.setDescription("Default category");
-                newCategory.setUser(user);
-
-                categoryRepository.save(newCategory);
-
-                user.getCategories().add(newCategory);
                 userRepository.save(user);
 
 

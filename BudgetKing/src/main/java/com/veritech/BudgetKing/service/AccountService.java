@@ -49,27 +49,10 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
     @Override
     @Transactional
     public AccountDTO create(AccountDTO dto) {
-
         AppUser user = securityUtils.getCurrentUser();
-
         AccountRelatedEntities accountRelatedEntities = new AccountRelatedEntities(user);
         Account account = accountMapper.toEntity(dto, accountRelatedEntities);
         Account saved = accountRepository.save(account);
-
-        Category category = categoryService.getDefaultCategory(user);
-
-        Transaction firstTransaction = new Transaction();
-        firstTransaction.setAccount(account);
-        firstTransaction.setAmount(account.getBalance());
-        firstTransaction.setDescription("First transaction generating a new account");
-        firstTransaction.setCounterparty("None");
-        firstTransaction.setType(TransactionType.INCOME);
-        firstTransaction.setCategory(category);
-        firstTransaction.setDate(LocalDateTime.now());
-        firstTransaction.setUser(user);
-
-        transactionRepository.save(firstTransaction);
-
         return accountMapper.toDto(saved);
     }
 

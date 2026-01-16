@@ -83,6 +83,7 @@ export class TransactionList {
     this.transactionService.search(this.form.value).subscribe({
       next: (data) => {
         this.transactions.set(data);
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.ns.error(err);

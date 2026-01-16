@@ -18,7 +18,7 @@
       <tbody>
         @for(tx of txs(); track tx.id) {
         <tr class="border-t border-border hover:bg-secondary transition">
-          <td class="px-4 py-3">{{ tx.date | date: 'dd/MM/yyyy HH:mm'}}</td>
+          <td class="px-4 py-3">{{ tx.date}}</td>
           <td class="px-4 py-3">{{ tx.accountName }}</td>
           <td class="px-4 py-3">{{ tx.type }}</td>
 
