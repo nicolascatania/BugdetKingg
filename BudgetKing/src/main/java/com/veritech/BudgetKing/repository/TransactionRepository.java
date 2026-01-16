@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.repository;
 
 import com.veritech.BudgetKing.dto.IncomeExpenseDTO;
+import com.veritech.BudgetKing.dto.MonthlyIncomeExpenseDTO;
 import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.model.AppUser;
@@ -99,6 +100,40 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
             @Param("user") AppUser user,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
+    );
+
+
+
+
+    @Query("""
+    SELECT new com.veritech.BudgetKing.dto.MonthlyIncomeExpenseDTO(
+        MONTH(t.date),
+        COALESCE(SUM(
+            CASE 
+                WHEN t.type = com.veritech.BudgetKing.enumerator.TransactionType.INCOME
+                THEN t.amount
+                ELSE 0
+            END
+        ), 0),
+        COALESCE(SUM(
+            CASE 
+                WHEN t.type = com.veritech.BudgetKing.enumerator.TransactionType.EXPENSE
+                THEN t.amount
+                ELSE 0
+            END
+        ), 0)
+    )
+    FROM Transaction t
+    WHERE t.user = :user
+      AND YEAR(t.date) = :year
+      AND (:accountId IS NULL OR t.account.id = :accountId)
+    GROUP BY MONTH(t.date)
+    ORDER BY MONTH(t.date)
+""")
+    List<MonthlyIncomeExpenseDTO> getIncomeExpenseByMonth(
+            @Param("user") AppUser user,
+            @Param("year") int year,
+            @Param("accountId") UUID accountId
     );
 
 

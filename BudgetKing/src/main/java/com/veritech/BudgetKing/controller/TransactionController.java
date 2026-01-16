@@ -1,9 +1,6 @@
 package com.veritech.BudgetKing.controller;
 
-import com.veritech.BudgetKing.dto.DashBoardDTO;
-import com.veritech.BudgetKing.dto.LastMovesDTO;
-import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
-import com.veritech.BudgetKing.dto.TransactionDTO;
+import com.veritech.BudgetKing.dto.*;
 import com.veritech.BudgetKing.filter.DashBoardFilter;
 import com.veritech.BudgetKing.filter.TransactionFilter;
 import com.veritech.BudgetKing.interfaces.ICrudController;
@@ -42,4 +39,12 @@ public class TransactionController implements ICrudController<TransactionDTO, UU
     public ResponseEntity<DashBoardDTO> dashboard(@RequestBody DashBoardFilter filter) {
         return ResponseEntity.ok(service.getDataForDashBoard(filter));
     }
+
+    @GetMapping("/income-expense-by-month")
+    public ResponseEntity<List<MonthlyIncomeExpenseDTO>> incomeExpenseByMonth(
+            @RequestParam(required = false) UUID accountId
+    ) {
+        return ResponseEntity.ok(service.getIncomeExpensePerMonth(accountId));
+    }
+
 }

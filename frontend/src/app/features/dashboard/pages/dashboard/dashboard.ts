@@ -13,13 +13,14 @@ import { DashBoardDTO } from '../../interfaces/DashBoardDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LastMoves } from "../../../home/components/last-moves/last-moves";
+import { ExpensesIncomeEachMonth } from "../../components/expenses-income-each-month/expenses-income-each-month";
 
 
 
 Chart.register(PieController, ArcElement, Tooltip, Legend);
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, ReactiveFormsModule, LastMoves],
+  imports: [CommonModule, ReactiveFormsModule, LastMoves, ExpensesIncomeEachMonth],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

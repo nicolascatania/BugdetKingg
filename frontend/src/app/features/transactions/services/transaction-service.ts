@@ -7,6 +7,7 @@ import { MonthlyTransactionReportDTO } from '../interfaces/MonthlyTransactionRep
 import { LastMovesDTO } from '../interfaces/LastMovesDTO.interface';
 import { DashboardFilter } from '../../dashboard/interfaces/dashboardFilter.interface';
 import { DashBoardDTO } from '../../dashboard/interfaces/DashBoardDTO.interface';
+import { MonthlyIncomeExpenseDTO } from '../interfaces/MonthlyIncomeExpenseDTO.interface';
 
 
 @Injectable({
@@ -70,5 +71,19 @@ export class TransactionService {
   dashboard(filter: DashboardFilter): Observable<DashBoardDTO> {
     return this.HttpClient.post<DashBoardDTO>(`${this.baseUrl}/dashboard`, filter);
   }
+
+  /**
+ * Retrieves income and expense totals per month.
+ * Optionally filtered by account ID.
+ */
+  getIncomeExpenseByMonth(accountId?: string) {
+    return this.HttpClient.get<MonthlyIncomeExpenseDTO[]>(
+      `${this.baseUrl}/income-expense-by-month`,
+      {
+        params: accountId ? { accountId } : {}
+      }
+    );
+  }
+
 
 }

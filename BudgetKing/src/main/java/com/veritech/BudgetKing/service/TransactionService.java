@@ -223,4 +223,18 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
         );
     }
 
+
+    /**
+     * Returns income and expense totals per month for the current year.
+     * Can be optionally filtered by account.
+     */
+    public List<MonthlyIncomeExpenseDTO> getIncomeExpensePerMonth(UUID accountId) {
+
+        AppUser user = securityUtils.getCurrentUser();
+        int currentYear = LocalDateTime.now().getYear();
+
+        return transactionRepository
+                .getIncomeExpenseByMonth(user, currentYear, accountId);
+    }
+
 }
