@@ -4,6 +4,7 @@ import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Transaction {
 
     @Id
