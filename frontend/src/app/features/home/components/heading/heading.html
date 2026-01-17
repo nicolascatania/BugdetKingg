@@ -14,14 +14,11 @@
   </h1>
 </div>
 
-<div class="flex flex-wrap gap-4 mb-14">
+<div class="flex flex-col md:flex-row gap-3 mb-14">
   <button
     (click)="openNewTransactionModal()"
-    class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent-blue/90 hover:bg-accent-blue text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent-blue/50"
+    class="flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-accent-blue/90 hover:bg-accent-blue text-sm font-medium"
     [disabled]="!userHasAccounts"
-    [ngClass]="{ 'opacity-50 cursor-not-allowed': !userHasAccounts }"
-    [title]="
-      !userHasAccounts ? 'You need to have at least one account to create a transaction.' : ''"
   >
     <i class="fa-solid fa-right-left"></i>
     Transaction
@@ -29,7 +26,7 @@
 
   <button
     (click)="openNewAccountModal()"
-    class="flex items-center gap-2 px-5 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
+    class="flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-medium"
   >
     <i class="fa-solid fa-building-columns"></i>
     New Account
