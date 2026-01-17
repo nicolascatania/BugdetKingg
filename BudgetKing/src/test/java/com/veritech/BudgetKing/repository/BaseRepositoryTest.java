@@ -23,6 +23,7 @@ public abstract class BaseRepositoryTest {
     protected AppUser savedUser;
     protected Account savedAccount;
     protected Category savedCategory;
+    protected Transaction savedNetflixTransaction;
 
     @BeforeEach
     void setUp() {
@@ -52,29 +53,28 @@ public abstract class BaseRepositoryTest {
         this.savedCategory = entityManager.persistFlushFind(category);
 
 
-        Transaction t1 = Transaction.builder()
+
+        LocalDateTime fixedDate = LocalDateTime.of(2024, 1, 15, 10, 0);
+
+        savedNetflixTransaction = entityManager.persist(Transaction.builder()
                 .amount(new BigDecimal("50.00"))
                 .description("Netflix")
                 .category(savedCategory)
                 .user(savedUser)
                 .account(savedAccount)
                 .type(TransactionType.INCOME)
-                .date(LocalDateTime.now())
-                .build();
+                .date(fixedDate)
+                .build());
 
-        Transaction t2 = Transaction.builder()
+        entityManager.persist(Transaction.builder()
                 .amount(new BigDecimal("20.00"))
                 .description("Steam Game")
                 .category(savedCategory)
                 .user(savedUser)
                 .account(savedAccount)
-                .type(TransactionType.INCOME)
-                .date(LocalDateTime.now())
-                .build();
-
-        entityManager.persist(t1);
-        entityManager.persist(t2);
-
+                .type(TransactionType.EXPENSE)
+                .date(fixedDate.plusDays(1))
+                .build());
 
         entityManager.flush();
         entityManager.clear();
