@@ -25,10 +25,10 @@ export class AuthService {
   }
 
 
-  register(request: RegisterRequest): Observable<any> {
-    return this.http.post<string>(`${this.apiUrl}/register`, request)
-      .pipe(tap(token => {
-        localStorage.setItem(this.tokenKey, token);
+  register(request: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request)
+      .pipe(tap(res => {
+        localStorage.setItem(this.tokenKey, res.token);
         this.loggedIn$.next(true);
       }));
   }

@@ -13,7 +13,7 @@ import { NotificationService } from '../../../../core/services/NotificationServi
 
 @Component({
   selector: 'app-transaction-list',
-  imports: [DatePipe, CommonModule, ReactiveFormsModule, EditTransaction],
+  imports: [CommonModule, ReactiveFormsModule, EditTransaction],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
