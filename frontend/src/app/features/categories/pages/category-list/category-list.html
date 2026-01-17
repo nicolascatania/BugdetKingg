@@ -12,14 +12,14 @@
   </div>
 
   <!-- Card -->
-  <div class="bg-card border border-border rounded-lg shadow-sm p-4">
-    <!-- Table wrapper -->
+  <!-- Desktop table -->
+  <div
+    class="hidden md:block bg-card border border-border rounded-lg shadow-sm p-4"
+  >
     <div class="overflow-x-auto">
       <table class="min-w-full border-collapse">
         <thead>
-          <tr
-            class="border-b text-left text-sm font-medium text-muted-foreground"
-          >
+          <tr class="border-b text-left text-sm font-medium text-slate-400">
             <th class="px-4 py-3">Name</th>
             <th class="px-4 py-3">Description</th>
             <th class="px-4 py-3 text-center">Actions</th>
@@ -28,25 +28,59 @@
 
         <tbody class="divide-y divide-border text-sm">
           @for (category of categories(); track category.id) {
-          <tr class="hover:bg-muted/50 transition-colors">
+          <tr class="hover:bg-secondary transition-colors">
             <td class="px-4 py-3">{{ category.name }}</td>
 
-            <td class="px-4 py-3">{{ category.description }}</td>
-            <td class="px-4 py-3 flex flex-wrap justify-center align-middle gap-2">
-              <i
-                (click)="openCategoryModal(category)"
-                class="fa-solid fa-pen-to-square text-accent-blue hover:text-accent-blue/80 cursor-pointer"
-              ></i>
-              <i
-                class="fa-solid fa-trash text-accent-blue hover:text-accent-blue/80 cursor-pointer"
-                (click)="deleteCategory(category)"
-              ></i>
+            <td class="px-4 py-3">{{ category.description || '—' }}</td>
+
+            <td class="px-4 py-3">
+              <div class="flex justify-center gap-3">
+                <i
+                  (click)="openCategoryModal(category)"
+                  class="fa-solid fa-pen-to-square text-accent-blue cursor-pointer"
+                ></i>
+
+                <i
+                  (click)="deleteCategory(category)"
+                  class="fa-solid fa-trash text-accent-red cursor-pointer"
+                ></i>
+              </div>
             </td>
           </tr>
           }
         </tbody>
       </table>
     </div>
+  </div>
+  <!-- Mobile cards -->
+  <div class="md:hidden space-y-3">
+    @for (category of categories(); track category.id) {
+    <div
+      class="bg-card border border-border rounded-lg p-4 flex justify-between items-start gap-4"
+    >
+      <div class="min-w-0">
+        <p class="text-sm font-medium truncate">{{ category.name }}</p>
+
+        @if(category.description){
+        <p class="text-xs text-slate-400 mt-1 break-words">
+          {{ category.description }}
+        </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-3 shrink-0">
+        <i
+          (click)="openCategoryModal(category)"
+          class="fa-solid fa-pen-to-square text-accent-blue cursor-pointer text-lg"
+        ></i>
+
+        <i
+          (click)="deleteCategory(category)"
+          class="fa-solid fa-trash text-accent-red cursor-pointer text-lg"
+        ></i>
+      </div>
+    </div>
+    }
   </div>
 </div>
 

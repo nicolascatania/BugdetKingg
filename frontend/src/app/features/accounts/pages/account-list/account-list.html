@@ -1,6 +1,7 @@
 <div class="w-full px-4 py-6">
   <h1 class="text-2xl font-semibold mb-6">Accounts</h1>
 
+  <!-- Actions -->
   <div class="flex flex-wrap gap-4 mb-14">
     <button
       (click)="openAccountModal(null)"
@@ -11,52 +12,99 @@
     </button>
   </div>
 
-  <!-- Card -->
-  <div class="bg-card border border-border rounded-lg shadow-sm p-4">
-    <!-- Table wrapper -->
+  <!-- ================= DESKTOP ================= -->
+  <div class="hidden md:block bg-card border border-border rounded-lg shadow-sm p-4">
     <div class="overflow-x-auto">
       <table class="min-w-full border-collapse">
         <thead>
-          <tr
-            class="border-b text-left text-sm font-medium text-muted-foreground"
-          >
+          <tr class="border-b text-left text-sm font-medium text-slate-400">
             <th class="px-4 py-3">Name</th>
             <th class="px-4 py-3">Description</th>
-            <th class="px-4 py-3">Balance</th>
+            <th class="px-4 py-3 text-right">Balance</th>
             <th class="px-4 py-3 text-center">Actions</th>
           </tr>
         </thead>
 
         <tbody class="divide-y divide-border text-sm">
           @for (account of accounts(); track account.id) {
-          <tr class="hover:bg-muted/50 transition-colors">
+          <tr class="hover:bg-secondary transition-colors">
             <td class="px-4 py-3">{{ account.name }}</td>
 
-            <td class="px-4 py-3">{{ account.description }}</td>
+            <td class="px-4 py-3">
+              {{ account.description || '—' }}
+            </td>
+
             <td
               class="px-4 py-3 text-right font-medium"
               [ngClass]="{
-                  'text-accent-green': account.balance >= 0,
-                  'text-accent-red': account.balance < 0
-                }"
+                'text-accent-green': account.balance >= 0,
+                'text-accent-red': account.balance < 0
+              }"
             >
               {{ account.balance | currency:'ARS':'symbol':'1.2-2' }}
             </td>
-            <td class="px-4 py-3 flex flex-wrap justify-center align-middle gap-2">
-              <i
-                (click)="openAccountModal(account)"
-                class="fa-solid fa-pen-to-square text-accent-blue hover:text-accent-blue/80 cursor-pointer"
-              ></i>
-              <i
-                class="fa-solid fa-trash text-accent-blue hover:text-accent-blue/80 cursor-pointer"
-                (click)="deleteAccount(account)"
-              ></i>
+
+            <td class="px-4 py-3">
+              <div class="flex justify-center gap-3">
+                <i
+                  (click)="openAccountModal(account)"
+                  class="fa-solid fa-pen-to-square text-accent-blue cursor-pointer"
+                ></i>
+
+                <i
+                  (click)="deleteAccount(account)"
+                  class="fa-solid fa-trash text-accent-red cursor-pointer"
+                ></i>
+              </div>
             </td>
           </tr>
           }
         </tbody>
       </table>
     </div>
+  </div>
+
+  <!-- ================= MOBILE ================= -->
+  <div class="md:hidden space-y-3">
+    @for (account of accounts(); track account.id) {
+    <div
+      class="bg-card border border-border rounded-lg p-4 flex justify-between items-start gap-4"
+    >
+      <div class="min-w-0">
+        <p class="text-sm font-medium truncate">
+          {{ account.name }}
+        </p>
+
+        @if(account.description){
+        <p class="text-xs text-slate-400 mt-1 break-words">
+          {{ account.description }}
+        </p>
+        }
+
+        <p
+          class="text-sm font-semibold mt-2"
+          [ngClass]="{
+            'text-accent-green': account.balance >= 0,
+            'text-accent-red': account.balance < 0
+          }"
+        >
+          {{ account.balance | currency:'ARS':'symbol':'1.2-2' }}
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-3 shrink-0">
+        <i
+          (click)="openAccountModal(account)"
+          class="fa-solid fa-pen-to-square text-accent-blue cursor-pointer text-lg"
+        ></i>
+
+        <i
+          (click)="deleteAccount(account)"
+          class="fa-solid fa-trash text-accent-red cursor-pointer text-lg"
+        ></i>
+      </div>
+    </div>
+    }
   </div>
 </div>
 
