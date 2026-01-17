@@ -1,9 +1,26 @@
-<div class="h-screen flex bg-primary text-slate-100 font-sans overflow-hidden">
+<div class="h-screen flex bg-primary text-slate-100 overflow-hidden">
+  <!-- Overlay mobile -->
+  @if (sidebarOpen()) {
+    <div
+      class="fixed inset-0 bg-black/50 z-40 md:hidden"
+      (click)="toggleSidebar()"
+    ></div>
+  }
+
   <!-- Sidebar -->
-  <side-bar class="flex-shrink-0"></side-bar>
+  <side-bar
+    class="z-50 h-full shrink-0"
+    [sidebarOpen]="sidebarOpen()"
+    (toggleSideBarEvent)="toggleSidebar()"
+  ></side-bar>
 
   <!-- Main content -->
-  <main class="flex-1 overflow-y-auto p-8">
+  <main
+    class="
+      flex-1 overflow-y-auto p-6 md:p-8
+      transition-all duration-300
+    "
+  >
     <router-outlet></router-outlet>
   </main>
 </div>

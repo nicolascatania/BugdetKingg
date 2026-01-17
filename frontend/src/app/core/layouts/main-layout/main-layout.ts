@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { SideBar } from '../../../shared/components/side-bar/side-bar';
 import { RouterOutlet } from '@angular/router';
 
@@ -9,4 +9,10 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './main-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MainLayout { }
+export class MainLayout {
+  sidebarOpen = signal(false);
+
+  toggleSidebar() {
+    this.sidebarOpen.update(v => !v);
+  }
+}
