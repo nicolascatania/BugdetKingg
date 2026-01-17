@@ -2,12 +2,21 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   OnInit,
   signal
 } from '@angular/core';
-import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import {
+  Chart,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+} from 'chart.js';
 import { TransactionService } from '../../../transactions/services/transaction-service';
+import { AccountService } from '../../../accounts/services/AccountService';
+import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { MonthlyIncomeExpenseDTO } from '../../../transactions/interfaces/MonthlyIncomeExpenseDTO.interface';
 
 Chart.register(
@@ -29,26 +38,48 @@ Chart.register(
 })
 export class ExpensesIncomeEachMonth implements OnInit {
 
-  /**
-   * Optional account filter.
-   * If undefined, all accounts are considered.
-   */
-  @Input() accountId?: string;
-
+  /** Chart instance */
   private chart?: Chart;
 
-  constructor(private transactionService: TransactionService) {}
+  /** Available accounts for filtering */
+  accounts = signal<OptionDTO[]>([]);
+
+  /** Currently selected account ID (undefined = all accounts) */
+  selectedAccountId = signal<string | undefined>(undefined);
+
+  constructor(
+    private transactionService: TransactionService,
+    private accountService: AccountService
+  ) {}
 
   ngOnInit(): void {
+    this.loadAccounts();
     this.loadChartData();
   }
 
   /**
-   * Loads data from backend and renders the chart.
+   * Loads the available accounts for the select filter.
+   */
+  private loadAccounts(): void {
+    this.accountService.getOptions().subscribe(accounts => {
+      this.accounts.set(accounts);
+    });
+  }
+
+  /**
+   * Triggered when the account filter changes.
+   */
+  onAccountChange(accountId: string): void {
+    this.selectedAccountId.set(accountId || undefined);
+    this.loadChartData();
+  }
+
+  /**
+   * Loads data from backend and renders or updates the chart.
    */
   private loadChartData(): void {
     this.transactionService
-      .getIncomeExpenseByMonth(this.accountId)
+      .getIncomeExpenseByMonth(this.selectedAccountId())
       .subscribe(data => this.renderChart(data));
   }
 
