@@ -1,13 +1,12 @@
 export interface PageResponse<T> {
   content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number; // Página actual (empieza en 0)
-  last: boolean;
-  first: boolean;
+  page: {
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    number: number;
+  };
 }
-
 export interface BaseFilter {
   page: number;
   size: number;

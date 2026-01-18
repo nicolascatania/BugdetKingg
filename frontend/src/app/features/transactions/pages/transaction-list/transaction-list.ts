@@ -96,8 +96,8 @@ export class TransactionList {
     this.transactionService.search(filter).subscribe({
       next: (data) => {
         this.transactions.set(data.content);
-        this.totalElements.set(data.totalElements);
-        this.totalPages.set(data.totalPages);
+        this.totalElements.set(data.page.totalElements);
+        this.totalPages.set(data.page.totalPages);
         this.cdr.markForCheck();
       },
       error: (err) => {

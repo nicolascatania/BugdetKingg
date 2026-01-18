@@ -44,8 +44,8 @@ export class CategoryList {
     this.categoryService.search(filter).subscribe({
       next: (response) => {
         this.categories.set(response.content);
-        this.totalElements.set(response.totalElements);
-        this.totalPages.set(response.totalPages);
+        this.totalElements.set(response.page.totalElements);
+        this.totalPages.set(response.page.totalPages);
       },
       error: (err) => {
         this.notificationService.error('Error loading categories');
