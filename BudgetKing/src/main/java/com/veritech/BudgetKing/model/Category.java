@@ -29,9 +29,6 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
-    @Column
-    private String description;
-
     // Many categories belong to one user
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

@@ -29,7 +29,6 @@ export class EditCategory {
     this.form = this.fb.group({
       id: [''],
       name: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', [Validators.required, Validators.maxLength(500)]],
     });
 
     effect(() => {
@@ -49,11 +48,11 @@ export class EditCategory {
         this.submitEvent.emit(true);
         this.ns.success('Category saved successfully');
       },
-        error: (err) => {
-          this.ns.error(err);
-          this.submitEvent.emit(false);
-        }
-      });
+      error: (err) => {
+        this.ns.error(err);
+        this.submitEvent.emit(false);
+      }
+    });
   }
 
 

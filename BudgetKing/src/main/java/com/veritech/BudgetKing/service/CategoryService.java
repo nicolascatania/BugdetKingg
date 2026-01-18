@@ -55,7 +55,6 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
         found.setName(dto.name());
-        found.setDescription(dto.description());
 
         Category saved = categoryRepository.save(found);
         return categoryMapper.toDto(saved);
@@ -99,16 +98,4 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
     }
 
-    public Category getDefaultCategory(AppUser user) {
-        Category def = categoryRepository.getByNameAndUser("DEFAULT", user)
-                .orElse(new Category());
-
-        if(def.getId() == null){
-            def.setDescription("Default Category");
-            def.setName("DEFAULT");
-            def.setUser(user);
-        }
-        return def;
-
-    }
 }

@@ -21,7 +21,6 @@
         <thead>
           <tr class="border-b text-left text-sm font-medium text-slate-400">
             <th class="px-4 py-3">Name</th>
-            <th class="px-4 py-3">Description</th>
             <th class="px-4 py-3 text-center">Actions</th>
           </tr>
         </thead>
@@ -30,8 +29,6 @@
           @for (category of categories(); track category.id) {
           <tr class="hover:bg-secondary transition-colors">
             <td class="px-4 py-3">{{ category.name }}</td>
-
-            <td class="px-4 py-3">{{ category.description || '—' }}</td>
 
             <td class="px-4 py-3">
               <div class="flex justify-center gap-3">
@@ -60,12 +57,6 @@
     >
       <div class="min-w-0">
         <p class="text-sm font-medium truncate">{{ category.name }}</p>
-
-        @if(category.description){
-        <p class="text-xs text-slate-400 mt-1 break-words">
-          {{ category.description }}
-        </p>
-        }
       </div>
 
       <div class="flex flex-col gap-3 shrink-0">

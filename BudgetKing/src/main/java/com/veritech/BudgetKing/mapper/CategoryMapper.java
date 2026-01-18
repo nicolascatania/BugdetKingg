@@ -12,7 +12,7 @@ import java.util.HashSet;
 public class CategoryMapper implements ICrudMapper<Category, CategoryDTO, CategoryRelatedEntities> {
     @Override
     public CategoryDTO toDto(Category entity) {
-        return new CategoryDTO(entity.getId(), entity.getName(), entity.getDescription());
+        return new CategoryDTO(entity.getId(), entity.getName());
     }
 
     @Override
@@ -20,7 +20,6 @@ public class CategoryMapper implements ICrudMapper<Category, CategoryDTO, Catego
         return new Category(
                 dto.id(),
                 dto.name(),
-                dto.description(),
                 relatedEntities.user(),
                 new HashSet<>()
         );

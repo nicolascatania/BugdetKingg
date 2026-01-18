@@ -88,7 +88,6 @@ class TransactionRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void getIncomeExpenseByMonth() {
-        // Test para el año 2024, sin filtrar por cuenta específica (null)
         var report = repository.getIncomeExpenseByMonth(savedUser, 2024, null);
 
         assertFalse(report.isEmpty());

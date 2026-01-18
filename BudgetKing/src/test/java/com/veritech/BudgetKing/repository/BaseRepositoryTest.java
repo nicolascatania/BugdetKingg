@@ -47,7 +47,6 @@ public abstract class BaseRepositoryTest {
 
         Category category = Category.builder()
                 .name("Entertainment")
-                .description("Movies, Games, etc.")
                 .user(savedUser)
                 .build();
         this.savedCategory = entityManager.persistFlushFind(category);
