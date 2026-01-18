@@ -57,6 +57,7 @@ export class EditTransaction {
       type: ['', Validators.required],
       counterparty: ['', Validators.required],
       destinationAccount: [''],
+      date: [formatDate(new Date()), Validators.required],
     });
 
     effect(() => {
@@ -100,7 +101,6 @@ export class EditTransaction {
     const payload: TransactionDTO = {
       id: this.transaction?.id ?? '',
       account: this.transaction?.account ?? '',
-      date: this.transaction?.date ?? formatDate(new Date()),
       ...this.form.getRawValue(),
     };
 

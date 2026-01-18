@@ -3,7 +3,6 @@ package com.veritech.BudgetKing.mapper;
 import com.veritech.BudgetKing.dto.LastMovesDTO;
 import com.veritech.BudgetKing.dto.TransactionDTO;
 import com.veritech.BudgetKing.dto.TransactionRelatedEntities;
-import com.veritech.BudgetKing.enumerator.TransactionCategory;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.interfaces.ICrudMapper;
 import com.veritech.BudgetKing.model.Transaction;
@@ -36,7 +35,7 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
     public Transaction toEntity(TransactionDTO dto, TransactionRelatedEntities r) {
         return new Transaction(
                 dto.id(),
-                LocalDateTime.parse(dto.date(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                LocalDateTime.parse(dto.date()),
                 dto.amount(),
                 TransactionType.valueOf(dto.type()),
                 dto.description(),
