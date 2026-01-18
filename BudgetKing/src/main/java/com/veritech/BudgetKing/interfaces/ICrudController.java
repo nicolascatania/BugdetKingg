@@ -1,11 +1,11 @@
 package com.veritech.BudgetKing.interfaces;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 public interface ICrudController<D, ID, FILTER> {
@@ -43,7 +43,7 @@ public interface ICrudController<D, ID, FILTER> {
     }
 
     @PostMapping("/search")
-    default ResponseEntity<List<D>> search(@RequestBody FILTER filter) {
+    default ResponseEntity<Page<D>> search(@RequestBody FILTER filter) {
         return ResponseEntity.ok(getService().search(filter));
     }
 }

@@ -8,11 +8,13 @@ import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.repository.AppUserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -52,14 +54,17 @@ public class AppUserService implements ICrudService<AppUserDTO, UUID, AppUserFil
     }
 
     @Override
-    public List<AppUserDTO> search(AppUserFilter filter) {
-        List<AppUser> users;
+    public Page<AppUserDTO> search(AppUserFilter filter) {
+        Page<AppUser> users;
+
+        Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize());
+
         if (filter == null) {
-            users = repository.findAll();
+            users = repository.findAll(pageable);
         } else {
-            users = repository.findAll(filter.toSpecification());
+            users = repository.findAll(filter.toSpecification(), pageable);
         }
-        return users.stream().map(mapper::toDto).collect(Collectors.toList());
+        return users.map(mapper::toDto);
     }
 
     public AppUser getEntityById(UUID id) {

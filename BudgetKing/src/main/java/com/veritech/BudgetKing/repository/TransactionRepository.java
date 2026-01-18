@@ -6,6 +6,9 @@ import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -135,5 +138,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
             @Param("accountId") UUID accountId
     );
 
+
+    Page<Transaction> findAllByUser(AppUser user, Pageable pageRequest);
 
 }

@@ -5,25 +5,32 @@
   <div class="space-y-6 my-5">
     <div class="p-4 rounded-xl border border-border bg-card">
       <form [formGroup]="form" (ngSubmit)="onSearch()" class="space-y-4">
-
         <!-- Primary filters -->
         <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
           <div>
             <label class="block text-sm text-slate-300 mb-1">From</label>
-            <input type="date" formControlName="dateFrom"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white" />
+            <input
+              type="date"
+              formControlName="dateFrom"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
           </div>
 
           <div>
             <label class="block text-sm text-slate-300 mb-1">To</label>
-            <input type="date" formControlName="dateTo"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white" />
+            <input
+              type="date"
+              formControlName="dateTo"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
           </div>
 
           <div>
             <label class="block text-sm text-slate-300 mb-1">Account</label>
-            <select formControlName="account"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white">
+            <select
+              formControlName="account"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            >
               <option value="">All</option>
               @for (account of accounts; track account.id) {
               <option [value]="account.id">{{ account.value }}</option>
@@ -33,8 +40,10 @@
 
           <div>
             <label class="block text-sm text-slate-300 mb-1">Category</label>
-            <select formControlName="category"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white">
+            <select
+              formControlName="category"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            >
               <option value="">All</option>
               @for (category of categories; track category.id) {
               <option [value]="category.id">{{ category.value }}</option>
@@ -44,8 +53,10 @@
 
           <div>
             <label class="block text-sm text-slate-300 mb-1">Type</label>
-            <select formControlName="type"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white">
+            <select
+              formControlName="type"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            >
               <option value="">All</option>
               @for (type of transactionTypes; track type) {
               <option [value]="type">{{ type }}</option>
@@ -58,41 +69,60 @@
         <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
           <div>
             <label class="block text-sm text-slate-300 mb-1">Min amount</label>
-            <input type="number" formControlName="minAmount"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white" />
+            <input
+              type="number"
+              formControlName="minAmount"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
           </div>
 
           <div>
             <label class="block text-sm text-slate-300 mb-1">Max amount</label>
-            <input type="number" formControlName="maxAmount"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white" />
+            <input
+              type="number"
+              formControlName="maxAmount"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
           </div>
 
           <div>
             <label class="block text-sm text-slate-300 mb-1">Description</label>
-            <input type="text" formControlName="description"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white" />
+            <input
+              type="text"
+              formControlName="description"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
           </div>
 
           <div>
-            <label class="block text-sm text-slate-300 mb-1">Counterparty</label>
-            <input type="text" formControlName="counterparty"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white" />
+            <label class="block text-sm text-slate-300 mb-1"
+              >Counterparty</label
+            >
+            <input
+              type="text"
+              formControlName="counterparty"
+              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
+            />
           </div>
         </div>
 
         <!-- Actions -->
         <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-          <button type="button"
+          <button
+            type="button"
             class="w-full bg-border text-black rounded-lg px-3 py-2 text-sm font-medium"
-            (click)="onClear()">Clear</button>
+            (click)="onClear()"
+          >
+            Clear
+          </button>
 
-          <button type="submit"
-            class="w-full bg-accent-green text-black rounded-lg px-3 py-2 text-sm font-medium">
+          <button
+            type="submit"
+            class="w-full bg-accent-green text-black rounded-lg px-3 py-2 text-sm font-medium"
+          >
             Apply
           </button>
         </div>
-
       </form>
     </div>
   </div>
@@ -133,11 +163,13 @@
             <td class="px-4 py-3">{{ transaction.accountName }}</td>
             <td class="px-4 py-3">{{ transaction.type }}</td>
             <td class="px-4 py-3">{{ transaction.categoryName }}</td>
-            <td class="px-4 py-3 text-right font-medium"
+            <td
+              class="px-4 py-3 text-right font-medium"
               [ngClass]="{
                 'text-accent-green': transaction.type === TRANSACTION_TYPE.INCOME,
                 'text-accent-red': transaction.type === TRANSACTION_TYPE.EXPENSE
-              }">
+              }"
+            >
               {{ transaction.amount | currency:'ARS':'symbol':'1.2-2' }}
             </td>
             <td class="px-4 py-3">{{ transaction.description || '—' }}</td>
@@ -146,6 +178,15 @@
           }
         </tbody>
       </table>
+      <div class="w-full px-4 py-6">
+        <app-pagination
+          [page]="currentPage()"
+          [size]="pageSize()"
+          [totalElements]="totalElements()"
+          [totalPages]="totalPages()"
+          (changePage)="onPageChange($event)"
+        ></app-pagination>
+      </div>
     </div>
   </div>
 
@@ -155,18 +196,18 @@
     <div class="bg-card border border-border rounded-lg p-4">
       <div class="flex flex-col justify-start items-start">
         <span class="text-xs text-slate-400">{{ transaction.date }}</span>
-        <span class="text-sm font-semibold"
+        <span
+          class="text-sm font-semibold"
           [ngClass]="{
             'text-accent-green': transaction.type === TRANSACTION_TYPE.INCOME,
             'text-accent-red': transaction.type === TRANSACTION_TYPE.EXPENSE
-          }">
+          }"
+        >
           {{ transaction.amount | currency:'ARS':'symbol':'1.2-2' }}
         </span>
       </div>
 
-      <div class="mt-2 font-medium text-sm">
-        {{ transaction.categoryName }}
-      </div>
+      <div class="mt-2 font-medium text-sm">{{ transaction.categoryName }}</div>
 
       <div class="mt-1 text-xs text-slate-400">
         {{ transaction.accountName }} · {{ transaction.type }}
@@ -176,15 +217,22 @@
       <div class="mt-2 text-xs text-slate-300 break-words">
         {{ transaction.description }}
       </div>
-      }
-
-      @if (transaction.counterparty) {
+      } @if (transaction.counterparty) {
       <div class="mt-1 text-xs text-slate-400">
         {{ transaction.counterparty }}
       </div>
       }
     </div>
     }
+    <div class="w-full px-4 py-6">
+      <app-pagination
+        [page]="currentPage()"
+        [size]="pageSize()"
+        [totalElements]="totalElements()"
+        [totalPages]="totalPages()"
+        (changePage)="onPageChange($event)"
+      ></app-pagination>
+    </div>
   </div>
 </div>
 

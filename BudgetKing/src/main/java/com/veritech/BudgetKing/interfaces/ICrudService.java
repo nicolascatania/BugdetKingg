@@ -1,8 +1,8 @@
 package com.veritech.BudgetKing.interfaces;
 
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 
 public interface ICrudService<D, ID, FILTER> {
@@ -18,5 +18,5 @@ public interface ICrudService<D, ID, FILTER> {
     @Transactional
     void deleteById(ID id);
 
-    List<D> search(FILTER filter);
+    Page<D> search(FILTER filter);
 }

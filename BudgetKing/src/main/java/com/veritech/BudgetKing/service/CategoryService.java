@@ -12,14 +12,16 @@ import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.repository.CategoryRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,9 +80,17 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
     }
 
     @Override
-    public List<CategoryDTO> search(CategoryFilter categoryFilter) {
+    public Page<CategoryDTO> search(CategoryFilter categoryFilter) {
         AppUser user = securityUtils.getCurrentUser();
-        return categoryRepository.findByUser(user).stream().map(categoryMapper::toDto).collect(Collectors.toList());
+
+        Pageable pageable = (Pageable) PageRequest.of(
+                categoryFilter.page(),
+                categoryFilter.size(),
+                Sort.by("name").ascending()
+        );
+
+        Page<Category> categoryPage = categoryRepository.findByUser(user, pageable);
+        return categoryPage.map(categoryMapper::toDto);
     }
 
     public List<OptionDTO> getOptions() {

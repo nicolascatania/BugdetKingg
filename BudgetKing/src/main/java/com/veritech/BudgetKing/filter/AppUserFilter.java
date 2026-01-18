@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.filter;
 
 import com.veritech.BudgetKing.filter.generic.GenericSpecifications;
+import com.veritech.BudgetKing.filter.generic.PageableFilter;
 import com.veritech.BudgetKing.filter.generic.SpecificationFilter;
 import com.veritech.BudgetKing.model.AppUser;
 import lombok.Data;
@@ -8,7 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 
 @Data
-public class AppUserFilter implements SpecificationFilter<AppUser> {
+public class AppUserFilter extends PageableFilter implements SpecificationFilter<AppUser> {
 
     private String firstName;
     private String lastName;
@@ -34,5 +35,10 @@ public class AppUserFilter implements SpecificationFilter<AppUser> {
         }
 
         return spec;
+    }
+
+    @Override
+    public Specification<AppUser> toSpecification(AppUser user) {
+        return null;
     }
 }

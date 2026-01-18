@@ -16,6 +16,10 @@ import com.veritech.BudgetKing.security.util.SecurityUtils;
 import com.veritech.BudgetKing.utils.DateUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,15 +91,23 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
     }
 
     @Override
-    public List<TransactionDTO> search(TransactionFilter filter) {
+    public Page<TransactionDTO> search(TransactionFilter filter) {
 
-        List<Transaction> transactions;
+        AppUser user = securityUtils.getCurrentUser();
+
+        Pageable pageRequest = PageRequest.of(
+                filter.getPage(),
+                filter.getSize(),
+                Sort.by(Sort.Direction.DESC, "date")
+        );
+
+        Page<Transaction> transactions;
         if (filter == null)
-            transactions = transactionRepository.findAll();
+            transactions = transactionRepository.findAllByUser(user, pageRequest);
         else
-            transactions = transactionRepository.findAll(filter.toSpecification());
+            transactions = transactionRepository.findAll(filter.toSpecification(user), pageRequest);
 
-        return transactions.stream().map(mapper::toDto).toList();
+        return transactions.map(mapper::toDto);
     }
 
     /**

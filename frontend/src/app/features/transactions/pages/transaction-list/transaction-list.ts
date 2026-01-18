@@ -10,16 +10,23 @@ import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { TransactionType } from '../../../../shared/models/TransactionType.enum';
 import { EditTransaction } from '../../components/edit-transaction/edit-transaction';
 import { NotificationService } from '../../../../core/services/NotificationService';
+import { PaginationComponent } from '../../../../shared/components/PaginationComponent/PaginationComponent';
+import { BaseFilter } from '../../../../core/interfaces/GenericFilter.interfaces';
+import { TransactionFilter } from '../../interfaces/TransactionFilter.interface';
 
 @Component({
   selector: 'app-transaction-list',
-  imports: [CommonModule, ReactiveFormsModule, EditTransaction],
+  imports: [CommonModule, ReactiveFormsModule, EditTransaction, PaginationComponent],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionList {
 
+  totalElements = signal(0);
+  totalPages = signal(0);
+  currentPage = signal(0);
+  pageSize = signal(20);
 
   TRANSACTION_TYPE = TransactionType;
 
@@ -80,13 +87,22 @@ export class TransactionList {
 
 
   onSearch() {
-    this.transactionService.search(this.form.value).subscribe({
+    const filter: TransactionFilter = {
+      page: this.currentPage(),
+      size: this.pageSize(),
+      ...this.form.value
+    };
+
+    this.transactionService.search(filter).subscribe({
       next: (data) => {
-        this.transactions.set(data);
-        this.cdr.detectChanges();
+        this.transactions.set(data.content);
+        this.totalElements.set(data.totalElements);
+        this.totalPages.set(data.totalPages);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.ns.error(err);
+        this.transactions.set([]);
       }
     });
   }
@@ -122,4 +138,10 @@ export class TransactionList {
   get userHasAccounts(): boolean {
     return this.accountsService.userHasAccounts();
   }
+
+  onPageChange(newPage: number) {
+    this.currentPage.set(newPage);
+    this.onSearch();
+  }
+
 }

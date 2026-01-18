@@ -2,12 +2,13 @@ package com.veritech.BudgetKing.repository;
 
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Category;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +17,8 @@ import java.util.UUID;
 public interface CategoryRepository extends JpaRepository<Category, UUID>, JpaSpecificationExecutor<Category> {
 
     List<Category> findByUser(AppUser user);
+
+    Page<Category> findByUser(AppUser user, Pageable pageable);
 
     Optional<Category> findByIdAndUser(UUID uuid, AppUser user);
 

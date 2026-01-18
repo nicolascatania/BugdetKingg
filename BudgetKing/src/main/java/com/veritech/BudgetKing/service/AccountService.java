@@ -19,6 +19,10 @@ import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,16 +94,23 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
     }
 
     @Override
-    public List<AccountDTO> search(AccountFilter filter) {
-        List<Account> accounts;
+    public Page<AccountDTO> search(AccountFilter filter) {
+        AppUser user = securityUtils.getCurrentUser();
+        Page<Account> accounts;
+
+        Pageable pageRequest = PageRequest.of(
+                filter.getPage(),
+                filter.getSize(),
+                Sort.by("name")
+        );
 
         if (filter == null) {
-            accounts = accountRepository.findAll();
+            accounts = accountRepository.findAllByUser(user, pageRequest);
         } else {
-            accounts = accountRepository.findAll(filter.toSpecification());
+            accounts = accountRepository.searchByUser(user, filter.toSpecification(), pageRequest);
         }
 
-        return accounts.stream().map(accountMapper::toDto).collect(Collectors.toList());
+        return accounts.map(accountMapper::toDto);
     }
 
     

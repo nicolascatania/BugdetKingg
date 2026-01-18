@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { OptionDTO } from '../../../shared/models/OptionDTO.interface';
 import { CategoryDTO } from '../interfaces/CategoryDTO.interface';
+import { BaseFilter, PageResponse } from '../../../core/interfaces/GenericFilter.interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +20,9 @@ export class CategoryService {
     return this.http.get<OptionDTO[]>(`${this.baseUrl}/options`);
   }
 
-  search(): Observable<CategoryDTO[]> {
-    return this.http.post<CategoryDTO[]>(`${this.baseUrl}/search`, {});
+  // category-service.ts
+  search(filter: BaseFilter): Observable<PageResponse<CategoryDTO>> {
+    return this.http.post<PageResponse<CategoryDTO>>(`${this.baseUrl}/search`, filter);
   }
 
   save(category: CategoryDTO): Observable<CategoryDTO> {

@@ -8,7 +8,8 @@ import { LastMovesDTO } from '../interfaces/LastMovesDTO.interface';
 import { DashboardFilter } from '../../dashboard/interfaces/dashboardFilter.interface';
 import { DashBoardDTO } from '../../dashboard/interfaces/DashBoardDTO.interface';
 import { MonthlyIncomeExpenseDTO } from '../interfaces/MonthlyIncomeExpenseDTO.interface';
-
+import { BaseFilter, PageResponse } from '../../../core/interfaces/GenericFilter.interfaces';
+import { TransactionFilter } from '../interfaces/TransactionFilter.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -63,8 +64,8 @@ export class TransactionService {
       );
   }
 
-  search(filter: any): Observable<TransactionDTO[]> {
-    return this.HttpClient.post<TransactionDTO[]>(`${this.baseUrl}/search`, filter);
+  search(filter: TransactionFilter): Observable<PageResponse<TransactionDTO>> {
+    return this.HttpClient.post<PageResponse<TransactionDTO>>(`${this.baseUrl}/search`, filter);
   }
 
 

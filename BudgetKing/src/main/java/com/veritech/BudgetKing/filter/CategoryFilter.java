@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.filter;
 
-public class CategoryFilter {
-    private String name;
-    private String description;
-}
+public record CategoryFilter(
+        String name,
+        int page,
+        int size
+) {}

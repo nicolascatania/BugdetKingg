@@ -47,6 +47,15 @@
           }
         </tbody>
       </table>
+      <div class="w-full px-4 py-6">
+        <app-pagination
+          [page]="currentPage()"
+          [size]="pageSize()"
+          [totalElements]="totalElements()"
+          [totalPages]="totalPages()"
+          (changePage)="onPageChange($event)"
+        ></app-pagination>
+      </div>
     </div>
   </div>
   <!-- Mobile cards -->
@@ -72,6 +81,15 @@
       </div>
     </div>
     }
+    <div class="w-full px-4 py-6">
+      <app-pagination
+        [page]="currentPage()"
+        [size]="pageSize()"
+        [totalElements]="totalElements()"
+        [totalPages]="totalPages()"
+        (changePage)="onPageChange($event)"
+      ></app-pagination>
+    </div>
   </div>
 </div>
 

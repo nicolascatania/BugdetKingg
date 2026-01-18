@@ -2,20 +2,23 @@ package com.veritech.BudgetKing.filter;
 
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.filter.generic.GenericSpecifications;
+import com.veritech.BudgetKing.filter.generic.PageableFilter;
 import com.veritech.BudgetKing.filter.generic.SpecificationFilter;
+import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.model.dict.Transaction_;
 import com.veritech.BudgetKing.utils.StringUtils;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
-public class TransactionFilter implements SpecificationFilter<Transaction> {
+public class TransactionFilter extends PageableFilter implements SpecificationFilter<Transaction> {
 
-    private LocalDate dateFrom;
-    private LocalDate dateTo;
+    private LocalDateTime dateFrom;
+    private LocalDateTime dateTo;
 
     private Double minAmount;
     private Double maxAmount;
@@ -29,9 +32,18 @@ public class TransactionFilter implements SpecificationFilter<Transaction> {
 
     @Override
     public Specification<Transaction> toSpecification() {
+        return null;
+    }
+
+    @Override
+    public Specification<Transaction> toSpecification(AppUser user) {
+
+
 
         Specification<Transaction> spec =
                 Specification.where((root, query, cb) -> cb.conjunction());
+
+        spec = spec.and((root, query, cb) -> cb.equal(root.get(Transaction_.user), user));
 
         // Dates
         if (dateFrom != null) {
@@ -51,10 +63,10 @@ public class TransactionFilter implements SpecificationFilter<Transaction> {
             );
         }
 
-        // Account
         if (!StringUtils.isBlankOrNUll(account)) {
+            UUID accountId = UUID.fromString(account);
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get(Transaction_.account).get("id"), account));
+                    cb.equal(root.get(Transaction_.account).get("id"), accountId));
         }
 
         // Category
