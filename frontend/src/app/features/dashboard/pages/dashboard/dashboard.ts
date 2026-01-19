@@ -1,13 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
-import { MultiSelectComponent } from '../../../../shared/components/multiselect/multiselect';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { DashboardFilter } from '../../interfaces/dashboardFilter.interface';
-import { forkJoin } from 'rxjs';
-import { AccountService } from '../../../accounts/services/AccountService';
-import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
-import { CategoryService } from '../../../categories/service/category-service';
 import { TransactionService } from '../../../transactions/services/transaction-service';
 import { DashBoardDTO } from '../../interfaces/DashBoardDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
@@ -25,22 +20,28 @@ Chart.register(PieController, ArcElement, Tooltip, Legend);
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Dashboard  {
+export class Dashboard {
 
 
   private expenseChart?: Chart;
-
 
   fromDate!: string;
   toDate!: string;
   filterForm!: FormGroup;
 
+  // State management with signals
   dashboardData = signal<DashBoardDTO | null>(null);
+  filterTrigger = signal(0);  // Trigger para cambios de filtro
 
   constructor(private fb: FormBuilder, private ns: NotificationService,
-    private transactionService: TransactionService,
-    private cdr: ChangeDetectorRef
-  ) { }
+    private transactionService: TransactionService
+  ) {
+    // ✅ Effect reactivo que se ejecuta cuando hay cambios
+    effect(() => {
+      this.filterTrigger();  // Leer trigger para dependency tracking
+      this.loadDashboardData();
+    });
+  }
 
   ngOnInit() {
     const now = new Date();
@@ -55,42 +56,47 @@ export class Dashboard  {
       dateTo: [this.toDate],
     });
 
+    // Initial load
+    this.filterTrigger.update(v => v + 1);
+  }
 
-
+  // ✅ Método para cargar datos del dashboard
+  private loadDashboardData() {
     this.transactionService.dashboard(this.filterForm.value).subscribe({
       next: (data) => {
-        this.dashboardData.set(data);
+        this.dashboardData.set(data);  // Signal se actualiza automáticamente
 
         if (data.expensesByCategory) {
           this.renderExpenseChart(data.expensesByCategory);
         }
-
-        this.cdr.markForCheck();
+        // ✅ No necesita markForCheck() - Signal lo maneja
       },
       error: (err: HttpErrorResponse) => {
         this.ns.error(err.error.message);
       }
     });
-
-
   }
 
   onAccountsSelected(selected: any[]) {
     this.filterForm.get('accountIds')?.setValue(selected.map(s => s.id));
+    this.filterTrigger.update(v => v + 1);  // ✅ Trigger a recarga
   }
 
   onCategoriesSelected(selected: any[]) {
     this.filterForm.get('categoryIds')?.setValue(selected.map(s => s.id));
+    this.filterTrigger.update(v => v + 1);  // ✅ Trigger a recarga
   }
 
   onTypesSelected(selected: any[]) {
     this.filterForm.get('transactionTypes')?.setValue(selected.map(s => s.id));
+    this.filterTrigger.update(v => v + 1);  // ✅ Trigger a recarga
   }
 
-  // Submit
+  // Submit - Aplica filtros y recarga
   applyFilters() {
     const filters: DashboardFilter = this.filterForm.value;
     console.log('Filters applied:', filters);
+    this.filterTrigger.update(v => v + 1);  // ✅ Trigger a recarga
   }
 
   private renderExpenseChart(data: Record<string, number>) {

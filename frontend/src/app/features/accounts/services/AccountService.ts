@@ -1,26 +1,30 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AccountDTO } from '../interfaces/AccountDTO.interfaces';
 import { TransactionService } from '../../transactions/services/transaction-service';
-import { OptionDTO } from '../../../shared/models/OptionDTO.interface';
+import { BaseService } from '../../../core/services/BaseService';
+import { RefreshableCrudService } from '../../../core/services/RefreshableCrudService.mixin';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AccountService {
+export class AccountService extends BaseService<AccountDTO> {
 
-
-  private readonly baseUrl = `${environment.apiUrl}/account`;
+  protected readonly baseUrl = `${environment.apiUrl}/account`;
 
   private _accounts = signal<AccountDTO[]>([]);
   readonly accounts = this._accounts.asReadonly();
 
+  private refreshable = new RefreshableCrudService();
+  readonly refresh$ = this.refreshable.getRefreshSignal();
+
   constructor(
-    private http: HttpClient,
+    http: HttpClient,
     private transactionService: TransactionService
   ) {
+    super(http);
     effect(() => {
       transactionService.refresh$();
       this.loadAccounts();
@@ -40,31 +44,16 @@ export class AccountService {
       .subscribe(accs => this._accounts.set(accs));
   }
 
-  create(account: AccountDTO) {
-    return this.http.post<AccountDTO>(this.baseUrl, account).pipe(
-      tap(() => {
-        this.loadAccounts(),
-          this.transactionService.notifyRefresh();
-      }
-      )
-    );
+  override create(account: AccountDTO) {
+    return this.refreshable.wrapWithRefresh(super.create(account));
   }
 
-  update(account: AccountDTO) {
-    return this.http.put<AccountDTO>(`${this.baseUrl}/${account.id}`, account).pipe(
-      tap(() => this.loadAccounts())
-    );
+  override update(account: AccountDTO) {
+    return this.refreshable.wrapWithRefresh(super.update(account));
   }
 
-  delete(id: string) {
-    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
-      tap(() => this.loadAccounts())
-    );
-  }
-
-
-  getOptions(): Observable<OptionDTO[]> {
-    return this.http.get<OptionDTO[]>(`${this.baseUrl}/options`);
+  override delete(id: string) {
+    return this.refreshable.wrapWithRefresh(super.delete(id));
   }
 
   userHasAccounts(): boolean {

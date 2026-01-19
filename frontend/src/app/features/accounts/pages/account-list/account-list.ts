@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { EditAccountModal } from "../../components/edit-account-modal/edit-account-modal";
 import { AccountDTO } from '../../interfaces/AccountDTO.interfaces';
 import { AccountService } from '../../services/AccountService';
@@ -15,21 +15,27 @@ import { TransactionType } from '../../../../shared/models/TransactionType.enum'
 })
 export class AccountList {
 
-  accountService = inject(AccountService);
+  private accountService = inject(AccountService);
+  private ns = inject(NotificationService);
+
   isModalOpen = signal(false);
   selectedAccount = signal<AccountDTO | null>(null);
-  accounts = this.accountService.accounts;
 
-  constructor(
-    private ns: NotificationService
-  ) { }
+  // Computed que reacciona automáticamente a cambios en el servicio
+  accounts = computed(() => this.accountService.accounts());
 
+  constructor() {
+    // Efecto: cuando accountService.refresh$ cambia, recarga cuentas
+    effect(() => {
+      this.accountService.refresh$();
+      this.accountService.loadAccounts();
+    });
+  }
 
   openAccountModal(account: AccountDTO | null) {
     this.selectedAccount.set(account);
     this.isModalOpen.set(true);
   }
-
 
   deleteAccount(account: AccountDTO) {
     this.accountService.delete(account.id).subscribe({

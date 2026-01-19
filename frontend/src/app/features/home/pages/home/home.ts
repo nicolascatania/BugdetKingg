@@ -27,8 +27,13 @@ export class Home {
 
   constructor() {
     this.accountService.loadAccounts();
-  }
 
+    // Efecto: cuando accountService notifica cambios, recarga cuentas
+    effect(() => {
+      this.accountService.refresh$();
+      this.accountService.loadAccounts();
+    });
+  }
 
   /**
    * Opens the modal to create a new account.

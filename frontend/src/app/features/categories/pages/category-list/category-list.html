@@ -49,10 +49,10 @@
       </table>
       <div class="w-full px-4 py-6">
         <app-pagination
-          [page]="currentPage()"
-          [size]="pageSize()"
-          [totalElements]="totalElements()"
-          [totalPages]="totalPages()"
+          [page]="paginationState.currentPage()"
+          [size]="paginationState.pageSize()"
+          [totalElements]="paginationState.totalElements()"
+          [totalPages]="paginationState.totalPages()"
           (changePage)="onPageChange($event)"
         ></app-pagination>
       </div>
@@ -83,10 +83,10 @@
     }
     <div class="w-full px-4 py-6">
       <app-pagination
-        [page]="currentPage()"
-        [size]="pageSize()"
-        [totalElements]="totalElements()"
-        [totalPages]="totalPages()"
+        [page]="paginationState.currentPage()"
+        [size]="paginationState.pageSize()"
+        [totalElements]="paginationState.totalElements()"
+        [totalPages]="paginationState.totalPages()"
         (changePage)="onPageChange($event)"
       ></app-pagination>
     </div>

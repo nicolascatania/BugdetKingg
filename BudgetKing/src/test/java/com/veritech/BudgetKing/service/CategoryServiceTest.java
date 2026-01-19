@@ -54,7 +54,7 @@ class CategoryServiceTest{
     @BeforeEach
     void setUp() {
         categoryId = UUID.randomUUID();
-        mockUser = new AppUser(); // Configura propiedades básicas si es necesario
+        mockUser = new AppUser();
 
         mockCategory = Category.builder()
                 .id(categoryId)

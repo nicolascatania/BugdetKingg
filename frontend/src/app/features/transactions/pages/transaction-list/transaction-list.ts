@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { TransactionDTO } from '../../interfaces/TransactionDTO.interface';
 import { TransactionService } from '../../services/transaction-service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -11,8 +11,8 @@ import { TransactionType } from '../../../../shared/models/TransactionType.enum'
 import { EditTransaction } from '../../components/edit-transaction/edit-transaction';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { PaginationComponent } from '../../../../shared/components/PaginationComponent/PaginationComponent';
-import { BaseFilter } from '../../../../core/interfaces/GenericFilter.interfaces';
 import { TransactionFilter } from '../../interfaces/TransactionFilter.interface';
+import { createPaginationState, PaginationState } from '../../../../core/utils/pagination.util';
 
 @Component({
   selector: 'app-transaction-list',
@@ -23,31 +23,28 @@ import { TransactionFilter } from '../../interfaces/TransactionFilter.interface'
 })
 export class TransactionList {
 
-  totalElements = signal(0);
-  totalPages = signal(0);
-  currentPage = signal(0);
-  pageSize = signal(20);
+  private transactionService = inject(TransactionService);
+  private fb = inject(FormBuilder);
+  private accountsService = inject(AccountService);
+  private categoryService = inject(CategoryService);
+  private ns = inject(NotificationService);
 
   TRANSACTION_TYPE = TransactionType;
-
   transactionTypes = Object.values(TransactionType);
 
-  transactions = signal<TransactionDTO[]>([]);
-
+  paginationState: PaginationState = createPaginationState(20);
   form: FormGroup;
 
-  accounts: OptionDTO[] = [];
-  categories: OptionDTO[] = [];
+  accounts = signal<OptionDTO[]>([]);
+  categories = signal<OptionDTO[]>([]);
+  transactions = signal<TransactionDTO[]>([]);
 
-  isTransactionModalOpen = false;
+  isTransactionModalOpen = signal(false);
 
-  constructor(private transactionService: TransactionService,
-    private fb: FormBuilder,
-    private accountsService: AccountService,
-    private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef,
-    private ns: NotificationService
-  ) {
+  // Trigger para recargar cuando cambia la búsqueda
+  private searchTrigger = signal(0);
+
+  constructor() {
     this.form = this.fb.group({
       dateFrom: [''],
       dateTo: [''],
@@ -60,8 +57,12 @@ export class TransactionList {
       counterparty: ['']
     });
 
+    // Efecto: cuando searchTrigger cambia, busca transacciones
+    effect(() => {
+      this.searchTrigger();
+      this.performSearch();
+    });
   }
-
 
   ngOnInit() {
     this.loadFilterData();
@@ -73,9 +74,8 @@ export class TransactionList {
       categories: this.categoryService.getOptions()
     }).subscribe({
       next: ({ accounts, categories }) => {
-        this.accounts = accounts;
-        this.categories = categories;
-        this.cdr.markForCheck();
+        this.accounts.set(accounts);
+        this.categories.set(categories);
         this.onSearch();
       },
       error: err => {
@@ -84,21 +84,17 @@ export class TransactionList {
     });
   }
 
-
-
-  onSearch() {
+  private performSearch(): void {
     const filter: TransactionFilter = {
-      page: this.currentPage(),
-      size: this.pageSize(),
+      page: this.paginationState.currentPage(),
+      size: this.paginationState.pageSize(),
       ...this.form.value
     };
 
     this.transactionService.search(filter).subscribe({
       next: (data) => {
         this.transactions.set(data.content);
-        this.totalElements.set(data.page.totalElements);
-        this.totalPages.set(data.page.totalPages);
-        this.cdr.markForCheck();
+        this.paginationState.updateFromResponse(data);
       },
       error: (err) => {
         this.ns.error(err);
@@ -107,6 +103,9 @@ export class TransactionList {
     });
   }
 
+  onSearch() {
+    this.searchTrigger.update(v => v + 1);
+  }
 
   onClear() {
     this.form.reset({
@@ -120,19 +119,16 @@ export class TransactionList {
       description: '',
       counterparty: ''
     });
-
-    this.cdr.markForCheck();
     this.onSearch();
   }
 
   onTransactionModalClosed($event: boolean) {
-    this.isTransactionModalOpen = false;
+    this.isTransactionModalOpen.set(false);
     this.onSearch();
   }
 
-
   openNewTransactionModal(): void {
-    this.isTransactionModalOpen = true;
+    this.isTransactionModalOpen.set(true);
   }
 
   get userHasAccounts(): boolean {
@@ -140,8 +136,7 @@ export class TransactionList {
   }
 
   onPageChange(newPage: number) {
-    this.currentPage.set(newPage);
+    this.paginationState.goToPage(newPage);
     this.onSearch();
   }
-
 }
