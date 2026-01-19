@@ -21,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Transaction {
+public class Transaction extends AuditedEntity {
 
     @Id
     @GeneratedValue
@@ -45,8 +45,8 @@ public class Transaction {
 
     private String counterparty; //who I paid, who paid me
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
     @ManyToOne(fetch = FetchType.EAGER)

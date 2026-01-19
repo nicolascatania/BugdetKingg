@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Category {
+public class Category extends AuditedEntity {
 
     @Id
     @GeneratedValue

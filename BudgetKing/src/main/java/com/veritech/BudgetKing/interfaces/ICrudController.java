@@ -1,10 +1,13 @@
 package com.veritech.BudgetKing.interfaces;
 
+import com.veritech.BudgetKing.dto.OptionDTO;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 
@@ -45,5 +48,10 @@ public interface ICrudController<D, ID, FILTER> {
     @PostMapping("/search")
     default ResponseEntity<Page<D>> search(@RequestBody FILTER filter) {
         return ResponseEntity.ok(getService().search(filter));
+    }
+
+    @GetMapping("/options")
+    default ResponseEntity<List<OptionDTO>> getOptions() {
+        return ResponseEntity.ok(getService().getOptions());
     }
 }

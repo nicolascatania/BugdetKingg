@@ -31,9 +31,4 @@ public class AccountController implements ICrudController<AccountDTO, UUID, Acco
     public ResponseEntity<List<AccountDTO>> getByUser() {
         return ResponseEntity.ok(this.accountService.getByUser());
     }
-
-    @GetMapping("/options")
-    public ResponseEntity<List<OptionDTO>> getOptions() {
-        return ResponseEntity.ok(this.accountService.getOptions());
-    }
 }

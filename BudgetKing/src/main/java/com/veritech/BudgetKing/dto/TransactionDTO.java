@@ -20,8 +20,7 @@ public record TransactionDTO(
         String counterparty,
         @NotBlank(message = "Description is mandatory")
         String description,
-        @NotNull(message = "Category is mandatory")
-        UUID category,
+        UUID category, // only required for non-transfer transactions
         String categoryName,
         @NotNull(message = "Account ID is mandatory")
         UUID account,
@@ -29,10 +28,18 @@ public record TransactionDTO(
         String accountName
 ) {
         @AssertTrue(message = "destinationAccount is mandatory when transaction type is TRANSFER")
-        public boolean isdestinationAccountValid() {
-                if (!TransactionType.TRANSFER.equals(type)) {
+        public boolean isDestinationAccountValid() {
+                if (!TransactionType.TRANSFER.name().equals(type)) {
                         return true;
                 }
                 return destinationAccount != null;
+        }
+
+        @AssertTrue(message = "category is mandatory for INCOME and EXPENSE transactions")
+        public boolean isCategoryRequired() {
+                if (TransactionType.TRANSFER.name().equals(type)) {
+                        return true; // TRANSFER no requiere categoria
+                }
+                return category != null;
         }
 }

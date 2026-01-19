@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.AppUserDTO;
+import com.veritech.BudgetKing.dto.OptionDTO;
 import com.veritech.BudgetKing.filter.AppUserFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.AppUserMapper;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -65,6 +67,14 @@ public class AppUserService implements ICrudService<AppUserDTO, UUID, AppUserFil
             users = repository.findAll(filter.toSpecification(), pageable);
         }
         return users.map(mapper::toDto);
+    }
+
+    @Override
+    public List<OptionDTO> getOptions() {
+        return repository.findAll()
+                .stream()
+                .map(u -> new OptionDTO(u.getId().toString(), u.getName()))
+                .toList();
     }
 
     public AppUser getEntityById(UUID id) {

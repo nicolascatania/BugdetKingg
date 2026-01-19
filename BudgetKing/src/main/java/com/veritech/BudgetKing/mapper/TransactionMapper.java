@@ -23,8 +23,8 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 entity.getType().name(),
                 entity.getCounterparty(),
                 entity.getDescription(),
-                entity.getCategory().getId(),
-                entity.getCategory().getName(),
+                entity.getCategory() != null ? entity.getCategory().getId() : null,
+                entity.getCategory() != null ? entity.getCategory().getName() : null,
                 entity.getAccount().getId(),
                 entity.getDestinationAccount() != null ? entity.getDestinationAccount().getId() : null,
                 entity.getAccount().getName()
@@ -55,7 +55,7 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 entity.getType().name(),
                 entity.getCounterparty(),
                 entity.getDescription(),
-                entity.getCategory().getName(),
+                entity.getCategory() != null ? entity.getCategory().getName() : "Transfer",
                 entity.getAccount().getName()
 
         );

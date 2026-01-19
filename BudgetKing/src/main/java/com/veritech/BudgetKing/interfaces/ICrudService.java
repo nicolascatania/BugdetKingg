@@ -1,9 +1,10 @@
 package com.veritech.BudgetKing.interfaces;
 
+import com.veritech.BudgetKing.dto.OptionDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.List;
 
 public interface ICrudService<D, ID, FILTER> {
 
@@ -19,4 +20,6 @@ public interface ICrudService<D, ID, FILTER> {
     void deleteById(ID id);
 
     Page<D> search(FILTER filter);
+
+    List<OptionDTO> getOptions();
 }

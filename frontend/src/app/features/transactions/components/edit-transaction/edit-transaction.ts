@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TransactionDTO } from '../../interfaces/TransactionDTO.interface';
 import { TransactionService } from '../../services/transaction-service';
 import { TransactionType } from '../../../../shared/models/TransactionType.enum';
-import { TransactionCategory } from '../../../../shared/models/TransactionCategories.enum';
+// TransactionCategory not used — category values come from server (UUID) or null for transfers
 import { AccountService } from '../../../accounts/services/AccountService';
 import { AccountDTO } from '../../../accounts/interfaces/AccountDTO.interfaces';
 import { formatDate } from '../../../../shared/utils/datesUtils';
@@ -142,8 +142,10 @@ export class EditTransaction {
       const destinationCtrl = this.form.get('destinationAccount');
 
       if (type === TransactionType.TRANSFER) {
-        categoryCtrl?.setValue(TransactionCategory.TRANSFER);
+        // For transfers the backend expects no category UUID — use null/empty
+        categoryCtrl?.setValue(null);
         categoryCtrl?.disable({ emitEvent: false });
+        categoryCtrl?.clearValidators();
 
         destinationCtrl?.setValidators(Validators.required);
 
@@ -152,7 +154,9 @@ export class EditTransaction {
           destinationCtrl?.setValue(destinations[0].id);
         }
       } else {
+        // Restore category control for income/expense
         categoryCtrl?.enable({ emitEvent: false });
+        categoryCtrl?.setValidators(Validators.required);
         categoryCtrl?.reset();
 
         destinationCtrl?.clearValidators();

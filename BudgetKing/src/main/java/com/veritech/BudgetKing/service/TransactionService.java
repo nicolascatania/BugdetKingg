@@ -59,7 +59,12 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
         AppUser user = securityUtils.getCurrentUser();
         Account sourceAccount = accountService.getEntityById(dto.account());
         Account destinationAccount = resolveDestinationAccount(dto);
-        Category category = categoryService.getEntityById(dto.category());
+
+        // Category is optional for TRANSFER transactions
+        Category category = null;
+        if (dto.category() != null) {
+            category = categoryService.getEntityById(dto.category());
+        }
 
         validateTransaction(dto, sourceAccount, destinationAccount);
 
@@ -88,6 +93,15 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
     @Override
     public void deleteById(UUID id) {
         //shall not be used
+    }
+
+    @Override
+    public List<OptionDTO> getOptions() {
+        AppUser user = securityUtils.getCurrentUser();
+        return transactionRepository.findByUser(user)
+                .stream()
+                .map(t -> new OptionDTO(t.getId().toString(), t.getDescription()))
+                .toList();
     }
 
     @Override
@@ -137,6 +151,7 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
                 .findByUserAndDateBetween(user, start, end)
                 .stream()
                 .map(mapper::toLastMovesDTO)
+                .sorted((a, b) -> b.date().compareTo(a.date()))
                 .toList();
     }
 
