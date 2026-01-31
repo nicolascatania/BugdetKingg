@@ -39,6 +39,10 @@ class TransactionServiceTest {
     @Mock
     private TransactionMapper transactionMapper;
 
+
+    @Mock
+    private AccountService accountService;
+
     @InjectMocks
     private TransactionService transactionService;
 
@@ -261,4 +265,22 @@ class TransactionServiceTest {
         );
     }
 
+    @Test
+    void create_Success() {
+        // GIVEN
+        Account source = Account.builder().id(mockAccount.getId()).balance(new BigDecimal("100.00")).build();
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(accountService.getEntityById(any())).thenReturn(source);
+        when(transactionMapper.toEntity(any(), any())).thenReturn(mockTransaction);
+        when(transactionRepository.save(any())).thenReturn(mockTransaction);
+        when(transactionMapper.toDto(any())).thenReturn(mockDto);
+
+        // WHEN
+        TransactionDTO result = transactionService.create(mockDto);
+
+        // THEN
+        assertNotNull(result);
+        assertEquals(new BigDecimal("85.00"), source.getBalance());
+        verify(transactionRepository, times(1)).save(any());
+    }
 }
