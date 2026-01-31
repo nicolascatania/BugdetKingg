@@ -1,0 +1,61 @@
+services:
+  # Base de Datos
+  db:
+    image: mysql:8.0
+    container_name: budget-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: budget_db
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: user_budget
+      MYSQL_PASSWORD: user_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: ./BudgetKing
+      dockerfile: Dockerfile
+    container_name: spring-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/budget_db?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=user_budget
+      - SPRING_DATASOURCE_PASSWORD=user_password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  # Frontend Angular
+  frontend:
+    build:
+      context: ./frontend
+    container_name: angular-client
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+# Secciones de nivel raíz (sin espacios al principio)
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:

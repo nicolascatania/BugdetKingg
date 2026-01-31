@@ -15,6 +15,7 @@ import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import com.veritech.BudgetKing.utils.DateUtils;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -168,9 +169,9 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
         return transactionRepository.getMonthlyReport(user, start, end);
     }
 
-    private void validateTransaction(
+    void validateTransaction(
             TransactionDTO dto,
-            Account source,
+            @NotNull Account source,
             Account destination
     ) {
         TransactionType type = TransactionType.valueOf(dto.type());
@@ -188,13 +189,13 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
         }
     }
 
-    private void applyBalanceChanges(
+    void applyBalanceChanges(
             TransactionDTO dto,
             Account source,
             Account destination
     ) {
 
-        TransactionType type = TransactionType.valueOf(dto.type());
+        TransactionType type = TransactionType.fromString(dto.type());
 
         switch (type) {
             case EXPENSE -> source.setBalance(source.getBalance().subtract(dto.amount()));
