@@ -23,9 +23,8 @@ services:
 
   # Backend Spring Boot - ¡AQUÍ ESTÁ EL CAMBIO!
   backend:
-    # Reemplazamos 'build' por la imagen de Docker Hub
-    image: ${{ secrets.DOCKERHUB_USERNAME }}/budget-king-backend:latest
-    pull_policy: always # Esto obliga a Docker a buscar si hay una versión nueva en la nube
+    image: nicolascatania/budget-king-backend:latest 
+    pull_policy: always
     container_name: spring-api
     depends_on:
       db:
