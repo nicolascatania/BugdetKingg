@@ -45,13 +45,11 @@ jobs:
       - name: Run Tests con Maven
         run: |
           cd BudgetKing
-          mvn clean test -X \
+          mvn clean test \
             -Dspring.datasource.url=jdbc:mysql://127.0.0.1:3306/budget_db?allowPublicKeyRetrieval=true\&useSSL=false \
             -Dspring.datasource.username=user_budget \
             -Dspring.datasource.password=user_password \
-            -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver \
-            -Dspring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect \
-            -Dspring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+            -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
       - name: Build with Maven (Skip Tests)
         run: |
