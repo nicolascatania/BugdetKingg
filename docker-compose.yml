@@ -1,5 +1,5 @@
 services:
-  # Base de Datos
+  # Base de Datos (Se queda igual, no cambia)
   db:
     image: mysql:8.0
     container_name: budget-db
@@ -21,11 +21,11 @@ services:
       timeout: 5s
       retries: 5
 
-  # Backend Spring Boot
+  # Backend Spring Boot - ¡AQUÍ ESTÁ EL CAMBIO!
   backend:
-    build:
-      context: ./BudgetKing
-      dockerfile: Dockerfile
+    # Reemplazamos 'build' por la imagen de Docker Hub
+    image: ${{ secrets.DOCKERHUB_USERNAME }}/budget-king-backend:latest
+    pull_policy: always # Esto obliga a Docker a buscar si hay una versión nueva en la nube
     container_name: spring-api
     depends_on:
       db:
@@ -40,7 +40,7 @@ services:
     networks:
       - app-network
 
-  # Frontend Angular
+  # Frontend Angular (Por ahora se queda con build, hasta que hagamos su Action)
   frontend:
     build:
       context: ./frontend
@@ -52,7 +52,6 @@ services:
     networks:
       - app-network
 
-# Secciones de nivel raíz (sin espacios al principio)
 networks:
   app-network:
     driver: bridge
