@@ -265,4 +265,8 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
                 .getIncomeExpenseByMonth(user, currentYear, accountId);
     }
 
+    public void testCICD() {
+        // Method to test CICD pipeline
+    }
+
 }
