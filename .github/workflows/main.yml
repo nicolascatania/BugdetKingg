@@ -34,14 +34,17 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
+    - name: Wait for MySQL to be ready
+      run: sleep 15
+
     - name: Run Tests con Maven
-      # Pasamos las variables de conexión para que apunte al service de arriba
       run: |
         cd BudgetKing
         mvn clean test \
-          -Dspring.datasource.url=jdbc:mysql://localhost:3306/budget_db \
+          -Dspring.datasource.url=jdbc:mysql://127.0.0.1:3306/budget_db \
           -Dspring.datasource.username=user_budget \
-          -Dspring.datasource.password=user_password
+          -Dspring.datasource.password=user_password \
+          -Dspring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 
     - name: Build with Maven (Skip Tests)
       run: |
