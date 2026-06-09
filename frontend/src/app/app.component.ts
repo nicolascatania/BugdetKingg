@@ -10,5 +10,5 @@ import { Home } from "./features/home/pages/home/home";
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'frontend';
+  title = 'BudgetKing';
 }

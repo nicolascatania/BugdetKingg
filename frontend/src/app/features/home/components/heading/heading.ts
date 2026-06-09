@@ -1,25 +1,33 @@
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 import { AccountService } from '../../../accounts/services/AccountService';
+import { DolarService } from '../../../../core/services/dolarService';
+
 
 @Component({
   selector: 'heading',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './heading.html',
   styleUrl: './heading.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Heading {
+  private readonly accountService = inject(AccountService);
+  private readonly dolarService = inject(DolarService);
 
-  private accountService = inject(AccountService);
-
-  /**
-   * Fired when the user wants to create a new account.
-   */
-  @Output() newAccount = new EventEmitter<void>();
-  @Output() newTransaction = new EventEmitter<void>();
+  // Exponer los datos del dólar como Signals inmutables y reactivos
+  private readonly dolarData$ = this.dolarService.getDolarCompraVenta();
   
-  totalBalance = this.accountService.totalBalance;
+  readonly dolarCompra = toSignal(this.dolarData$.pipe(map(r => r.compra)), { initialValue: 0 });
+  readonly dolarVenta = toSignal(this.dolarData$.pipe(map(r => r.venta)), { initialValue: 0 });
+
+  @Output() readonly newAccount = new EventEmitter<void>();
+  @Output() readonly newTransaction = new EventEmitter<void>();
+  
+  readonly totalBalance = this.accountService.totalBalance;
 
   openNewAccountModal(): void {
     this.newAccount.emit();
@@ -32,5 +40,4 @@ export class Heading {
   get userHasAccounts(): boolean {
     return this.accountService.userHasAccounts();
   }
-
 }

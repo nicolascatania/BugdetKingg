@@ -1,23 +1,52 @@
-<div class="mb-12">
-  <p class="text-slate-400 text-sm uppercase tracking-wide">Total Balance</p>
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-12">
+  
+  <div>
+    <p class="text-slate-400 text-xs font-medium uppercase tracking-wider">Total Balance</p>
+    <h1
+      class="text-4xl font-bold mt-2 flex items-center gap-3 tracking-tight"
+      [ngClass]="{
+        'text-accent-green': totalBalance() > 0,
+        'text-accent-red': totalBalance() < 0,
+        'text-slate-300': totalBalance() === 0
+      }"
+    >
+      <i class="fa-solid fa-wallet text-3xl opacity-80"></i>
+      {{ totalBalance() | currency:'ARS':'symbol':'1.2-2' }}
+    </h1>
+  </div>
 
-  <h1
-    class="text-4xl font-semibold mt-2 flex items-center gap-3"
-    [ngClass]="{
-    'text-accent-green': totalBalance() > 0,
-    'text-accent-red': totalBalance() < 0,
-    'text-slate-300': totalBalance() === 0
-  }"
-  >
-    <i class="fa-solid fa-wallet text-3xl opacity-80"></i>
-    {{ totalBalance() | currency:'ARS':'symbol':'1.2-2' }}
-  </h1>
+  <div class="flex items-center gap-4 bg-slate-800/40 border border-slate-700/60 rounded-xl p-4 self-start lg:self-auto backdrop-blur-sm">
+    <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+      <i class="fa-solid fa-circle-dollar-to-slot text-xl"></i>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+      <div>
+        <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Dólar Oficial</p>
+        <p class="text-sm font-medium text-slate-200 mt-0.5">Mercado Sincronizado</p>
+      </div>
+      
+      <div class="hidden sm:block h-8 w-px bg-slate-700"></div>
+      
+      <div class="flex gap-4">
+        <div>
+          <span class="text-[10px] text-slate-500 block uppercase font-bold">Compra</span>
+          <span class="text-base font-semibold text-emerald-400">{{ dolarCompra() | currency:'ARS':'symbol':'1.0-0' }}</span>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-500 block uppercase font-bold">Venta</span>
+          <span class="text-base font-semibold text-slate-200">{{ dolarVenta() | currency:'ARS':'symbol':'1.0-0' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </div>
 
-<div class="flex flex-col md:flex-row gap-3 mb-14">
+<div class="flex flex-col sm:flex-row gap-3 mb-14">
   <button
     (click)="openNewTransactionModal()"
-    class="flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-accent-blue/90 hover:bg-accent-blue text-sm font-medium"
+    class="flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-accent-blue/90 hover:bg-accent-blue text-sm font-medium transition-colors duration-200"
     [disabled]="!userHasAccounts"
   >
     <i class="fa-solid fa-right-left"></i>
@@ -26,7 +55,7 @@
 
   <button
     (click)="openNewAccountModal()"
-    class="flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-medium"
+    class="flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-medium transition-colors duration-200"
   >
     <i class="fa-solid fa-building-columns"></i>
     New Account
