@@ -1,9 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
-import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  input,
+  output,
+} from '@angular/core';
+import {
+  Chart,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import { MonthlyIncomeExpenseDTO } from '../../../transactions/interfaces/MonthlyIncomeExpenseDTO.interface';
 
-Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+Chart.register(
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+);
 
 @Component({
   selector: 'app-expenses-income-each-month',
@@ -32,7 +53,9 @@ export class ExpensesIncomeEachMonth {
   }
 
   private updateOrRenderChart(data: MonthlyIncomeExpenseDTO[]) {
-    const canvasElement = document.getElementById('incomeExpenseChart') as HTMLCanvasElement;
+    const canvasElement = document.getElementById(
+      'incomeExpenseChart',
+    ) as HTMLCanvasElement;
     if (!canvasElement) return;
 
     const incomeData = Array(12).fill(0);
@@ -56,7 +79,20 @@ export class ExpensesIncomeEachMonth {
     this.barChart = new Chart(canvasElement, {
       type: 'bar',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        labels: [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ],
         datasets: [
           {
             label: 'Income',
@@ -86,8 +122,8 @@ export class ExpensesIncomeEachMonth {
             position: 'bottom',
             labels: {
               color: '#94a3b8',
-              font: { size: 11, weight: 'normal' },
-              padding: 16,
+              font: { size: 11 },
+              padding: 12,
               usePointStyle: true,
               pointStyle: 'circle',
             },

@@ -143,9 +143,16 @@ export class Dashboard implements OnInit {
   private renderExpenseChart(data: Record<string, number>) {
     const labels = Object.keys(data);
     const values = Object.values(data);
+    const total = values.reduce((a, b) => a + b, 0);
+
+    const labelsWithPercentage = labels.map((label, index) => {
+      const val = values[index];
+      const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
+      return `${label} (${pct}%)`;
+    });
 
     if (this.expenseChart) {
-      this.expenseChart.data.labels = labels;
+      this.expenseChart.data.labels = labelsWithPercentage;
       this.expenseChart.data.datasets[0].data = values;
       this.expenseChart.update();
       return;
@@ -154,7 +161,7 @@ export class Dashboard implements OnInit {
     this.expenseChart = new Chart('expensePie', {
       type: 'pie',
       data: {
-        labels,
+        labels: labelsWithPercentage,
         datasets: [
           {
             data: values,
@@ -180,8 +187,8 @@ export class Dashboard implements OnInit {
             position: 'bottom',
             labels: {
               color: '#94a3b8',
-              font: { size: 11, weight: 'normal' },
-              padding: 16,
+              font: { size: 10, weight: 'normal' },
+              padding: 10,
               usePointStyle: true,
               pointStyle: 'circle',
             },
@@ -195,11 +202,8 @@ export class Dashboard implements OnInit {
             padding: 10,
             callbacks: {
               label: (context) => {
-                const label = context.label ?? '';
                 const value = context.raw as number;
-                const total = values.reduce((a, b) => a + b, 0);
-                const percentage = ((value / total) * 100).toFixed(1);
-                return ` ${label}: $${value.toLocaleString('es-AR')} (${percentage}%)`;
+                return ` $${value.toLocaleString('es-AR')}`;
               },
             },
           },
