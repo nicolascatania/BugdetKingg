@@ -7,6 +7,8 @@ import java.util.UUID;
 public record CategoryDTO(
         UUID id,
         @NotBlank(message = "Name is mandatory")
-        String name
+        String name,
+        @NotBlank(message = "Icon is mandatory")
+        String icon
 ) {
 }

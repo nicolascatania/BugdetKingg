@@ -12,6 +12,23 @@
         <textarea formControlName="description" placeholder="Optional details..." rows="3"
           class="w-full rounded-lg bg-slate-900/60 border border-border px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-accent-blue transition-colors resize-none"></textarea>
       </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-400 mb-2">Account Icon</label>
+
+        <div class="grid grid-cols-4 gap-2 p-2.5 rounded-xl bg-slate-900/40 border border-border">
+          @for (option of iconOptions; track option.value) {
+          <button type="button" (click)="form.patchValue({ icon: option.value })" [title]="option.label"
+            class="flex flex-col items-center justify-center p-3 rounded-lg border text-lg transition-all focus:outline-none"
+            [ngClass]="{
+        'bg-indigo-600/10 border-indigo-500 text-indigo-400 shadow-md shadow-indigo-500/5': form.get('icon')?.value === option.value,
+        'bg-slate-800/40 border-border/40 text-slate-400 hover:border-border hover:text-slate-200': form.get('icon')?.value !== option.value
+      }">
+            <i class="fa-solid" [ngClass]="option.preview"></i>
+          </button>
+          }
+        </div>
+      </div>
     </form>
   </div>
 

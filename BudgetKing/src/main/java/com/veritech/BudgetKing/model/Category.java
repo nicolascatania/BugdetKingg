@@ -29,6 +29,9 @@ public class Category extends AuditedEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, length = 50)
+    private String icon;
+
     // Many categories belong to one user
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

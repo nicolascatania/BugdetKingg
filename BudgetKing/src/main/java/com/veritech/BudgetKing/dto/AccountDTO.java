@@ -11,6 +11,8 @@ public record AccountDTO(
         String name,
         @NotBlank(message = "Description is mandatory")
         String description,
+        @NotBlank(message = "Icon is mandatory")
+        String icon,
         BigDecimal balance
 ) {
 }

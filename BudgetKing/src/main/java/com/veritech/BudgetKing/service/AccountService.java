@@ -71,6 +71,7 @@ public class AccountService implements ICrudService<AccountDTO, UUID, AccountFil
 
         existing.setName(dto.name());
         existing.setDescription(dto.description());
+        existing.setIcon(dto.icon());
         // existing.setBalance(dto.balance()); it should just change name and description, not balance
 
         Account updated = accountRepository.save(existing);

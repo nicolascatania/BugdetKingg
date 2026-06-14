@@ -57,6 +57,7 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
         found.setName(dto.name());
+        found.setIcon(dto.icon());
 
         Category saved = categoryRepository.save(found);
         return categoryMapper.toDto(saved);

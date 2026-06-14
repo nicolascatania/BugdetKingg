@@ -35,6 +35,9 @@ public class Account extends AuditedEntity {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
 
+    @Column(nullable = false, length = 50)
+    private String icon;
+
     @ManyToOne(fetch = FetchType.EAGER) //for now to test and make it easier
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;

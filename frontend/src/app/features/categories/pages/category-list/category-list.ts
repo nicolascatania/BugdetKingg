@@ -1,12 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { CategoryService } from '../../service/category-service';
 import { CategoryDTO } from '../../interfaces/CategoryDTO.interface';
 import { EditCategory } from '../../components/edit-category/edit-category';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationComponent } from '../../../../shared/components/PaginationComponent/PaginationComponent';
-import { createPaginationState, PaginationState } from '../../../../core/utils/pagination.util';
+import {
+  createPaginationState,
+  PaginationState,
+} from '../../../../core/utils/pagination.util';
 
 @Component({
   selector: 'app-category-list',
@@ -16,7 +25,6 @@ import { createPaginationState, PaginationState } from '../../../../core/utils/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryList {
-
   private categoryService = inject(CategoryService);
   private notificationService = inject(NotificationService);
 
@@ -25,11 +33,9 @@ export class CategoryList {
   categories = signal<CategoryDTO[]>([]);
   paginationState: PaginationState = createPaginationState(20);
 
-  // Trigger para recargar cuando sea necesario
   private loadTrigger = signal(0);
 
   constructor() {
-    // Efecto: cuando loadTrigger cambia, carga categorías
     effect(() => {
       this.loadTrigger();
       this.loadCategories();
@@ -37,7 +43,7 @@ export class CategoryList {
   }
 
   ngOnInit() {
-    this.loadTrigger.update(v => v + 1);
+    this.loadTrigger.update((v) => v + 1);
   }
 
   private loadCategories(): void {
@@ -51,12 +57,12 @@ export class CategoryList {
       error: (err) => {
         this.notificationService.error('Error loading categories');
         this.categories.set([]);
-      }
+      },
     });
   }
 
   private reloadCategories(): void {
-    this.loadTrigger.update(v => v + 1);
+    this.loadTrigger.update((v) => v + 1);
   }
 
   onPageChange(newPage: number) {
@@ -75,7 +81,7 @@ export class CategoryList {
       error: (err: HttpErrorResponse) => {
         const message = err?.error?.message ?? 'Error deleting category';
         this.notificationService.error(message);
-      }
+      },
     });
   }
 
@@ -84,4 +90,3 @@ export class CategoryList {
     this.reloadCategories();
   }
 }
-

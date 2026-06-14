@@ -1,36 +1,49 @@
-<ui-modal
-  [open]="true"
-  [title]="category() ? 'Edit Category' : 'New Category'"
-  (closed)="close()"
->
-  <!-- BODY -->
+<ui-modal [open]="true" [title]="category() ? 'Edit Category' : 'New Category'" (closed)="close()">
   <div modal-body>
     <form [formGroup]="form" class="space-y-4">
       <div>
-        <label class="block text-sm text-slate-300 mb-1">Name</label>
-        <input
-          type="text"
-          formControlName="name"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        />
+        <label class="block text-xs font-medium text-slate-400 mb-1.5">Name</label>
+        <input type="text" formControlName="name" placeholder="e.g., Delivery, Services, Subscriptions"
+          class="w-full rounded-lg bg-slate-900/60 border border-border px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-400 mb-2">Category Icon</label>
+
+        <div class="sticky top-0 z-10 bg-slate-950 pb-2">
+          <input type="text" placeholder="Search icon (e.g. 'games')..."
+            (input)="searchQuery.set($any($event.target).value)"
+            class="w-full rounded-lg bg-slate-900 border border-border px-3 py-2 text-sm text-slate-200 focus:border-indigo-500 transition-colors" />
+        </div>
+
+        <div
+          class="grid grid-cols-4 sm:grid-cols-5 gap-2 p-2.5 rounded-xl bg-slate-900/40 border border-border max-h-64 overflow-y-auto custom-scrollbar">
+          @for (option of filteredIcons(); track option.value) {
+          <button type="button" (click)="form.patchValue({ icon: option.value })"
+            class="flex flex-col items-center justify-center p-3 sm:p-2.5 rounded-lg border transition-all" [ngClass]="{
+        'bg-indigo-600/20 border-indigo-500 text-indigo-400': form.get('icon')?.value === option.value,
+        'bg-slate-800/40 border-border/40 text-slate-400 hover:border-slate-600': form.get('icon')?.value !== option.value
+      }">
+            <i class="fa-solid" [ngClass]="option.preview"></i>
+          </button>
+          } @empty {
+          <p class="col-span-full text-center text-xs text-slate-500 py-4">No icons found.</p>
+          }
+        </div>
       </div>
     </form>
   </div>
 
-  <!-- FOOTER -->
-  <div modal-footer>
+  <div modal-footer class="flex justify-end gap-2.5">
     <button
-      class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600"
-      (click)="close()"
-    >
+      class="px-4 py-2 text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-border transition-colors"
+      (click)="close()">
       Cancel
     </button>
 
     <button
-      class="px-4 py-2 ms-2 rounded-lg bg-accent-green hover:bg-green-600"
-      (click)="submit()"
-      [disabled]="form.invalid"
-    >
+      class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-slate-100 transition-colors disabled:opacity-40 disabled:hover:bg-indigo-600"
+      (click)="submit()" [disabled]="form.invalid">
       {{ category() ? 'Update' : 'Create' }}
     </button>
   </div>

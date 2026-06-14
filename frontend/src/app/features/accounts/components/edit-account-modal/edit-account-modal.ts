@@ -4,13 +4,19 @@ import {
   EventEmitter,
   Input,
   Output,
-  OnInit
+  OnInit,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AccountDTO } from '../../interfaces/AccountDTO.interfaces';
 import { AccountService } from '../../services/AccountService';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
+import { FINANCIAL_ICONS } from '../../../icons/interfaces/iconsenum.interace';
 
 /**
  * Modal used to create or edit an account.
@@ -29,20 +35,22 @@ import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditAccountModal implements OnInit {
-
   @Input() account: AccountDTO | null = null;
   @Output() closed = new EventEmitter<boolean>();
 
   form: FormGroup;
 
+  protected iconOptions = FINANCIAL_ICONS;
+
   constructor(
     private fb: FormBuilder,
-    private accountService: AccountService
+    private accountService: AccountService,
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', [Validators.maxLength(255), Validators.required]],
-      balance: [0, [Validators.required, Validators.min(0)]],
+      // balance: [0, [Validators.required, Validators.min(0)]], NOT USED FOR NOW, USER SETS A NEW ACCOUNT AND STARTS DOING TXS, NOT SETTING THE ACTUAL AMMOUNT
+      icon: ['fa-wallet', [Validators.required]],
     });
   }
 
@@ -55,6 +63,7 @@ export class EditAccountModal implements OnInit {
         name: this.account.name,
         description: this.account.description,
         balance: this.account.balance,
+        icon: this.account.icon || 'fa-wallet',
       });
     }
   }
@@ -86,5 +95,8 @@ export class EditAccountModal implements OnInit {
    */
   close(success = false): void {
     this.closed.emit(success);
+    if (success) {
+      this.accountService.loadAccounts();
+    }
   }
 }
