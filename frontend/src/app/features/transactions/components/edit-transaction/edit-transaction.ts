@@ -9,6 +9,7 @@ import {
   Output,
   OnInit,
   ChangeDetectorRef,
+  signal,
 } from '@angular/core';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
 import {
@@ -49,15 +50,12 @@ export class EditTransaction implements OnInit {
   transactionTypes = Object.values(TransactionType);
   form: FormGroup;
 
-  // Valores sugeridos para cargas rápidas de montos
   readonly quickAmounts: number[] = [1000, 2000, 5000, 10000, 15000];
 
-  private selectedAccountSignal = computed(() => {
-    return this.form?.get('account')?.value;
-  });
+  originAccountSignal = signal<string>('');
 
   filteredDestinationAccounts = computed(() => {
-    const selectedAccountId = this.selectedAccountSignal();
+    const selectedAccountId = this.originAccountSignal();
     return this.accounts()?.filter((acc) => acc.id !== selectedAccountId) ?? [];
   });
 
@@ -66,7 +64,7 @@ export class EditTransaction implements OnInit {
     private transactionService: TransactionService,
     private categoryService: CategoryService,
     private ns: NotificationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.form = this.fb.group({
       account: ['', Validators.required],
@@ -76,7 +74,7 @@ export class EditTransaction implements OnInit {
       type: ['EXPENSE', Validators.required],
       counterparty: ['', Validators.required],
       destinationAccount: [''],
-      date: [this.getLocalDateTimeString(), Validators.required], // 2. Seteado "hoy/ahora" por defecto nativamente
+      date: [this.getLocalDateTimeString(), Validators.required],
     });
 
     effect(() => {
@@ -84,7 +82,9 @@ export class EditTransaction implements OnInit {
       const accountCtrl = this.form.get('account');
 
       if (accounts?.length && !accountCtrl?.value) {
-        accountCtrl?.setValue(accounts[0].id);
+        const initialId = accounts[0].id;
+        accountCtrl!.setValue(initialId);
+        this.originAccountSignal.set(initialId);
         this.cdr.markForCheck();
       }
     });
@@ -104,6 +104,7 @@ export class EditTransaction implements OnInit {
         account: this.transaction.account,
         date: this.transaction.date,
       });
+      this.originAccountSignal.set(this.transaction.account);
     }
 
     this.handleTypeChanges();
@@ -114,7 +115,6 @@ export class EditTransaction implements OnInit {
     this.form.get('type')?.setValue(type);
   }
 
-  // 4. Lógica acumulativa para las píldoras de montos rápidos
   setQuickAmount(value: number): void {
     const amountCtrl = this.form.get('amount');
     const current = amountCtrl?.value ?? 0;
@@ -134,7 +134,10 @@ export class EditTransaction implements OnInit {
       ...this.form.getRawValue(),
     };
 
-    if (payload.type === TransactionType.TRANSFER && !payload.destinationAccount) {
+    if (
+      payload.type === TransactionType.TRANSFER &&
+      !payload.destinationAccount
+    ) {
       this.ns.info('Please select a destination account for the transfer.');
       return;
     }
@@ -174,7 +177,7 @@ export class EditTransaction implements OnInit {
         categoryCtrl?.disable({ emitEvent: false });
 
         destinationCtrl?.setValidators(Validators.required);
-        
+
         const destinations = this.filteredDestinationAccounts();
         if (destinations.length) {
           destinationCtrl?.setValue(destinations[0].id);
@@ -195,12 +198,18 @@ export class EditTransaction implements OnInit {
   }
 
   private handleAccountChanges(): void {
-    this.form.get('account')!.valueChanges.subscribe(() => {
-      this.form.get('account')?.updateValueAndValidity({ emitEvent: false });
-      
+    this.form.get('account')!.valueChanges.subscribe((accountId) => {
+      this.originAccountSignal.set(accountId);
+
       if (this.form.get('type')?.value === TransactionType.TRANSFER) {
         const destinations = this.filteredDestinationAccounts();
-        this.form.get('destinationAccount')?.setValue(destinations[0]?.id ?? null);
+        const currentDest = this.form.get('destinationAccount')?.value;
+
+        if (currentDest === accountId || !currentDest) {
+          this.form
+            .get('destinationAccount')
+            ?.setValue(destinations[0]?.id ?? null);
+        }
       }
       this.cdr.markForCheck();
     });
@@ -210,7 +219,6 @@ export class EditTransaction implements OnInit {
     return isAccountDTO(account) ? account.name : account.value;
   }
 
-  // Helper centralizado para inyectar la fecha ISO local exacta sin desfase de huso horario
   private getLocalDateTimeString(): string {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
