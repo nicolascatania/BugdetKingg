@@ -1,6 +1,20 @@
-import { ChangeDetectionStrategy, Component, computed, effect, EventEmitter, input, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  EventEmitter,
+  input,
+  Input,
+  Output,
+} from '@angular/core';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { TransactionDTO } from '../../interfaces/TransactionDTO.interface';
 import { TransactionService } from '../../services/transaction-service';
 import { TransactionType } from '../../../../shared/models/TransactionType.enum';
@@ -13,14 +27,11 @@ import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { CommonModule } from '@angular/common';
 
-
 type AccountLike = AccountDTO | OptionDTO;
 
 function isAccountDTO(acc: AccountLike): acc is AccountDTO {
   return 'name' in acc;
 }
-
-
 
 @Component({
   selector: 'app-edit-transaction',
@@ -30,13 +41,11 @@ function isAccountDTO(acc: AccountLike): acc is AccountDTO {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditTransaction {
-
   @Input() transaction: TransactionDTO | null = null;
   @Output() closed = new EventEmitter<boolean>();
 
   accounts = input<AccountLike[]>();
   categories: OptionDTO[] = [];
-
 
   transactionTypes = Object.values(TransactionType);
 
@@ -47,7 +56,7 @@ export class EditTransaction {
     private transactionService: TransactionService,
     private accountService: AccountService,
     private categoryService: CategoryService,
-    private ns: NotificationService
+    private ns: NotificationService,
   ) {
     this.form = this.fb.group({
       account: ['', Validators.required],
@@ -68,11 +77,9 @@ export class EditTransaction {
         accountCtrl?.setValue(accounts[0].id);
       }
     });
-
   }
 
   ngOnInit(): void {
-
     this.loadCategories();
 
     if (this.transaction) {
@@ -91,12 +98,11 @@ export class EditTransaction {
     this.handleAccountChanges();
   }
 
-
   submit(): void {
     if (this.form.invalid) {
       this.ns.error('Please fill in all required fields correctly.');
       return;
-    };
+    }
 
     const payload: TransactionDTO = {
       id: this.transaction?.id ?? '',
@@ -104,7 +110,10 @@ export class EditTransaction {
       ...this.form.getRawValue(),
     };
 
-    if (payload.type === TransactionType.TRANSFER && !payload.destinationAccount) {
+    if (
+      payload.type === TransactionType.TRANSFER &&
+      !payload.destinationAccount
+    ) {
       this.ns.info('Please select a destination account for the transfer.');
       return;
     }
@@ -115,19 +124,21 @@ export class EditTransaction {
 
     request$.subscribe({
       next: () => this.close(true),
-      error: () => this.ns.error('Something went wrong while creating the transaction. Please try again.'),
+      error: () =>
+        this.ns.error(
+          'Something went wrong while creating the transaction. Please try again.',
+        ),
     });
   }
 
   private loadCategories(): void {
     this.categoryService.getOptions().subscribe({
-      next: categories => {
+      next: (categories) => {
         this.categories = categories;
       },
       error: (err) => this.ns.error(err),
     });
   }
-
 
   /**
    * Closes the modal.
@@ -137,7 +148,7 @@ export class EditTransaction {
   }
 
   private handleTypeChanges(): void {
-    this.form.get('type')!.valueChanges.subscribe(type => {
+    this.form.get('type')!.valueChanges.subscribe((type) => {
       const categoryCtrl = this.form.get('category');
       const destinationCtrl = this.form.get('destinationAccount');
 
@@ -167,10 +178,9 @@ export class EditTransaction {
     });
   }
 
-
   filteredDestinationAccounts = computed(() => {
     const selectedAccountId = this.form.get('account')?.value;
-    return this.accounts()?.filter(acc => acc.id !== selectedAccountId) ?? [];
+    return this.accounts()?.filter((acc) => acc.id !== selectedAccountId) ?? [];
   });
 
   private handleAccountChanges(): void {
@@ -191,6 +201,16 @@ export class EditTransaction {
     return account.value;
   }
 
+  setCurrentDateTime(): void {
+    const now = new Date();
 
+    // Ajustar la zona horaria local para obtener el formato YYYY-MM-DDTHH:mm requerido por el input
+    const offset = now.getTimezoneOffset() * 60000;
+    const localISOTime = new Date(now.getTime() - offset)
+      .toISOString()
+      .slice(0, 16); // Remueve segundos y milisegundos
 
+    this.form.get('date')?.setValue(localISOTime);
+    this.form.get('date')?.markAsDirty();
+  }
 }

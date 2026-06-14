@@ -5,13 +5,11 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DolarService {
-
   protected readonly baseUrl = `${environment.apiUrl}/dolar`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-
-  getDolarCompraVenta(): Observable<any> {
+  getDollarValue(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/cotizacion-oficial`);
   }
 }

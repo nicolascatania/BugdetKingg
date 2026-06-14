@@ -1,5 +1,7 @@
+name: budgetking
+
 services:
-  # Base de Datos (Se queda igual, no cambia)
+  # Base de Datos impecable y centralizada
   db:
     image: mysql:8.0
     container_name: budget-db
@@ -10,50 +12,16 @@ services:
       MYSQL_USER: user_budget
       MYSQL_PASSWORD: user_password
     ports:
+      # MAPEAMOS EL PUERTO HACIA AFUERA: Tu Windows ahora puede ver la BD en el 3306
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
-    networks:
-      - app-network
+    # Reemplazá tu bloque de healthcheck por este:
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Backend Spring Boot - ¡AQUÍ ESTÁ EL CAMBIO!
-  backend:
-    image: nicolascatania/budget-king-backend:latest 
-    pull_policy: always
-    container_name: spring-api
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/budget_db?allowPublicKeyRetrieval=true&useSSL=false
-      - SPRING_DATASOURCE_USERNAME=user_budget
-      - SPRING_DATASOURCE_PASSWORD=user_password
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-    ports:
-      - "8080:8080"
-    networks:
-      - app-network
-
-  # Frontend Angular (Por ahora se queda con build, hasta que hagamos su Action)
-  frontend:
-    build:
-      context: ./frontend
-    container_name: angular-client
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+      test: ["CMD-SHELL", "mysqladmin ping -u root -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
 
 volumes:
   db_data:

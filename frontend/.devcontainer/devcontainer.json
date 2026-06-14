@@ -1,0 +1,23 @@
+{
+	"name": "BKING FRONTEND DEV",
+	"dockerComposeFile": "../../docker-compose.yml",
+	"service": "frontend-dev",
+	"workspaceFolder": "/workspace/frontend",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "lts"
+		}
+	},
+	"forwardPorts": [
+		4200
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"angular.ng-template",
+				"dbaeumer.vscode-eslint"
+			]
+		}
+	},
+	"postCreateCommand": "npm install -g @angular/cli && npm install"
+}

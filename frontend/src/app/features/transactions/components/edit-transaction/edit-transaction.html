@@ -1,46 +1,38 @@
-<ui-modal
-  [open]="true"
-  [title]="transaction ? 'Edit Transaction' : 'New Transaction'"
-  (closed)="close(false)"
->
+<ui-modal [open]="true" [title]="transaction ? 'Edit Transaction' : 'New Transaction'" (closed)="close(false)">
   <!-- BODY -->
   <div modal-body>
     <form [formGroup]="form" class="space-y-4">
       <!-- Description -->
       <div>
         <label class="block text-sm text-slate-300 mb-1">Description</label>
-        <input
-          type="text"
-          formControlName="description"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        />
+        <input type="text" formControlName="description"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2" />
       </div>
 
       <!-- Amount -->
       <div>
         <label class="block text-sm text-slate-300 mb-1">Amount</label>
-        <input
-          type="number"
-          formControlName="amount"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        />
+        <input type="number" formControlName="amount"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2" />
       </div>
 
       <div>
         <label class="block text-sm text-slate-300 mb-1">Date</label>
-        <input
-          type="datetime-local"
-          formControlName="date"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        />
+        <div class="flex gap-2">
+          <input type="datetime-local" formControlName="date"
+            class="flex-1 rounded-lg bg-slate-800 border border-slate-600 px-3 py-2 text-slate-100 focus:outline-none focus:border-accent-blue" />
+          <button type="button" (click)="setCurrentDateTime()"
+            class="px-3 rounded-lg bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-200 transition-colors duration-150 flex items-center justify-center"
+            title="Set current date and time">
+            <i class="fa-solid fa-clock text-sm"></i>
+            <span class="sr-only">Now</span>
+          </button>
+        </div>
       </div>
 
       <div>
         <label class="block text-sm text-slate-300 mb-1">Account</label>
-        <select
-          formControlName="account"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        >
+        <select formControlName="account" class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2">
           @for (account of accounts(); track account.id) {
           <option [value]="account.id">{{ getAccountLabel(account) }}</option>
           }
@@ -50,10 +42,7 @@
       <!-- Type -->
       <div>
         <label class="block text-sm text-slate-300 mb-1">Type</label>
-        <select
-          formControlName="type"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        >
+        <select formControlName="type" class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2">
           <option value="">Select Type</option>
           @for (type of transactionTypes; track type) {
           <option [value]="type">{{ type }}</option>
@@ -66,10 +55,8 @@
         <label class="block text-sm text-slate-300 mb-1">
           Destination Account
         </label>
-        <select
-          formControlName="destinationAccount"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        >
+        <select formControlName="destinationAccount"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2">
           @for (account of filteredDestinationAccounts(); track account.id) {
           <option [value]="account.id">{{ getAccountLabel(account) }}</option>
           }
@@ -80,10 +67,7 @@
       <!-- Category -->
       <div>
         <label class="block text-sm text-slate-300 mb-1">Category</label>
-        <select
-          formControlName="category"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        >
+        <select formControlName="category" class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2">
           <option value="">Select Category</option>
           @for (category of categories; track category) {
           <option [value]="category.id">{{ category.value }}</option>
@@ -94,35 +78,24 @@
       <!-- Counterparty -->
       <div>
         <label class="block text-sm text-slate-300 mb-1">Counterparty</label>
-        <input
-          type="text"
-          formControlName="counterparty"
-          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2"
-        />
+        <input type="text" formControlName="counterparty"
+          class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2" />
       </div>
     </form>
   </div>
 
   <!-- FOOTER -->
   <div modal-footer>
-    <button
-      class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600"
-      (click)="close(false)"
-    >
+    <button class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600" (click)="close(false)">
       Cancel
     </button>
 
-    <button
-      class="px-4 py-2 ms-2 rounded-lg transition-colors duration-150"
-      (click)="submit()"
-      [disabled]="form.invalid"
-      [ngClass]="{
+    <button class="px-4 py-2 ms-2 rounded-lg transition-colors duration-150" (click)="submit()"
+      [disabled]="form.invalid" [ngClass]="{
     'bg-accent-green hover:bg-green-600 cursor-pointer': !form.invalid,
     'bg-gray-500 cursor-not-allowed': form.invalid
-  }"
-      [title]="form.invalid ? 'Form is invalid. Please complete all required fields.' : null"
-      tooltipClass="tooltip-invalid"
-    >
+  }" [title]="form.invalid ? 'Form is invalid. Please complete all required fields.' : null"
+      tooltipClass="tooltip-invalid">
       {{ transaction ? 'Update' : 'Create' }}
     </button>
   </div>

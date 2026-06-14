@@ -1,0 +1,25 @@
+{
+  "name": "BKING BACKEND DEV",
+  "dockerComposeFile": "../../docker-compose.yml",
+  "service": "backend-dev",
+  "workspaceFolder": "/workspace/backend",
+
+  // Fuerza a IntelliJ a mirar el proyecto global unificado
+  "runServices": ["backend-dev"],
+
+  "forwardPorts": [
+    8080
+  ],
+  "customizations": {
+    "jetbrains": {
+      "plugins": [
+        "lombok",
+        "com.intellij.database"
+      ],
+      "settings": {
+        "com.intellij:app:HttpConfigurable.use_proxy_pac": true
+      }
+    }
+  },
+  "postCreateCommand": "./mvnw clean install -DskipTests"
+}
