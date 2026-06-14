@@ -19,11 +19,12 @@
         <div
           class="grid grid-cols-4 sm:grid-cols-5 gap-2 p-2.5 rounded-xl bg-slate-900/40 border border-border max-h-64 overflow-y-auto custom-scrollbar">
           @for (option of filteredIcons(); track option.value) {
-          <button type="button" (click)="form.patchValue({ icon: option.value })"
-            class="flex flex-col items-center justify-center p-3 sm:p-2.5 rounded-lg border transition-all" [ngClass]="{
-        'bg-indigo-600/20 border-indigo-500 text-indigo-400': form.get('icon')?.value === option.value,
-        'bg-slate-800/40 border-border/40 text-slate-400 hover:border-slate-600': form.get('icon')?.value !== option.value
-      }">
+          <button type="button" (click)="form.patchValue({ icon: option.value })" [title]="option.label"
+            class="flex flex-col items-center justify-center p-3 sm:p-2.5 rounded-lg border transition-all hover:bg-slate-800"
+            [ngClass]="{
+      'bg-indigo-600/20 border-indigo-500 text-indigo-400': form.get('icon')?.value === option.value,
+      'bg-slate-800/40 border-border/40 text-slate-400 hover:border-slate-600': form.get('icon')?.value !== option.value
+    }">
             <i class="fa-solid" [ngClass]="option.preview"></i>
           </button>
           } @empty {

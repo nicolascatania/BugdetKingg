@@ -140,4 +140,27 @@ export const CATEGORY_ICONS: IconOption[] = [
     label: 'Subscriptions',
     preview: 'fa-calendar-days',
   },
+
+  {
+    value: 'fa-chart-line',
+    label: 'Stocks / Investments',
+    preview: 'fa-chart-line',
+  },
+  { value: 'fa-chart-pie', label: 'Portfolio', preview: 'fa-chart-pie' },
+  { value: 'fa-bitcoin', label: 'Crypto', preview: 'fa-bitcoin' },
+  { value: 'fa-landmark', label: 'Bonds / Bank', preview: 'fa-landmark' },
+  { value: 'fa-arrow-trend-up', label: 'Growth', preview: 'fa-arrow-trend-up' },
+  { value: 'fa-volleyball', label: 'Volleyball', preview: 'fa-volleyball' },
+  { value: 'fa-basketball', label: 'Basketball', preview: 'fa-basketball' },
+  {
+    value: 'fa-table-tennis-paddle-ball',
+    label: 'Tennis',
+    preview: 'fa-table-tennis-paddle-ball',
+  },
+  {
+    value: 'fa-person-running',
+    label: 'Running',
+    preview: 'fa-person-running',
+  },
+  { value: 'fa-trophy', label: 'Awards / Competitions', preview: 'fa-trophy' },
 ];
