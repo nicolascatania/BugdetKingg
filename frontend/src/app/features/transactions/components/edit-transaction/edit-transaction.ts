@@ -7,6 +7,8 @@ import {
   input,
   Input,
   Output,
+  OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
 import {
@@ -18,10 +20,7 @@ import {
 import { TransactionDTO } from '../../interfaces/TransactionDTO.interface';
 import { TransactionService } from '../../services/transaction-service';
 import { TransactionType } from '../../../../shared/models/TransactionType.enum';
-// TransactionCategory not used — category values come from server (UUID) or null for transfers
-import { AccountService } from '../../../accounts/services/AccountService';
 import { AccountDTO } from '../../../accounts/interfaces/AccountDTO.interfaces';
-import { formatDate } from '../../../../shared/utils/datesUtils';
 import { CategoryService } from '../../../categories/service/category-service';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
@@ -35,38 +34,49 @@ function isAccountDTO(acc: AccountLike): acc is AccountDTO {
 
 @Component({
   selector: 'app-edit-transaction',
+  standalone: true,
   imports: [UiModalComponent, ReactiveFormsModule, CommonModule],
   templateUrl: './edit-transaction.html',
   styleUrl: './edit-transaction.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditTransaction {
+export class EditTransaction implements OnInit {
   @Input() transaction: TransactionDTO | null = null;
   @Output() closed = new EventEmitter<boolean>();
 
   accounts = input<AccountLike[]>();
   categories: OptionDTO[] = [];
-
   transactionTypes = Object.values(TransactionType);
-
   form: FormGroup;
+
+  // Valores sugeridos para cargas rápidas de montos
+  readonly quickAmounts: number[] = [1000, 2000, 5000, 10000, 15000];
+
+  private selectedAccountSignal = computed(() => {
+    return this.form?.get('account')?.value;
+  });
+
+  filteredDestinationAccounts = computed(() => {
+    const selectedAccountId = this.selectedAccountSignal();
+    return this.accounts()?.filter((acc) => acc.id !== selectedAccountId) ?? [];
+  });
 
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService,
-    private accountService: AccountService,
     private categoryService: CategoryService,
     private ns: NotificationService,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       account: ['', Validators.required],
       description: ['', [Validators.required, Validators.maxLength(255)]],
-      amount: [0, [Validators.required]],
-      category: [{ value: '', disabled: false }, Validators.required],
-      type: ['', Validators.required],
+      amount: [null, [Validators.required, Validators.min(0.01)]],
+      category: ['', Validators.required],
+      type: ['EXPENSE', Validators.required],
       counterparty: ['', Validators.required],
       destinationAccount: [''],
-      date: [formatDate(new Date()), Validators.required],
+      date: [this.getLocalDateTimeString(), Validators.required], // 2. Seteado "hoy/ahora" por defecto nativamente
     });
 
     effect(() => {
@@ -75,6 +85,7 @@ export class EditTransaction {
 
       if (accounts?.length && !accountCtrl?.value) {
         accountCtrl?.setValue(accounts[0].id);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -91,11 +102,25 @@ export class EditTransaction {
         counterparty: this.transaction.counterparty,
         destinationAccount: this.transaction.destinationAccount ?? '',
         account: this.transaction.account,
+        date: this.transaction.date,
       });
     }
 
     this.handleTypeChanges();
     this.handleAccountChanges();
+  }
+
+  setType(type: 'EXPENSE' | 'INCOME' | 'TRANSFER'): void {
+    this.form.get('type')?.setValue(type);
+  }
+
+  // 4. Lógica acumulativa para las píldoras de montos rápidos
+  setQuickAmount(value: number): void {
+    const amountCtrl = this.form.get('amount');
+    const current = amountCtrl?.value ?? 0;
+    amountCtrl?.setValue(current + value);
+    amountCtrl?.markAsDirty();
+    this.cdr.markForCheck();
   }
 
   submit(): void {
@@ -105,15 +130,11 @@ export class EditTransaction {
     }
 
     const payload: TransactionDTO = {
-      id: this.transaction?.id ?? '',
-      account: this.transaction?.account ?? '',
+      ...this.transaction,
       ...this.form.getRawValue(),
     };
 
-    if (
-      payload.type === TransactionType.TRANSFER &&
-      !payload.destinationAccount
-    ) {
+    if (payload.type === TransactionType.TRANSFER && !payload.destinationAccount) {
       this.ns.info('Please select a destination account for the transfer.');
       return;
     }
@@ -124,10 +145,7 @@ export class EditTransaction {
 
     request$.subscribe({
       next: () => this.close(true),
-      error: () =>
-        this.ns.error(
-          'Something went wrong while creating the transaction. Please try again.',
-        ),
+      error: () => this.ns.error('Something went wrong. Please try again.'),
     });
   }
 
@@ -135,14 +153,12 @@ export class EditTransaction {
     this.categoryService.getOptions().subscribe({
       next: (categories) => {
         this.categories = categories;
+        this.cdr.markForCheck();
       },
       error: (err) => this.ns.error(err),
     });
   }
 
-  /**
-   * Closes the modal.
-   */
   close(success = false): void {
     this.closed.emit(success);
   }
@@ -153,64 +169,51 @@ export class EditTransaction {
       const destinationCtrl = this.form.get('destinationAccount');
 
       if (type === TransactionType.TRANSFER) {
-        // For transfers the backend expects no category UUID — use null/empty
         categoryCtrl?.setValue(null);
-        categoryCtrl?.disable({ emitEvent: false });
         categoryCtrl?.clearValidators();
+        categoryCtrl?.disable({ emitEvent: false });
 
         destinationCtrl?.setValidators(Validators.required);
-
+        
         const destinations = this.filteredDestinationAccounts();
         if (destinations.length) {
           destinationCtrl?.setValue(destinations[0].id);
         }
       } else {
-        // Restore category control for income/expense
         categoryCtrl?.enable({ emitEvent: false });
         categoryCtrl?.setValidators(Validators.required);
-        categoryCtrl?.reset();
+        if (!this.transaction) categoryCtrl?.reset('');
 
         destinationCtrl?.clearValidators();
-        destinationCtrl?.reset();
+        destinationCtrl?.reset('');
       }
 
+      categoryCtrl?.updateValueAndValidity();
       destinationCtrl?.updateValueAndValidity();
+      this.cdr.markForCheck();
     });
   }
 
-  filteredDestinationAccounts = computed(() => {
-    const selectedAccountId = this.form.get('account')?.value;
-    return this.accounts()?.filter((acc) => acc.id !== selectedAccountId) ?? [];
-  });
-
   private handleAccountChanges(): void {
     this.form.get('account')!.valueChanges.subscribe(() => {
+      this.form.get('account')?.updateValueAndValidity({ emitEvent: false });
+      
       if (this.form.get('type')?.value === TransactionType.TRANSFER) {
         const destinations = this.filteredDestinationAccounts();
-        this.form
-          .get('destinationAccount')
-          ?.setValue(destinations[0]?.id ?? null);
+        this.form.get('destinationAccount')?.setValue(destinations[0]?.id ?? null);
       }
+      this.cdr.markForCheck();
     });
   }
 
   getAccountLabel(account: AccountLike): string {
-    if (isAccountDTO(account)) {
-      return account.name;
-    }
-    return account.value;
+    return isAccountDTO(account) ? account.name : account.value;
   }
 
-  setCurrentDateTime(): void {
+  // Helper centralizado para inyectar la fecha ISO local exacta sin desfase de huso horario
+  private getLocalDateTimeString(): string {
     const now = new Date();
-
-    // Ajustar la zona horaria local para obtener el formato YYYY-MM-DDTHH:mm requerido por el input
     const offset = now.getTimezoneOffset() * 60000;
-    const localISOTime = new Date(now.getTime() - offset)
-      .toISOString()
-      .slice(0, 16); // Remueve segundos y milisegundos
-
-    this.form.get('date')?.setValue(localISOTime);
-    this.form.get('date')?.markAsDirty();
+    return new Date(now.getTime() - offset).toISOString().slice(0, 16);
   }
 }
