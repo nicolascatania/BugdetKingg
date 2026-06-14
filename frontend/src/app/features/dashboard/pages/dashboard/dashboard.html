@@ -1,103 +1,74 @@
 <div class="space-y-6">
-  <!-- Filters -->
-  <div class="space-y-6">
-    <!-- Filters -->
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <form
-        [formGroup]="filterForm"
-        (ngSubmit)="applyFilters()"
-        class="space-y-4"
-      >
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-          <!-- Date from -->
-          <div>
-            <label class="block text-sm text-slate-300 mb-1">From</label>
-            <input
-              type="date"
-              formControlName="dateFrom"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
-            />
-          </div>
 
-          <!-- Date to -->
-          <div>
-            <label class="block text-sm text-slate-300 mb-1">To</label>
-            <input
-              type="date"
-              formControlName="dateTo"
-              class="w-full rounded-lg bg-card border border-border px-3 py-2 text-white"
-            />
-          </div>
-
-          <!-- Account          <app-multiselect
-            label="Account"
-            [options]="accounts"
-            labelField="value"
-            valueField="id"
-            placeholder="Select account..."
-            (selectedChange)="onAccountsSelected($event)"
-          ></app-multiselect>
- -->
-
-          <!-- Apply -->
-          <div>
-            <button
-              type="submit"
-              class="w-full bg-accent-green text-black rounded-lg px-3 py-2 text-sm font-medium hover:opacity-90"
-            >
-              Apply
-            </button>
-          </div>
+  <div class="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/30 shadow-2xl">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">From</label>
+          <input type="date" formControlName="dateFrom"
+            class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]" />
         </div>
-      </form>
-    </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">To</label>
+          <input type="date" formControlName="dateTo"
+            class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]" />
+        </div>
+
+        <div>
+          <button type="submit"
+            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-lg shadow-indigo-600/10 transition-all active:scale-[0.98]">
+            Apply Range
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
 
-  <!-- KPIs + Chart -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <!-- Chart -->
-    <div class="bg-card rounded-xl p-5 border border-border">
-      <h3 class="text-base font-medium mb-3">Expenses by Category</h3>
-      <div class="h-64">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+    <div class="bg-slate-900/30 rounded-2xl p-5 border border-slate-800/80 shadow-2xl">
+      <h3 class="text-base font-bold tracking-tight text-slate-100 mb-4">Expenses by Category</h3>
+      <div class="h-64 flex items-center justify-center">
         <canvas id="expensePie"></canvas>
       </div>
     </div>
 
-    <!-- KPIs column -->
-    <div class="flex flex-col gap-4">
-      <div class="bg-card rounded-xl p-5 border border-border">
-        <p class="text-slate-400 text-sm">Total Balance</p>
-        <p
-          class="text-2xl font-semibold"
-          [ngClass]="{
-          'text-accent-green': (dashboardData()?.totalBalance ?? 0) >= 0,
-          'text-accent-red':   (dashboardData()?.totalBalance ?? 0) < 0
-        }"
-        >
+    <div class="flex flex-col gap-4 justify-between">
+
+      <div
+        class="bg-gradient-to-br from-indigo-950/10 to-slate-900/30 rounded-2xl p-5 border border-slate-800/80 shadow-md flex-1 flex flex-col justify-center">
+        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Balance</p>
+        <p class="text-3xl font-black text-slate-100 mt-2 tracking-tight">
           {{ dashboardData()?.totalBalance | currency:'ARS':'symbol':'1.2-2' }}
         </p>
       </div>
 
-      <div class="bg-card rounded-xl p-5 border border-border">
-        <p class="text-slate-400 text-sm">Expenses</p>
-        <p class="text-2xl font-semibold text-accent-red">
+      <div
+        class="bg-slate-900/30 rounded-2xl p-5 border border-slate-800/80 shadow-md flex-1 flex flex-col justify-center hover:border-rose-500/20 transition-colors">
+        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Expenses</p>
+        <p class="text-2xl font-bold text-rose-400/90 mt-2 tracking-tight">
           {{ dashboardData()?.expense | currency:'ARS':'symbol':'1.2-2' }}
         </p>
       </div>
 
-      <div class="bg-card rounded-xl p-5 border border-border">
-        <p class="text-slate-400 text-sm">Income</p>
-        <p class="text-2xl font-semibold text-accent-green">
+      <div
+        class="bg-slate-900/30 rounded-2xl p-5 border border-slate-800/80 shadow-md flex-1 flex flex-col justify-center hover:border-teal-500/20 transition-colors">
+        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Income</p>
+        <p class="text-2xl font-bold text-teal-400 mt-2 tracking-tight">
           {{ dashboardData()?.income | currency:'ARS':'symbol':'1.2-2' }}
         </p>
       </div>
+
     </div>
   </div>
 
-  <!-- Last moves (full width, abajo de todo) -->
-  <div class="bg-card rounded-xl p-5 border border-border">
+  <div class="space-y-3">
+    <h3 class="text-lg font-bold tracking-tight text-slate-100 px-1">Movements of this month</h3>
     <last-moves></last-moves>
   </div>
 
-  <app-expenses-income-each-month></app-expenses-income-each-month>
+  <app-expenses-income-each-month [accounts]="accountsSignal()" [chartData]="annualChartData()"
+    (accountChanged)="onAccountFilterChanged($event)">
+  </app-expenses-income-each-month>
 </div>

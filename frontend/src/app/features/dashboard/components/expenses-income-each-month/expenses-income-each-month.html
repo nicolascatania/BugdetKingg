@@ -1,27 +1,24 @@
-<div class="bg-card rounded-xl p-5 border border-border space-y-4">
+<div class="bg-slate-900/30 rounded-2xl p-5 border border-slate-800/80 shadow-2xl space-y-4">
 
-  <!-- Header + filter -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-    <h3 class="text-base font-medium">
+    <h3 class="text-base font-bold tracking-tight text-slate-100">
       Income vs Expense (Current Year)
     </h3>
 
-    <!-- Account filter -->
     <select
-      class="rounded-lg bg-card border border-border px-3 py-2 text-sm text-white"
+      class="rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all"
       (change)="onAccountChange($any($event.target).value)"
     >
-      <option value="">All accounts</option>
+      <option value="" class="bg-slate-900 text-slate-200">All accounts</option>
 
       @for (account of accounts(); track account.id) {
-        <option [value]="account.id">
+        <option [value]="account.id" class="bg-slate-900 text-slate-200">
           {{ account.value }}
         </option>
       }
     </select>
   </div>
 
-  <!-- Chart -->
   <div class="h-72">
     <canvas id="incomeExpenseChart"></canvas>
   </div>

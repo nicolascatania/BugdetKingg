@@ -1,122 +1,128 @@
 <ui-modal [open]="true" [title]="transaction ? 'Edit Transaction' : 'New Transaction'" (closed)="close(false)">
   <div modal-body>
-    <form [formGroup]="form" class="space-y-4">
+    <form [formGroup]="form" class="space-y-5">
 
-      <div>
-        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Type</label>
-        <div class="grid grid-cols-3 gap-2 p-1 bg-slate-900/60 border border-slate-700/60 rounded-xl items-center">
-          <button type="button" (click)="setType('EXPENSE')" [ngClass]="{
-                    'bg-rose-500/20 text-rose-400 border border-rose-500/30 font-semibold': form.get('type')?.value === 'EXPENSE',
-                    'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'EXPENSE'
-                  }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
-            Expense
-          </button>
-          <button type="button" (click)="setType('INCOME')" [ngClass]="{
-                    'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold': form.get('type')?.value === 'INCOME',
-                    'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'INCOME'
-                  }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
-            Income
-          </button>
-          <button type="button" (click)="setType('TRANSFER')" [ngClass]="{
-                    'bg-slate-700 text-slate-100 border border-slate-600 font-semibold': form.get('type')?.value === 'TRANSFER',
-                    'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'TRANSFER'
-                  }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
-            Transfer
-          </button>
-        </div>
+
+      <div class="grid grid-cols-3 gap-2 p-1.5 bg-slate-950/60 border border-slate-800/80 rounded-xl items-center">
+
+        <button type="button" (click)="setType('EXPENSE')" [ngClass]="{
+            'bg-rose-500/[0.08] text-rose-400 border border-rose-500/20 font-semibold shadow-sm': form.get('type')?.value === 'EXPENSE',
+            'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'EXPENSE'
+          }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
+          Expense
+        </button>
+
+        <button type="button" (click)="setType('INCOME')" [ngClass]="{
+            'bg-teal-500/[0.08] text-teal-400 border border-teal-500/20 font-semibold shadow-sm': form.get('type')?.value === 'INCOME',
+            'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'INCOME'
+          }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
+          Income
+        </button>
+
+        <button type="button" (click)="setType('TRANSFER')" [ngClass]="{
+            'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 font-semibold shadow-sm': form.get('type')?.value === 'TRANSFER',
+            'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'TRANSFER'
+          }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
+          Transfer
+        </button>
+
       </div>
+
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Amount</label>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Amount</label>
           <div
-            class="relative flex items-center bg-slate-800 border border-slate-600 rounded-lg pr-2 focus-within:border-accent-blue">
+            class="relative flex items-center bg-slate-900/50 border border-slate-800/80 rounded-xl pr-2 focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/30 transition-all">
             <span class="pl-3 text-slate-400 font-medium">$</span>
             <input type="number" formControlName="amount" placeholder="0.00"
-              class="w-full bg-transparent pl-2 pr-2 py-2 text-white focus:outline-none font-semibold" />
+              class="w-full bg-transparent pl-2 pr-2 py-2 text-slate-100 focus:outline-none font-bold placeholder-slate-600" />
 
-            <div class="flex gap-1">
+            <div class="flex gap-1.5">
               <button type="button" (click)="setQuickAmount(1000)"
-                class="text-[10px] bg-slate-700/60 hover:bg-slate-600 text-slate-300 px-1.5 py-0.5 rounded font-medium">+1K</button>
+                class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md font-semibold border border-slate-700/40 transition-colors">+1K</button>
               <button type="button" (click)="setQuickAmount(5000)"
-                class="text-[10px] bg-slate-700/60 hover:bg-slate-600 text-slate-300 px-1.5 py-0.5 rounded font-medium">+5K</button>
+                class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md font-semibold border border-slate-700/40 transition-colors">+5K</button>
               <button type="button" (click)="setQuickAmount(10000)"
-                class="text-[10px] bg-slate-700/60 hover:bg-slate-600 text-slate-300 px-1.5 py-0.5 rounded font-medium">+10K</button>
+                class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md font-semibold border border-slate-700/40 transition-colors">+10K</button>
             </div>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Origin Account</label>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Origin Account</label>
           <select formControlName="account"
-            class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2 text-white focus:outline-none focus:border-accent-blue">
+            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
             @for (account of accounts(); track account.id) {
-            <option [value]="account.id">{{ getAccountLabel(account) }}</option>
+            <option [value]="account.id" class="bg-slate-900 text-white">{{ getAccountLabel(account) }}</option>
             }
           </select>
         </div>
       </div>
 
+
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         @if (form.get('type')?.value === 'TRANSFER') {
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Destination
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Destination
             Account</label>
           <select formControlName="destinationAccount"
-            class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2 text-white focus:outline-none focus:border-accent-blue">
+            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
             @for (account of filteredDestinationAccounts(); track account.id) {
-            <option [value]="account.id">{{ getAccountLabel(account) }}</option>
+            <option [value]="account.id" class="bg-slate-900 text-white">{{ getAccountLabel(account) }}</option>
             }
           </select>
         </div>
         } @else {
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Category</label>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Category</label>
           <select formControlName="category"
-            class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2 text-white focus:outline-none focus:border-accent-blue">
-            <option value="">Select Category</option>
+            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
+            <option value="" class="bg-slate-900 text-slate-500">Select Category</option>
             @for (category of categories; track category.id) {
-            <option [value]="category.id">{{ category.value }}</option>
+            <option [value]="category.id" class="bg-slate-900 text-white">{{ category.value }}</option>
             }
           </select>
         </div>
         }
 
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Date</label>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Date</label>
           <input type="datetime-local" formControlName="date"
-            class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2 text-slate-100 focus:outline-none focus:border-accent-blue" />
+            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]" />
         </div>
       </div>
 
+
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Counterparty</label>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Counterparty</label>
           <input type="text" formControlName="counterparty" placeholder="e.g. Supermarket, Employer"
-            class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2 text-white focus:outline-none focus:border-accent-blue" />
+            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Description</label>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
           <input type="text" formControlName="description" placeholder="Transaction details"
-            class="w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2 text-white focus:outline-none focus:border-accent-blue" />
+            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
         </div>
       </div>
 
     </form>
   </div>
 
-  <div modal-footer>
+
+  <div modal-footer class="flex justify-end gap-2.5">
     <button
-      class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-medium text-sm transition-colors"
+      class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold text-sm transition-colors active:scale-[0.98]"
       (click)="close(false)">
       Cancel
     </button>
 
-    <button class="px-4 py-2 ms-2 rounded-lg transition-all duration-150 text-sm font-medium" (click)="submit()"
-      [disabled]="form.invalid" [ngClass]="{
-        'bg-accent-green hover:bg-green-600 text-slate-900 cursor-pointer': !form.invalid,
-        'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed': form.invalid
+    <button class="px-5 py-2.5 rounded-xl transition-all duration-150 text-sm font-semibold shadow-lg"
+      (click)="submit()" [disabled]="form.invalid" [ngClass]="{
+        'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/10 cursor-pointer active:scale-[0.98]': !form.invalid,
+        'bg-slate-950 text-slate-600 border border-slate-900/80 cursor-not-allowed shadow-none': form.invalid
       }" [title]="form.invalid ? 'Form is invalid. Please complete all required fields.' : null">
       {{ transaction ? 'Update' : 'Create' }}
     </button>

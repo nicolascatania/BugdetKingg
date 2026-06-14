@@ -1,44 +1,58 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { DashboardFilter } from '../../interfaces/dashboardFilter.interface';
 import { TransactionService } from '../../../transactions/services/transaction-service';
+import { AccountService } from '../../../accounts/services/AccountService';
 import { DashBoardDTO } from '../../interfaces/DashBoardDTO.interface';
+import { MonthlyIncomeExpenseDTO } from '../../../transactions/interfaces/MonthlyIncomeExpenseDTO.interface';
+import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { HttpErrorResponse } from '@angular/common/http';
-import { LastMoves } from "../../../home/components/last-moves/last-moves";
-import { ExpensesIncomeEachMonth } from "../../components/expenses-income-each-month/expenses-income-each-month";
-
-
+import { LastMoves } from '../../../home/components/last-moves/last-moves';
+import { ExpensesIncomeEachMonth } from '../../components/expenses-income-each-month/expenses-income-each-month';
 
 Chart.register(PieController, ArcElement, Tooltip, Legend);
+
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, ReactiveFormsModule, LastMoves, ExpensesIncomeEachMonth],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    LastMoves,
+    ExpensesIncomeEachMonth,
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Dashboard {
-
-
+export class Dashboard implements OnInit {
   private expenseChart?: Chart;
 
   fromDate!: string;
   toDate!: string;
   filterForm!: FormGroup;
 
-  // State management with signals
   dashboardData = signal<DashBoardDTO | null>(null);
-  filterTrigger = signal(0);  // Trigger para cambios de filtro
+  annualChartData = signal<MonthlyIncomeExpenseDTO[]>([]);
+  accountsSignal = signal<OptionDTO[]>([]);
+  filterTrigger = signal(0);
 
-  constructor(private fb: FormBuilder, private ns: NotificationService,
-    private transactionService: TransactionService
+  constructor(
+    private fb: FormBuilder,
+    private ns: NotificationService,
+    private transactionService: TransactionService,
+    private accountService: AccountService,
   ) {
-    // ✅ Effect reactivo que se ejecuta cuando hay cambios
     effect(() => {
-      this.filterTrigger();  // Leer trigger para dependency tracking
+      this.filterTrigger();
       this.loadDashboardData();
     });
   }
@@ -54,49 +68,76 @@ export class Dashboard {
     this.filterForm = this.fb.group({
       dateFrom: [this.fromDate],
       dateTo: [this.toDate],
+      annualAccountFilterId: [''],
     });
 
-    // Initial load
-    this.filterTrigger.update(v => v + 1);
+    this.loadAccounts();
+    this.filterTrigger.update((v) => v + 1);
+    this.loadAnnualData('');
   }
 
-  // ✅ Método para cargar datos del dashboard
-  private loadDashboardData() {
-    this.transactionService.dashboard(this.filterForm.value).subscribe({
-      next: (data) => {
-        this.dashboardData.set(data);  // Signal se actualiza automáticamente
-
-        if (data.expensesByCategory) {
-          this.renderExpenseChart(data.expensesByCategory);
-        }
-        // ✅ No necesita markForCheck() - Signal lo maneja
+  private loadAccounts() {
+    this.accountService.getOptions().subscribe({
+      next: (accounts) => {
+        this.accountsSignal.set(accounts);
       },
       error: (err: HttpErrorResponse) => {
         this.ns.error(err.error.message);
-      }
+      },
     });
   }
 
+  private loadDashboardData() {
+    this.transactionService.dashboard(this.filterForm.value).subscribe({
+      next: (data) => {
+        this.dashboardData.set(data);
+        if (data.expensesByCategory) {
+          this.renderExpenseChart(data.expensesByCategory);
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.ns.error(err.error.message);
+      },
+    });
+  }
+
+  private loadAnnualData(accountId: string) {
+    this.transactionService
+      .getIncomeExpenseByMonth(accountId || undefined)
+      .subscribe({
+        next: (data) => {
+          this.annualChartData.set(data);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.ns.error(err.error.message);
+        },
+      });
+  }
+
+  onAccountFilterChanged(accountId: string) {
+    this.filterForm.get('annualAccountFilterId')?.setValue(accountId);
+    this.loadAnnualData(accountId);
+  }
+
   onAccountsSelected(selected: any[]) {
-    this.filterForm.get('accountIds')?.setValue(selected.map(s => s.id));
-    this.filterTrigger.update(v => v + 1);  // ✅ Trigger a recarga
+    this.filterForm.get('accountIds')?.setValue(selected.map((s) => s.id));
+    this.filterTrigger.update((v) => v + 1);
   }
 
   onCategoriesSelected(selected: any[]) {
-    this.filterForm.get('categoryIds')?.setValue(selected.map(s => s.id));
-    this.filterTrigger.update(v => v + 1);  // ✅ Trigger a recarga
+    this.filterForm.get('categoryIds')?.setValue(selected.map((s) => s.id));
+    this.filterTrigger.update((v) => v + 1);
   }
 
   onTypesSelected(selected: any[]) {
-    this.filterForm.get('transactionTypes')?.setValue(selected.map(s => s.id));
-    this.filterTrigger.update(v => v + 1);  // ✅ Trigger a recarga
+    this.filterForm
+      .get('transactionTypes')
+      ?.setValue(selected.map((s) => s.id));
+    this.filterTrigger.update((v) => v + 1);
   }
 
-  // Submit - Aplica filtros y recarga
   applyFilters() {
-    const filters: DashboardFilter = this.filterForm.value;
-    console.log('Filters applied:', filters);
-    this.filterTrigger.update(v => v + 1);  // ✅ Trigger a recarga
+    this.filterTrigger.update((v) => v + 1);
   }
 
   private renderExpenseChart(data: Record<string, number>) {
@@ -123,34 +164,47 @@ export class Dashboard {
               '#3b82f6',
               '#f59e0b',
               '#8b5cf6',
-              '#ec4899'
+              '#ec4899',
             ],
-            borderWidth: 1
-          }
-        ]
+            borderColor: '#0b0f19',
+            borderWidth: 2,
+            hoverOffset: 4,
+          },
+        ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom'
+            position: 'bottom',
+            labels: {
+              color: '#94a3b8',
+              font: { size: 11, weight: 'normal' },
+              padding: 16,
+              usePointStyle: true,
+              pointStyle: 'circle',
+            },
           },
           tooltip: {
+            backgroundColor: '#0f172a',
+            titleColor: '#f1f5f9',
+            bodyColor: '#94a3b8',
+            borderColor: '#334155/40',
+            borderWidth: 1,
+            padding: 10,
             callbacks: {
               label: (context) => {
                 const label = context.label ?? '';
                 const value = context.raw as number;
                 const total = values.reduce((a, b) => a + b, 0);
                 const percentage = ((value / total) * 100).toFixed(1);
-
-                return `${label}: $${value} (${percentage}%)`;
-              }
-            }
-          }
-        }
-      }
+                return ` ${label}: $${value.toLocaleString('es-AR')} (${percentage}%)`;
+              },
+            },
+          },
+        },
+      },
     });
   }
-
 }

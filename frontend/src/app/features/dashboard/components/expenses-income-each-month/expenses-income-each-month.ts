@@ -1,32 +1,9 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  signal
-} from '@angular/core';
-import {
-  Chart,
-  BarController,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend
-} from 'chart.js';
-import { TransactionService } from '../../../transactions/services/transaction-service';
-import { AccountService } from '../../../accounts/services/AccountService';
-import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
+import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import { MonthlyIncomeExpenseDTO } from '../../../transactions/interfaces/MonthlyIncomeExpenseDTO.interface';
 
-Chart.register(
-  BarController,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend
-);
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
   selector: 'app-expenses-income-each-month',
@@ -36,105 +13,110 @@ Chart.register(
   styleUrl: './expenses-income-each-month.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExpensesIncomeEachMonth implements OnInit {
+export class ExpensesIncomeEachMonth {
+  accounts = input<any[]>([]);
+  chartData = input<MonthlyIncomeExpenseDTO[]>([]);
+  accountChanged = output<string>();
 
-  /** Chart instance */
-  private chart?: Chart;
+  private barChart?: Chart;
 
-  /** Available accounts for filtering */
-  accounts = signal<OptionDTO[]>([]);
-
-  /** Currently selected account ID (undefined = all accounts) */
-  selectedAccountId = signal<string | undefined>(undefined);
-
-  constructor(
-    private transactionService: TransactionService,
-    private accountService: AccountService
-  ) {}
-
-  ngOnInit(): void {
-    this.loadAccounts();
-    this.loadChartData();
-  }
-
-  /**
-   * Loads the available accounts for the select filter.
-   */
-  private loadAccounts(): void {
-    this.accountService.getOptions().subscribe(accounts => {
-      this.accounts.set(accounts);
+  constructor() {
+    effect(() => {
+      const data = this.chartData();
+      this.updateOrRenderChart(data);
     });
   }
 
-  /**
-   * Triggered when the account filter changes.
-   */
-  onAccountChange(accountId: string): void {
-    this.selectedAccountId.set(accountId || undefined);
-    this.loadChartData();
+  onAccountChange(value: string) {
+    this.accountChanged.emit(value);
   }
 
-  /**
-   * Loads data from backend and renders or updates the chart.
-   */
-  private loadChartData(): void {
-    this.transactionService
-      .getIncomeExpenseByMonth(this.selectedAccountId())
-      .subscribe(data => this.renderChart(data));
-  }
+  private updateOrRenderChart(data: MonthlyIncomeExpenseDTO[]) {
+    const canvasElement = document.getElementById('incomeExpenseChart') as HTMLCanvasElement;
+    if (!canvasElement) return;
 
-  /**
-   * Renders or updates the bar chart.
-   */
-  private renderChart(data: MonthlyIncomeExpenseDTO[]): void {
+    const incomeData = Array(12).fill(0);
+    const expenseData = Array(12).fill(0);
 
-    const labels = [
-      'Jan','Feb','Mar','Apr','May','Jun',
-      'Jul','Aug','Sep','Oct','Nov','Dec'
-    ];
-
-    const incomeData = new Array(12).fill(0);
-    const expenseData = new Array(12).fill(0);
-
-    // Map backend data to fixed 12-month structure
-    data.forEach(d => {
-      incomeData[d.month - 1] = d.income;
-      expenseData[d.month - 1] = d.expense;
+    data.forEach((item) => {
+      const index = item.month - 1;
+      if (index >= 0 && index < 12) {
+        incomeData[index] = item.income;
+        expenseData[index] = item.expense;
+      }
     });
 
-    if (this.chart) {
-      this.chart.data.datasets[0].data = incomeData;
-      this.chart.data.datasets[1].data = expenseData;
-      this.chart.update();
+    if (this.barChart) {
+      this.barChart.data.datasets[0].data = incomeData;
+      this.barChart.data.datasets[1].data = expenseData;
+      this.barChart.update();
       return;
     }
 
-    this.chart = new Chart('incomeExpenseChart', {
+    this.barChart = new Chart(canvasElement, {
       type: 'bar',
       data: {
-        labels,
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         datasets: [
           {
             label: 'Income',
             data: incomeData,
-            backgroundColor: '#22c55e'
+            backgroundColor: '#22c55e',
+            borderRadius: 6,
+            borderWidth: 0,
+            barPercentage: 0.6,
+            categoryPercentage: 0.7,
           },
           {
             label: 'Expense',
             data: expenseData,
-            backgroundColor: '#ef4444'
-          }
-        ]
+            backgroundColor: '#ef4444',
+            borderRadius: 6,
+            borderWidth: 0,
+            barPercentage: 0.6,
+            categoryPercentage: 0.7,
+          },
+        ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom'
-          }
-        }
-      }
+            position: 'bottom',
+            labels: {
+              color: '#94a3b8',
+              font: { size: 11, weight: 'normal' },
+              padding: 16,
+              usePointStyle: true,
+              pointStyle: 'circle',
+            },
+          },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            titleColor: '#f1f5f9',
+            bodyColor: '#94a3b8',
+            borderColor: '#334155/40',
+            borderWidth: 1,
+            padding: 10,
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#64748b', font: { size: 11, weight: 'normal' } },
+          },
+          y: {
+            grid: { color: '#1e293b/40' },
+            border: { dash: [4, 4] },
+            ticks: {
+              color: '#64748b',
+              font: { size: 11, weight: 'normal' },
+              callback: (value) => `$${value}`,
+            },
+          },
+        },
+      },
     });
   }
 }

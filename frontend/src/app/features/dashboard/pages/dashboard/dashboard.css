@@ -1,12 +1,18 @@
 :host {
   display: block;
 }
-/* Chrome, Edge, Safari */
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) brightness(2);
+
+/* Forzar la estética del calendario nativo del motor webkit a modo oscuro */
+input[type="date"] {
+  color-scheme: dark;
 }
 
-/* Firefox */
-input[type="date"]::-moz-calendar-picker-indicator {
-  filter: invert(1) brightness(2);
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 0.9;
 }

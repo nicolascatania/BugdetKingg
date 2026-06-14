@@ -1,76 +1,61 @@
-<div>
-  <h2 class="text-xl font-medium mb-5">Movements of this month</h2>
-  <div
-    class="hidden md:block bg-card rounded-xl border border-border max-h-[400px] overflow-y-auto custom-scroll"
-  >
-    <table class="w-full text-sm">
-      <thead class="bg-secondary text-slate-400 sticky top-0 z-10">
+<div class="bg-slate-900/30 rounded-2xl border border-slate-800/80 p-2 shadow-2xl">
+  <div class="max-h-[440px] overflow-y-auto custom-scroll">
+    <table class="w-full text-sm text-left border-separate border-spacing-y-1">
+      
+      <thead class="bg-[#0b0f19] text-slate-400 text-xs font-bold uppercase tracking-wider sticky top-0 z-10">
         <tr>
-          <th class="px-4 py-3 text-left">Date</th>
-          <th class="px-4 py-3 text-left">Account</th>
-          <th class="px-4 py-3 text-left">Type</th>
-          <th class="px-4 py-3 text-left">Category</th>
-          <th class="px-4 py-3 text-right">Amount</th>
-          <th class="px-4 py-3 text-right">Description</th>
-          <th class="px-4 py-3 text-right">CounterParty</th>
+          <th class="px-6 py-4 rounded-l-xl">Date</th>
+          <th class="px-6 py-4">Account</th>
+          <th class="px-6 py-4">Type</th>
+          <th class="px-6 py-4">Category</th>
+          <th class="px-6 py-4 text-right">Amount</th>
+          <th class="px-6 py-4 pl-10">Description</th>
+          <th class="px-6 py-4 text-right rounded-r-xl">CounterParty</th>
         </tr>
       </thead>
 
       <tbody>
         @for(tx of txs(); track tx.id) {
-        <tr class="border-t border-border hover:bg-secondary transition">
-          <td class="px-4 py-3">{{ tx.date}}</td>
-          <td class="px-4 py-3">{{ tx.accountName }}</td>
-          <td class="px-4 py-3">{{ tx.type }}</td>
-
-          <td class="px-4 py-3">{{ tx.category }}</td>
-          <td
-            class="px-4 py-3 text-right"
-            [ngClass]="
-    tx.type === TRANSACTION_TYPES.INCOME
-      ? 'text-accent-green'
-      : tx.type === TRANSACTION_TYPES.EXPENSE
-        ? 'text-accent-red'
-        : ''
-  "
-          >
-            {{ tx.amount | currency:'ARS':'symbol':'1.2-2' }}
+        <tr class="hover:bg-indigo-500/[0.02] transition-all duration-150">
+          
+          <td class="px-6 py-4 text-slate-400 font-normal whitespace-nowrap border-b border-slate-800/40">
+            {{ tx.date }}
           </td>
-          <td class="px-4 py-3 text-right">{{tx.description}}</td>
-          <td class="px-4 py-3 text-right">{{tx.counterparty}}</td>
+          
+          <td class="px-6 py-4 font-semibold text-slate-200 border-b border-slate-800/40">
+            {{ tx.accountName }}
+          </td>
+          
+          <td class="px-6 py-4 border-b border-slate-800/40">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded border uppercase inline-block" [ngClass]="{
+              'bg-teal-500/[0.06] text-teal-400 border-teal-500/20': tx.type === TRANSACTION_TYPES.INCOME,
+              'bg-rose-500/[0.06] text-rose-400/90 border-rose-500/20': tx.type === TRANSACTION_TYPES.EXPENSE,
+              'bg-slate-800 text-slate-400 border-slate-700': tx.type === TRANSACTION_TYPES.TRANSFER
+            }">
+              {{ tx.type }}
+            </span>
+          </td>
+          
+          <td class="px-6 py-4 border-b border-slate-800/40">
+            <span class="font-normal text-slate-300">
+              {{ tx.category }}
+            </span>
+          </td>
+          
+          <td class="px-6 py-4 text-right font-bold tracking-tight text-slate-200 border-b border-slate-800/40">
+            {{ tx.type === TRANSACTION_TYPES.EXPENSE ? '-' : '' }}{{ tx.amount | currency:'ARS':'symbol':'1.2-2' }}
+          </td>
+          
+          <td class="px-6 py-4 text-left pl-10 text-slate-400 font-normal truncate max-w-[200px]" [title]="tx.description">
+            {{ tx.description || '-' }}
+          </td>
+          
+          <td class="px-6 py-4 text-right text-slate-400 font-normal border-b border-slate-800/40">
+            {{ tx.counterparty || '-' }}
+          </td>
         </tr>
         }
       </tbody>
     </table>
-  </div>
-
-  <div class="md:hidden space-y-3">
-    @for(tx of txs(); track tx.id) {
-    <div class="bg-card border border-border rounded-lg p-4">
-      <div class="flex justify-between items-center">
-        <span class="text-sm text-slate-400">{{ tx.date }}</span>
-        <span
-          class="text-sm font-medium"
-          [ngClass]="
-            tx.type === TRANSACTION_TYPES.INCOME
-              ? 'text-accent-green'
-              : 'text-accent-red'
-          "
-        >
-          {{ tx.amount | currency:'ARS':'symbol':'1.2-2' }}
-        </span>
-      </div>
-
-      <div class="mt-2 text-sm font-medium">{{ tx.category }}</div>
-
-      <div class="mt-1 text-xs text-slate-400">
-        {{ tx.accountName }} · {{ tx.type }}
-      </div>
-
-      @if (tx.description) {
-      <div class="mt-2 text-xs text-slate-300">{{ tx.description }}</div>
-      }
-    </div>
-    }
   </div>
 </div>
