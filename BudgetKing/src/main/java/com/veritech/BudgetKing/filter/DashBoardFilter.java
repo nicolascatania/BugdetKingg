@@ -1,15 +1,9 @@
 package com.veritech.BudgetKing.filter;
 
-import com.veritech.BudgetKing.dto.DashBoardDTO;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jspecify.annotations.Nullable;
-import org.springframework.data.jpa.domain.Specification;
 
 
 @Data

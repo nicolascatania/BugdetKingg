@@ -10,7 +10,10 @@ import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TransactionService } from '../../../transactions/services/transaction-service';
 import { AccountService } from '../../../accounts/services/AccountService';
-import { DashBoardDTO } from '../../interfaces/DashBoardDTO.interface';
+import {
+  CategoryExpense,
+  DashBoardDTO,
+} from '../../interfaces/DashBoardDTO.interface';
 import { MonthlyIncomeExpenseDTO } from '../../../transactions/interfaces/MonthlyIncomeExpenseDTO.interface';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
@@ -140,9 +143,9 @@ export class Dashboard implements OnInit {
     this.filterTrigger.update((v) => v + 1);
   }
 
-  private renderExpenseChart(data: Record<string, number>) {
-    const labels = Object.keys(data);
-    const values = Object.values(data);
+  private renderExpenseChart(data: CategoryExpense[]) {
+    const labels = data.map((item) => item.name);
+    const values = data.map((item) => item.amount);
     const total = values.reduce((a, b) => a + b, 0);
 
     const labelsWithPercentage = labels.map((label, index) => {
@@ -184,14 +187,7 @@ export class Dashboard implements OnInit {
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom',
-            labels: {
-              color: '#94a3b8',
-              font: { size: 10, weight: 'normal' },
-              padding: 10,
-              usePointStyle: true,
-              pointStyle: 'circle',
-            },
+            display: false,
           },
           tooltip: {
             backgroundColor: '#0f172a',

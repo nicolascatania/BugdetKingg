@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -128,6 +129,7 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
     /**
      * Gets the entity by UUID and current user in the session
      * If not found, throws Runtime Exception
+     *
      * @param id UUID from the transaction the user is looking for
      * @return Transaction entity
      */
@@ -139,6 +141,7 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
 
     /**
      * Gets the list of the last movements of the month of the user
+     *
      * @return
      */
     public List<LastMovesDTO> movementsOfThisMonth() {
@@ -158,6 +161,7 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
 
     /**
      * Gets the user`s monthly balance
+     *
      * @return
      */
     public MonthlyTransactionReportDTO getMonthlyBalance() {
@@ -219,36 +223,43 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
 
     /**
      * Gets the proper data to show in the dashboard
+     * List of expenses by category in a range of dates
+     * With icons
+     *
      * @param filter
      * @return
      */
     public DashBoardDTO getDataForDashBoard(DashBoardFilter filter) {
         AppUser user = securityUtils.getCurrentUser();
-
         LocalDateTime start = DateUtils.parseStart(filter.getDateFrom());
         LocalDateTime end = DateUtils.parseEnd(filter.getDateTo());
 
         IncomeExpenseDTO totals = transactionRepository.getIncomeAndExpense(user, start, end);
+        BigDecimal totalExpense = totals.expense();
 
-        Map<String, BigDecimal> byCategory =
-                transactionRepository.getExpensesByCategory(user, start, end)
-                        .stream()
-                        .collect(Collectors.toMap(
-                                r -> (String) r[0],
-                                r -> (BigDecimal) r[1]
-                        ));
+        List<CategoryExpenseDTO> listWithPercentage = transactionRepository.getExpensesByCategoryWithIcon(user, start, end)
+                .stream()
+                .map(r -> {
+                    BigDecimal amount = (BigDecimal) r[2];
+                    double pct = (totalExpense.compareTo(BigDecimal.ZERO) > 0)
+                            ? amount.divide(totalExpense, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).doubleValue()
+                            : 0.0;
+
+                    return new CategoryExpenseDTO(
+                            (String) r[0], // name
+                            (String) r[1], // icon
+                            amount,
+                            pct
+                    );
+                })
+                .collect(Collectors.toList());
 
         BigDecimal balance = accountService.getAccounts().stream()
                 .map(Account::getBalance)
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new DashBoardDTO(
-                balance,
-                totals.expense(),
-                totals.income(),
-                byCategory
-        );
+        return new DashBoardDTO(balance, totals.expense(), totals.income(), listWithPercentage);
     }
 
 

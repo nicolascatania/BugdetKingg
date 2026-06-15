@@ -104,6 +104,23 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
             @Param("end") LocalDateTime end
     );
 
+    @Query("""
+    SELECT c.name, c.icon, COALESCE(SUM(t.amount), 0) as total
+    FROM Transaction t
+    JOIN t.category c
+    WHERE t.user = :user
+      AND t.type = com.veritech.BudgetKing.enumerator.TransactionType.EXPENSE
+      AND t.date >= :start
+      AND t.date < :end
+    GROUP BY c.name, c.icon
+    ORDER BY total DESC
+""")
+    List<Object[]> getExpensesByCategoryWithIcon(
+            @Param("user") AppUser user,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
 
 
 
