@@ -1,68 +1,53 @@
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <img
-      src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-      alt="Your Company"
-      class="mx-auto h-10 w-auto"
-    />
-    <h2
-      class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white"
-    >
-      Sign in to your account
-    </h2>
+<div class="relative min-h-screen w-full bg-slate-950 overflow-hidden">
+
+  <div class="fixed inset-0 z-0 pointer-events-none">
+    <div class="block absolute top-[-10%] left-[-10%] w-96 h-96 rounded-full bg-indigo-600/20 bg-blur animate-float">
+    </div>
+    <div class="block absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full bg-indigo-900/20 bg-blur animate-float"
+      style="animation-delay: -4s;"></div>
+
+    <i class="block fa-solid fa-chart-line absolute top-[15%] left-[10%] text-indigo-500/20 text-7xl animate-float"></i>
+    <i class="block fa-solid fa-wallet absolute top-[60%] right-[15%] text-indigo-500/20 text-8xl animate-float"
+      style="animation-delay: -2s;"></i>
+    <i class="block fa-solid fa-tags absolute bottom-[20%] left-[20%] text-indigo-500/20 text-6xl animate-float"
+      style="animation-delay: -5s;"></i>
+    <i class="block fa-solid fa-credit-card absolute top-[20%] right-[20%] text-indigo-500/20 text-7xl animate-float"
+      style="animation-delay: -3s;"></i>
+    <i class="block fa-solid fa-piggy-bank absolute bottom-[10%] right-[5%] text-indigo-500/20 text-9xl animate-float"
+      style="animation-delay: -6s;"></i>
   </div>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-      <div>
-        <label for="email" class="block text-sm/6 font-medium text-gray-100">
-          Email address
-        </label>
-        <div class="mt-2">
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            autocomplete="email"
-            class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-          />
-        </div>
+  <div class="relative z-10 flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <div
+        class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+        <i class="fa-solid fa-crown text-indigo-400 text-3xl"></i>
       </div>
+      <h2 class="mt-8 text-center text-3xl font-extrabold tracking-tight text-white">BudgetKing</h2>
+      <p class="mt-2 text-center text-slate-400">Sign in to your account</p>
+    </div>
 
-      <div>
-        <label for="password" class="block text-sm/6 font-medium text-gray-100">
-          Password
-        </label>
-        <div class="mt-2">
-          <input
-            id="password"
-            type="password"
-            formControlName="password"
-            autocomplete="current-password"
-            class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-          />
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-slate-300">Email address</label>
+          <input formControlName="email" type="email"
+            class="mt-2 block w-full rounded-xl bg-slate-900/50 border border-slate-700/50 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
         </div>
-      </div>
-
-      <div>
-        <button
-          type="submit"
-          [disabled]="loginForm.invalid"
-          class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 disabled:opacity-50"
-        >
+        <div>
+          <label class="block text-sm font-medium text-slate-300">Password</label>
+          <input formControlName="password" type="password"
+            class="mt-2 block w-full rounded-xl bg-slate-900/50 border border-slate-700/50 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
+        </div>
+        <button type="submit" [disabled]="loginForm.invalid"
+          class="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-50">
           Sign in
         </button>
-      </div>
-    </form>
-
-    <p class="mt-10 text-center text-sm/6 text-gray-400">
-      Not a member?
-      <a
-        routerLink="/register"
-        class="font-semibold text-indigo-400 hover:text-indigo-300 cursor-pointer"
-      >
-        Register
-      </a>
-    </p>
+      </form>
+      <p class="mt-10 text-center text-sm text-slate-400">
+        Not a member? <a routerLink="/register"
+          class="font-semibold text-indigo-400 hover:text-indigo-300 cursor-pointer">Register</a>
+      </p>
+    </div>
   </div>
 </div>

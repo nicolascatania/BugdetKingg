@@ -1,3 +1,26 @@
+/* Asegura que el componente ocupe toda la pantalla para el fondo animado */
 :host {
   display: block;
+  min-height: 100vh;
+}
+
+/* Estilos de scrollbar para navegadores basados en Webkit (opcional) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020617;
+  /* slate-950 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #312e81;
+  /* índigo-900 */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5;
+  /* índigo-600 */
 }
