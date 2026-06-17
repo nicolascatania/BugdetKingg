@@ -6,6 +6,8 @@ import com.veritech.BudgetKing.interfaces.ICrudMapper;
 import com.veritech.BudgetKing.model.Account;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class AccountMapper implements ICrudMapper<Account, AccountDTO, AccountRelatedEntities> {
 
@@ -26,7 +28,7 @@ public class AccountMapper implements ICrudMapper<Account, AccountDTO, AccountRe
                 dto.id(),
                 dto.name(),
                 dto.description(),
-                dto.balance(),
+                dto.balance() != null ? dto.balance() : BigDecimal.ZERO,
                 dto.icon(),
                 relatedEntities.user()
         );

@@ -1,31 +1,28 @@
 <div class="mb-14">
   <h2 class="text-lg font-bold tracking-tight text-slate-100 mb-5">Monthly Summary</h2>
 
+  @if (monthlyReport() === null) {
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 animate-pulse">
+    @for (i of [1, 2, 3]; track i) {
+    <div class="bg-slate-900/40 rounded-xl p-5 border border-slate-800 h-24"></div>
+    }
+  </div>
+  } @else {
   <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-    <div class="bg-slate-900/40 rounded-xl p-5 border border-slate-800/80 hover:border-emerald-500/20 transition-colors shadow-sm">
+    <div class="bg-slate-900/40 rounded-xl p-5 border border-slate-800/80">
       <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Income</p>
-      <p class="text-2xl font-bold text-teal-400 mt-2 tracking-tight">
-        {{ monthlyReport()?.income | currency:'ARS':'symbol':'1.2-2' }}
+      <p class="text-2xl font-bold text-teal-400 mt-2">{{ monthlyReport()?.income | currency:'ARS':'symbol':'1.2-2' }}
       </p>
     </div>
-
-    <div class="bg-slate-900/40 rounded-xl p-5 border border-slate-800/80 hover:border-rose-500/20 transition-colors shadow-sm">
+    <div class="bg-slate-900/40 rounded-xl p-5 border border-slate-800/80">
       <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Outcome</p>
-      <p class="text-2xl font-bold text-rose-400/90 mt-2 tracking-tight">
-        {{ monthlyReport()?.outcome | currency:'ARS':'symbol':'1.2-2' }}
-      </p>
+      <p class="text-2xl font-bold text-rose-400/90 mt-2">{{ monthlyReport()?.outcome | currency:'ARS':'symbol':'1.2-2'
+        }}</p>
     </div>
-
-    <div class="bg-gradient-to-br from-indigo-950/10 to-slate-900/40 rounded-xl p-5 border border-indigo-500/20 shadow-md hover:border-indigo-500/40 transition-colors relative overflow-hidden group">
-      
-      <div class="absolute top-4 right-4 text-indigo-500/20 group-hover:text-indigo-400/30 transition-colors duration-200">
-        <i class="fa-solid fa-scale-balanced text-xl"></i>
-      </div>
-
+    <div class="bg-slate-900/40 rounded-xl p-5 border border-indigo-500/20">
       <p class="text-indigo-300 text-xs font-bold uppercase tracking-wider">Balance</p>
-      <p class="text-2xl font-black mt-2 tracking-tight text-white">
-        {{ balance() | currency:'ARS':'symbol':'1.2-2' }}
-      </p>
+      <p class="text-2xl font-black mt-2 text-white">{{ balance() | currency:'ARS':'symbol':'1.2-2' }}</p>
     </div>
   </div>
+  }
 </div>

@@ -1,5 +1,4 @@
 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 mb-12 border-b border-slate-800/60 pb-8">
-  
   <div class="flex flex-col gap-5">
     <div>
       <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Total Balance</p>
@@ -8,27 +7,29 @@
         {{ totalBalance() | currency:'ARS':'symbol':'1.2-2' }}
       </h1>
     </div>
-
     <div class="flex flex-wrap gap-3">
       <button (click)="openNewTransactionModal()"
-        class="flex justify-center items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold shadow-lg shadow-indigo-600/20 transition-all duration-200 active:scale-[0.98]"
-        [disabled]="!userHasAccounts">
-        <i class="fa-solid fa-plus text-xs"></i>
-        Transaction
+        class="flex justify-center items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all">
+        <i class="fa-solid fa-plus text-xs"></i> Transaction
       </button>
-
       <button (click)="openNewAccountModal()"
-        class="flex justify-center items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-sm font-semibold transition-all duration-200 active:scale-[0.98]">
-        <i class="fa-solid fa-building-columns text-xs text-indigo-400"></i>
-        New Account
+        class="flex justify-center items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-sm font-semibold">
+        <i class="fa-solid fa-building-columns text-xs text-indigo-400"></i> New Account
       </button>
     </div>
   </div>
 
+  @if (isLoading()) {
+  <div class="flex flex-col sm:flex-row lg:flex-col gap-3 w-full sm:w-auto animate-pulse">
+    @for (i of [1, 2]; track i) {
+    <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 w-full lg:w-[350px] h-20"></div>
+    }
+  </div>
+  } @else {
   <div class="flex flex-col sm:flex-row lg:flex-col gap-3 w-full sm:w-auto">
-    
-    <div class="flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-xl p-4 w-full sm:flex-1 lg:w-[350px]">
-      <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+    <div class="flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-xl p-4 w-full lg:w-[350px]">
+      <div
+        class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
         <i class="fa-solid fa-circle-dollar-to-slot text-base"></i>
       </div>
       <div class="flex items-center justify-between flex-1">
@@ -36,22 +37,21 @@
           <p class="text-xs text-slate-300 font-bold">Dollar Value</p>
           <span class="text-[10px] text-slate-500 font-medium block">Live quote</span>
         </div>
-        <div class="h-8 w-px bg-slate-800 mx-2"></div>
         <div class="flex gap-4">
-          <div>
-            <span class="text-[10px] text-slate-400 block uppercase font-bold text-right">Buy</span>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold">Buy</span>
             <span class="text-sm font-bold text-slate-200">{{ dolarCompra() | currency:'ARS':'symbol':'1.0-0' }}</span>
           </div>
-          <div>
-            <span class="text-[10px] text-slate-400 block uppercase font-bold text-right">Sell</span>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold">Sell</span>
             <span class="text-sm font-bold text-slate-200">{{ dolarVenta() | currency:'ARS':'symbol':'1.0-0' }}</span>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-xl p-4 w-full sm:flex-1 lg:w-[350px]">
-      <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+    <div class="flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-xl p-4 w-full lg:w-[350px]">
+      <div
+        class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
         <i class="fa-solid fa-chart-line text-base"></i>
       </div>
       <div class="flex items-center justify-between flex-1">
@@ -59,19 +59,18 @@
           <p class="text-xs text-slate-300 font-bold">Inflation</p>
           <span class="text-[10px] text-slate-500 font-medium block">INDEC</span>
         </div>
-        <div class="h-8 w-px bg-slate-800 mx-2"></div>
         <div class="flex gap-4">
-          <div>
-            <span class="text-[10px] text-slate-400 block uppercase font-bold text-right">Date</span>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold">Date</span>
             <span class="text-sm font-bold text-slate-200">{{ inflationDate() | date:'MM/yyyy' }}</span>
           </div>
-          <div>
-            <span class="text-[10px] text-slate-400 block uppercase font-bold text-right">Value</span>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold">Value</span>
             <span class="text-sm font-bold text-indigo-400">{{ inflationValue() }}%</span>
           </div>
         </div>
       </div>
     </div>
-
   </div>
+  }
 </div>

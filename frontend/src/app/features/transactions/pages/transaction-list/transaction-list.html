@@ -4,61 +4,49 @@
   <div class="space-y-6 my-5">
     <div class="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/30 shadow-2xl">
       <form [formGroup]="form" (ngSubmit)="onSearch()" class="space-y-5">
-        
+
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">From</label>
-            <input
-              type="date"
-              formControlName="dateFrom"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]"
-            />
+            <input type="date" formControlName="dateFrom"
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">To</label>
-            <input
-              type="date"
-              formControlName="dateTo"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]"
-            />
+            <input type="date" formControlName="dateTo"
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Account</label>
-            <select
-              formControlName="account"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer"
-            >
+            <select formControlName="account"
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer">
               <option value="" class="bg-slate-900">All</option>
               @for (account of accounts(); track account.id) {
-                <option [value]="account.id" class="bg-slate-900">{{ account.value }}</option>
+              <option [value]="account.id" class="bg-slate-900">{{ account.value }}</option>
               }
             </select>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Category</label>
-            <select
-              formControlName="category"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer"
-            >
+            <select formControlName="category"
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer">
               <option value="" class="bg-slate-900">All</option>
               @for (category of categories(); track category.id) {
-                <option [value]="category.id" class="bg-slate-900">{{ category.value }}</option>
+              <option [value]="category.id" class="bg-slate-900">{{ category.value }}</option>
               }
             </select>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Type</label>
-            <select
-              formControlName="type"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer"
-            >
+            <select formControlName="type"
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer">
               <option value="" class="bg-slate-900">All</option>
               @for (type of transactionTypes; track type) {
-                <option [value]="type" class="bg-slate-900">{{ type }}</option>
+              <option [value]="type" class="bg-slate-900">{{ type }}</option>
               }
             </select>
           </div>
@@ -67,58 +55,38 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Min amount</label>
-            <input
-              type="number"
-              formControlName="minAmount"
-              placeholder="0.00"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-            />
+            <input type="number" formControlName="minAmount" placeholder="0.00"
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Max amount</label>
-            <input
-              type="number"
-              formControlName="maxAmount"
-              placeholder="0.00"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-            />
+            <input type="number" formControlName="maxAmount" placeholder="0.00"
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
-            <input
-              type="text"
-              formControlName="description"
-              placeholder="Search details..."
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-            />
+            <input type="text" formControlName="description" placeholder="Search details..."
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Counterparty</label>
-            <input
-              type="text"
-              formControlName="counterparty"
-              placeholder="Search counterparty..."
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-            />
+            <input type="text" formControlName="counterparty" placeholder="Search counterparty..."
+              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
           </div>
         </div>
 
         <div class="flex justify-end gap-3 pt-2">
-          <button
-            type="button"
+          <button type="button"
             class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/40 text-sm font-semibold transition-colors active:scale-[0.98]"
-            (click)="onClear()"
-          >
+            (click)="onClear()">
             Clear
           </button>
 
-          <button
-            type="submit"
-            class="px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/10 text-sm font-semibold transition-all active:scale-[0.98]"
-          >
+          <button type="submit"
+            class="px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/10 text-sm font-semibold transition-all active:scale-[0.98]">
             Apply Filters
           </button>
         </div>
@@ -127,12 +95,9 @@
   </div>
 
   <div class="flex flex-wrap gap-4 mb-6">
-    <button
-      (click)="openNewTransactionModal()"
+    <button (click)="openNewTransactionModal()"
       class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-600/15 active:scale-[0.98]"
-      [disabled]="!userHasAccounts"
-      [ngClass]="{ 'opacity-40 cursor-not-allowed shadow-none': !userHasAccounts }"
-    >
+      [disabled]="!userHasAccounts" [ngClass]="{ 'opacity-40 cursor-not-allowed shadow-none': !userHasAccounts }">
       <i class="fa-solid fa-plus text-xs"></i>
       Transaction
     </button>
@@ -154,6 +119,17 @@
         </thead>
 
         <tbody>
+          @if (loading()) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+          <tr class="animate-pulse">
+            @for (col of [1, 2, 3, 4, 5, 6, 7]; track col) {
+            <td class="px-5 py-4">
+              <div class="h-4 bg-slate-800 rounded w-full"></div>
+            </td>
+            }
+          </tr>
+          }
+          } @else {
           @for (transaction of transactions(); track transaction.id) {
           <tr class="hover:bg-indigo-500/[0.02] transition-all duration-150">
             <td class="px-5 py-4 text-slate-400 font-normal border-b border-slate-800/40">
@@ -162,7 +138,7 @@
             <td class="px-5 py-4 font-semibold text-slate-200 border-b border-slate-800/40">
               {{ transaction.accountName }}
             </td>
-            
+
             <td class="px-5 py-4 border-b border-slate-800/40">
               <span class="text-[10px] font-bold px-2 py-0.5 rounded border uppercase inline-block" [ngClass]="{
                 'bg-teal-500/[0.06] text-teal-400 border-teal-500/20': transaction.type === TRANSACTION_TYPE.INCOME,
@@ -172,40 +148,45 @@
                 {{ transaction.type }}
               </span>
             </td>
-            
+
             <td class="px-5 py-4 text-slate-300 border-b border-slate-800/40">
               {{ transaction.categoryName }}
             </td>
-            
+
             <td class="px-5 py-4 text-right font-bold tracking-tight text-slate-200 border-b border-slate-800/40">
-              {{ transaction.type === TRANSACTION_TYPE.EXPENSE ? '-' : '' }}{{ transaction.amount | currency:'ARS':'symbol':'1.2-2' }}
+              {{ transaction.type === TRANSACTION_TYPE.EXPENSE ? '-' : '' }}{{ transaction.amount |
+              currency:'ARS':'symbol':'1.2-2' }}
             </td>
-            
-            <td class="px-5 py-4 text-left pl-8 text-slate-400 font-normal max-w-[220px] truncate border-b border-slate-800/40" [title]="transaction.description">
+
+            <td
+              class="px-5 py-4 text-left pl-8 text-slate-400 font-normal max-w-[220px] truncate border-b border-slate-800/40"
+              [title]="transaction.description">
               {{ transaction.description || '—' }}
             </td>
-            
+
             <td class="px-5 py-4 text-right text-slate-400 font-normal border-b border-slate-800/40">
               {{ transaction.counterparty || '—' }}
             </td>
           </tr>
           }
+          }
         </tbody>
       </table>
-      
+
       <div class="w-full pt-4 pb-2">
-        <app-pagination
-          [page]="paginationState.currentPage()"
-          [size]="paginationState.pageSize()"
-          [totalElements]="paginationState.totalElements()"
-          [totalPages]="paginationState.totalPages()"
-          (changePage)="onPageChange($event)"
-        ></app-pagination>
+        <app-pagination [page]="paginationState.currentPage()" [size]="paginationState.pageSize()"
+          [totalElements]="paginationState.totalElements()" [totalPages]="paginationState.totalPages()"
+          (changePage)="onPageChange($event)"></app-pagination>
       </div>
     </div>
   </div>
 
   <div class="md:hidden space-y-3">
+    @if (loading()) {
+    @for (i of [1, 2, 3]; track i) {
+    <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4 animate-pulse h-28"></div>
+    }
+    } @else {
     @for (transaction of transactions(); track transaction.id) {
     <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4 shadow-md">
       <div class="flex justify-between items-center w-full">
@@ -213,9 +194,10 @@
           <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{{ transaction.date }}</span>
           <span class="mt-1 font-bold text-sm text-slate-200">{{ transaction.categoryName }}</span>
         </div>
-        
+
         <span class="text-base font-bold text-slate-200 tracking-tight">
-          {{ transaction.type === TRANSACTION_TYPE.EXPENSE ? '-' : '' }}{{ transaction.amount | currency:'ARS':'symbol':'1.2-2' }}
+          {{ transaction.type === TRANSACTION_TYPE.EXPENSE ? '-' : '' }}{{ transaction.amount |
+          currency:'ARS':'symbol':'1.2-2' }}
         </span>
       </div>
 
@@ -223,7 +205,7 @@
         <span class="text-xs text-slate-400 font-medium">
           {{ transaction.accountName }}
         </span>
-        
+
         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase inline-block" [ngClass]="{
           'bg-teal-500/[0.06] text-teal-400 border-teal-500/20': transaction.type === TRANSACTION_TYPE.INCOME,
           'bg-rose-500/[0.06] text-rose-400/90 border-rose-500/20': transaction.type === TRANSACTION_TYPE.EXPENSE,
@@ -237,7 +219,7 @@
       <div class="mt-2 text-xs text-slate-400 bg-slate-950/20 rounded-lg p-2 border border-slate-800/30 break-words">
         {{ transaction.description }}
       </div>
-      } 
+      }
       @if (transaction.counterparty) {
       <div class="mt-2 text-[11px] text-slate-500 flex items-center gap-1">
         <i class="fa-solid fa-building text-[10px]"></i>
@@ -246,23 +228,16 @@
       }
     </div>
     }
-    
+    }
+
     <div class="w-full py-4">
-      <app-pagination
-        [page]="paginationState.currentPage()"
-        [size]="paginationState.pageSize()"
-        [totalElements]="paginationState.totalElements()"
-        [totalPages]="paginationState.totalPages()"
-        (changePage)="onPageChange($event)"
-      ></app-pagination>
+      <app-pagination [page]="paginationState.currentPage()" [size]="paginationState.pageSize()"
+        [totalElements]="paginationState.totalElements()" [totalPages]="paginationState.totalPages()"
+        (changePage)="onPageChange($event)"></app-pagination>
     </div>
   </div>
 </div>
 
 @if (isTransactionModalOpen()) {
-<app-edit-transaction
-  [transaction]="null"
-  [accounts]="accounts()"
-  (closed)="onTransactionModalClosed($event)"
-/>
+<app-edit-transaction [transaction]="null" [accounts]="accounts()" (closed)="onTransactionModalClosed($event)" />
 }

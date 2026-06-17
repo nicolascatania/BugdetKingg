@@ -8,10 +8,9 @@ import { BaseService } from '../../../core/services/BaseService';
 import { RefreshableCrudService } from '../../../core/services/RefreshableCrudService.mixin';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccountService extends BaseService<AccountDTO> {
-
   protected readonly baseUrl = `${environment.apiUrl}/account`;
 
   private _accounts = signal<AccountDTO[]>([]);
@@ -22,26 +21,26 @@ export class AccountService extends BaseService<AccountDTO> {
 
   constructor(
     http: HttpClient,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
   ) {
     super(http);
-    effect(() => {
-      transactionService.refresh$();
-      this.loadAccounts();
-    });
+    effect(
+      () => {
+        this.refresh$();
+        this.loadAccounts();
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   totalBalance = computed(() =>
-    this._accounts().reduce(
-      (sum, acc) => sum + acc.balance,
-      0
-    )
+    this._accounts().reduce((sum, acc) => sum + acc.balance, 0),
   );
 
-  loadAccounts(): void {
+  private loadAccounts(): void {
     this.http
       .get<AccountDTO[]>(`${this.baseUrl}/by-user`)
-      .subscribe(accs => this._accounts.set(accs));
+      .subscribe((accs) => this._accounts.set(accs));
   }
 
   override create(account: AccountDTO) {

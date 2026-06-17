@@ -4,6 +4,7 @@ import {
   computed,
   effect,
   inject,
+  OnInit,
   signal,
 } from '@angular/core';
 import { EditAccountModal } from '../../components/edit-account-modal/edit-account-modal';
@@ -11,7 +12,6 @@ import { AccountDTO } from '../../interfaces/AccountDTO.interfaces';
 import { AccountService } from '../../services/AccountService';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { CommonModule } from '@angular/common';
-import { TransactionType } from '../../../../shared/models/TransactionType.enum';
 
 @Component({
   selector: 'app-account-list',
@@ -28,6 +28,7 @@ export class AccountList {
   selectedAccount = signal<AccountDTO | null>(null);
 
   accounts = computed(() => this.accountService.accounts());
+  loading = computed(() => this.accounts().length === 0);
 
   openAccountModal(account: AccountDTO | null) {
     this.selectedAccount.set(account);

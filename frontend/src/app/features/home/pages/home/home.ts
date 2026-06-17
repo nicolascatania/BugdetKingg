@@ -1,21 +1,33 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { Heading } from "../../components/heading/heading";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { Heading } from '../../components/heading/heading';
 import { Accounts } from '../../components/accounts/accounts';
-import { MonthlySummary } from "../../components/monthly-summary/monthly-summary";
-import { LastMoves } from "../../components/last-moves/last-moves";
+import { MonthlySummary } from '../../components/monthly-summary/monthly-summary';
+import { LastMoves } from '../../components/last-moves/last-moves';
 import { AccountService } from '../../../accounts/services/AccountService';
 import { EditAccountModal } from '../../../accounts/components/edit-account-modal/edit-account-modal';
 import { EditTransaction } from '../../../transactions/components/edit-transaction/edit-transaction';
 
 @Component({
   selector: 'home',
-  imports: [Heading, Accounts, MonthlySummary, LastMoves, EditAccountModal, EditTransaction],
+  imports: [
+    Heading,
+    Accounts,
+    MonthlySummary,
+    LastMoves,
+    EditAccountModal,
+    EditTransaction,
+  ],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
-
   private accountService = inject(AccountService);
   accounts = this.accountService.accounts;
 
@@ -26,12 +38,8 @@ export class Home {
   selectedTransaction = null;
 
   constructor() {
-    this.accountService.loadAccounts();
-
-    // Efecto: cuando accountService notifica cambios, recarga cuentas
     effect(() => {
       this.accountService.refresh$();
-      this.accountService.loadAccounts();
     });
   }
 
@@ -59,5 +67,4 @@ export class Home {
   onTransactionModalClosed(success: boolean): void {
     this.isTransactionModalOpen = false;
   }
-
 }

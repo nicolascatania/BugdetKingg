@@ -95,8 +95,5 @@ export class EditAccountModal implements OnInit {
    */
   close(success = false): void {
     this.closed.emit(success);
-    if (success) {
-      this.accountService.loadAccounts();
-    }
   }
 }

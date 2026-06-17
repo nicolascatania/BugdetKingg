@@ -1,0 +1,9 @@
+1. Budget planner, divide % for categories... alerts when reaching the limits. Like 10% for social, 15% for to spend on what i want (choose categories plus others) 50% for food and education (cateogires for that) etc.
+2. Connect to browsers voice api.
+3. CSV export
+4. Skeleton screens
+5. Input masking for ammounts inputs.
+6. Savings view or some way to tell the user you saved this money last month, or you spent less money than last month.
+7. Streak badge.
+8. Auto categorizing
+9. 

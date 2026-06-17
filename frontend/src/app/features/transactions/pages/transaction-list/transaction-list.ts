@@ -1,5 +1,12 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { TransactionDTO } from '../../interfaces/TransactionDTO.interface';
 import { TransactionService } from '../../services/transaction-service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -12,22 +19,31 @@ import { EditTransaction } from '../../components/edit-transaction/edit-transact
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { PaginationComponent } from '../../../../shared/components/PaginationComponent/PaginationComponent';
 import { TransactionFilter } from '../../interfaces/TransactionFilter.interface';
-import { createPaginationState, PaginationState } from '../../../../core/utils/pagination.util';
+import {
+  createPaginationState,
+  PaginationState,
+} from '../../../../core/utils/pagination.util';
 
 @Component({
   selector: 'app-transaction-list',
-  imports: [CommonModule, ReactiveFormsModule, EditTransaction, PaginationComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    EditTransaction,
+    PaginationComponent,
+  ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionList {
-
   private transactionService = inject(TransactionService);
   private fb = inject(FormBuilder);
   private accountsService = inject(AccountService);
   private categoryService = inject(CategoryService);
   private ns = inject(NotificationService);
+
+  loading = signal(false);
 
   TRANSACTION_TYPE = TransactionType;
   transactionTypes = Object.values(TransactionType);
@@ -54,7 +70,7 @@ export class TransactionList {
       category: [''],
       type: [''],
       description: [''],
-      counterparty: ['']
+      counterparty: [''],
     });
 
     // Efecto: cuando searchTrigger cambia, busca transacciones
@@ -71,40 +87,43 @@ export class TransactionList {
   loadFilterData() {
     forkJoin({
       accounts: this.accountsService.getOptions(),
-      categories: this.categoryService.getOptions()
+      categories: this.categoryService.getOptions(),
     }).subscribe({
       next: ({ accounts, categories }) => {
         this.accounts.set(accounts);
         this.categories.set(categories);
         this.onSearch();
       },
-      error: err => {
+      error: (err) => {
         this.ns.error(err);
-      }
+      },
     });
   }
 
   private performSearch(): void {
+    this.loading.set(true);
     const filter: TransactionFilter = {
       page: this.paginationState.currentPage(),
       size: this.paginationState.pageSize(),
-      ...this.form.value
+      ...this.form.value,
     };
 
     this.transactionService.search(filter).subscribe({
       next: (data) => {
         this.transactions.set(data.content);
         this.paginationState.updateFromResponse(data);
+        this.loading.set(false);
       },
       error: (err) => {
         this.ns.error(err);
         this.transactions.set([]);
-      }
+        this.loading.set(false);
+      },
     });
   }
 
   onSearch() {
-    this.searchTrigger.update(v => v + 1);
+    this.searchTrigger.update((v) => v + 1);
   }
 
   onClear() {
@@ -117,7 +136,7 @@ export class TransactionList {
       category: '',
       type: '',
       description: '',
-      counterparty: ''
+      counterparty: '',
     });
     this.onSearch();
   }

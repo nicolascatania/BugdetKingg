@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   signal,
+  OnInit,
 } from '@angular/core';
 import { CategoryService } from '../../service/category-service';
 import { CategoryDTO } from '../../interfaces/CategoryDTO.interface';
@@ -19,18 +20,20 @@ import {
 
 @Component({
   selector: 'app-category-list',
+  standalone: true, // Asegurado como standalone
   imports: [CommonModule, EditCategory, PaginationComponent],
   templateUrl: './category-list.html',
   styleUrl: './category-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CategoryList {
+export class CategoryList implements OnInit {
   private categoryService = inject(CategoryService);
   private notificationService = inject(NotificationService);
 
   isModalCategoryOpen = signal(false);
   selectedCategory = signal<CategoryDTO | null>(null);
   categories = signal<CategoryDTO[]>([]);
+  loading = signal(true);
   paginationState: PaginationState = createPaginationState(20);
 
   private loadTrigger = signal(0);
@@ -43,20 +46,23 @@ export class CategoryList {
   }
 
   ngOnInit() {
-    this.loadTrigger.update((v) => v + 1);
+    this.reloadCategories();
   }
 
   private loadCategories(): void {
+    this.loading.set(true);
     const filter = this.paginationState.getFilter();
 
     this.categoryService.search(filter).subscribe({
       next: (response) => {
         this.categories.set(response.content);
         this.paginationState.updateFromResponse(response);
+        this.loading.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.notificationService.error('Error loading categories');
         this.categories.set([]);
+        this.loading.set(false);
       },
     });
   }
@@ -79,8 +85,9 @@ export class CategoryList {
     this.categoryService.delete(category.id).subscribe({
       next: () => this.reloadCategories(),
       error: (err: HttpErrorResponse) => {
-        const message = err?.error?.message ?? 'Error deleting category';
-        this.notificationService.error(message);
+        this.notificationService.error(
+          err?.error?.message ?? 'Error deleting category',
+        );
       },
     });
   }

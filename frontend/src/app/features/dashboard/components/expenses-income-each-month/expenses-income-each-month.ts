@@ -53,6 +53,8 @@ export class ExpensesIncomeEachMonth {
   }
 
   private updateOrRenderChart(data: MonthlyIncomeExpenseDTO[]) {
+    if (!data || data.length === 0) return;
+
     const canvasElement = document.getElementById(
       'incomeExpenseChart',
     ) as HTMLCanvasElement;

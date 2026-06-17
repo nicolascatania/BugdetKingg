@@ -47,6 +47,7 @@ export class Dashboard implements OnInit {
   annualChartData = signal<MonthlyIncomeExpenseDTO[]>([]);
   accountsSignal = signal<OptionDTO[]>([]);
   filterTrigger = signal(0);
+  loading = signal(true);
 
   constructor(
     private fb: FormBuilder,
@@ -91,15 +92,25 @@ export class Dashboard implements OnInit {
   }
 
   private loadDashboardData() {
+    this.loading.set(true);
+
+    //destroys the canvas to avoid conflicts on the re render when data arrives.
+    if (this.expenseChart) {
+      this.expenseChart.destroy();
+      this.expenseChart = undefined;
+    }
+
     this.transactionService.dashboard(this.filterForm.value).subscribe({
       next: (data) => {
         this.dashboardData.set(data);
         if (data.expensesByCategory) {
+          this.loading.set(false);
           this.renderExpenseChart(data.expensesByCategory);
         }
       },
       error: (err: HttpErrorResponse) => {
         this.ns.error(err.error.message);
+        this.loading.set(false);
       },
     });
   }
@@ -154,57 +165,60 @@ export class Dashboard implements OnInit {
       return `${label} (${pct}%)`;
     });
 
-    if (this.expenseChart) {
-      this.expenseChart.data.labels = labelsWithPercentage;
-      this.expenseChart.data.datasets[0].data = values;
-      this.expenseChart.update();
-      return;
-    }
+    setTimeout(() => {
+      const canvasElement = document.getElementById(
+        'expensePie',
+      ) as HTMLCanvasElement;
+      if (!canvasElement) return;
 
-    this.expenseChart = new Chart('expensePie', {
-      type: 'pie',
-      data: {
-        labels: labelsWithPercentage,
-        datasets: [
-          {
-            data: values,
-            backgroundColor: [
-              '#22c55e',
-              '#ef4444',
-              '#3b82f6',
-              '#f59e0b',
-              '#8b5cf6',
-              '#ec4899',
-            ],
-            borderColor: '#0b0f19',
-            borderWidth: 2,
-            hoverOffset: 4,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltip: {
-            backgroundColor: '#0f172a',
-            titleColor: '#f1f5f9',
-            bodyColor: '#94a3b8',
-            borderColor: '#334155/40',
-            borderWidth: 1,
-            padding: 10,
-            callbacks: {
-              label: (context) => {
-                const value = context.raw as number;
-                return ` $${value.toLocaleString('es-AR')}`;
+      if (this.expenseChart) {
+        this.expenseChart.destroy();
+      }
+      this.expenseChart = new Chart(canvasElement, {
+        type: 'pie',
+        data: {
+          labels: labelsWithPercentage,
+          datasets: [
+            {
+              data: values,
+              backgroundColor: [
+                '#22c55e',
+                '#ef4444',
+                '#3b82f6',
+                '#f59e0b',
+                '#8b5cf6',
+                '#ec4899',
+              ],
+              borderColor: '#0b0f19',
+              borderWidth: 2,
+              hoverOffset: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              titleColor: '#f1f5f9',
+              bodyColor: '#94a3b8',
+              borderColor: '#334155',
+              borderWidth: 1,
+              padding: 10,
+              callbacks: {
+                label: (context) => {
+                  const value = context.raw as number;
+                  return ` $${value.toLocaleString('es-AR')}`;
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+    }, 0);
   }
 }
