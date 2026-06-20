@@ -62,7 +62,7 @@ class CategoryServiceTest{
                 .user(mockUser)
                 .build();
 
-        mockDto = new CategoryDTO(categoryId, "Entertainment");
+        mockDto = new CategoryDTO(categoryId, "Entertainment", "fa fas-circle-info");
     }
 
 
@@ -111,7 +111,7 @@ class CategoryServiceTest{
 
     @Test
     void update_Success() {
-        CategoryDTO updateDto = new CategoryDTO(categoryId, "New Name");
+        CategoryDTO updateDto = new CategoryDTO(categoryId, "New Name", "fa fas-circle-info");
         when(securityUtils.getCurrentUser()).thenReturn(mockUser);
         when(categoryRepository.findByIdAndUser(categoryId, mockUser)).thenReturn(Optional.of(mockCategory));
         when(categoryRepository.save(any(Category.class))).thenReturn(mockCategory);
