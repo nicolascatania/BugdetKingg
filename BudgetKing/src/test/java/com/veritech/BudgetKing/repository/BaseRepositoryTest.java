@@ -43,6 +43,7 @@ public abstract class BaseRepositoryTest {
                 .name("Main Bank")
                 .balance(new BigDecimal("1000.00"))
                 .user(savedUser)
+                .icon("fa fa-bank")
                 .build();
         this.savedAccount = entityManager.persistFlushFind(account);
 
@@ -50,6 +51,7 @@ public abstract class BaseRepositoryTest {
         Category category = Category.builder()
                 .name("Entertainment")
                 .user(savedUser)
+                .icon("fa fa-bank")
                 .build();
         this.savedCategory = entityManager.persistFlushFind(category);
 
