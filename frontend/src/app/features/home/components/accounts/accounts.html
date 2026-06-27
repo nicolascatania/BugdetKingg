@@ -23,7 +23,7 @@
       class="bg-slate-900/50 rounded-xl p-4 border border-slate-800/80 shadow-lg transition-all duration-200 hover:border-slate-700 hover:translate-y-[-1px]">
       <div class="flex items-center justify-between border-b border-slate-800/40 pb-2">
         <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">{{ account.name }}</p>
-        <i class="fa-solid fa-building-columns text-slate-600 text-xs"></i>
+        <i [class]="'fa-solid ' + account.icon + ' text-slate-600 text-xs'"></i>
       </div>
       <p class="text-xl font-bold mt-3 text-slate-100 tracking-tight">
         {{ account.balance | currency:'ARS':'symbol':'1.2-2' }}
