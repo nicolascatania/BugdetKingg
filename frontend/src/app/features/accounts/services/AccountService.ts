@@ -27,6 +27,7 @@ export class AccountService extends BaseService<AccountDTO> {
     effect(
       () => {
         this.refresh$();
+        this.transactionService.refresh$();
         this.loadAccounts();
       },
       { allowSignalWrites: true },
