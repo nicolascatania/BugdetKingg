@@ -1,50 +1,143 @@
 package com.veritech.BudgetKing.service;
 
+import com.veritech.BudgetKing.dto.AppUserDTO;
+import com.veritech.BudgetKing.dto.CategoryDTO;
+import com.veritech.BudgetKing.mapper.AppUserMapper;
+import com.veritech.BudgetKing.mapper.CategoryMapper;
+import com.veritech.BudgetKing.model.Account;
+import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Category;
+import com.veritech.BudgetKing.model.Role;
+import com.veritech.BudgetKing.repository.AppUserRepository;
 import com.veritech.BudgetKing.repository.BaseRepositoryTest;
+import com.veritech.BudgetKing.repository.CategoryRepository;
+import com.veritech.BudgetKing.security.enumerator.Roles;
+import com.veritech.BudgetKing.security.util.SecurityUtils;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AppUserServiceTest {
 
+    @Mock
+    private AppUserRepository appUserRepository;
+
+    @Mock
+    private AppUserMapper appUserMapper;
+
+    @InjectMocks
+    private AppUserService appUserService;
+
+    private AppUser mockUser;
+    ;
+    private AppUserDTO mockDto;
+    private UUID userId;
+
     @BeforeEach
     void setUp() {
+        userId = UUID.randomUUID();
+        Role roleADMIN = new Role(UUID.randomUUID(), Roles.ROLE_ADMIN.name(), Set.of());
+        mockUser = AppUser.builder()
+                .id(userId)
+                .email("nicolas@gmail.com")
+                .name("Nico")
+                .passwordHash("123")
+                .lastName("Ar")
+                .enabled(true)
+                .roles(Set.of(roleADMIN))
+                .build();
+        mockDto = new AppUserDTO(userId, "nicolas@gmail.com", "123", "Nico", "Ar", Collections.singleton(Roles.ROLE_ADMIN.name()));
+
+
     }
 
-    @AfterEach
-    void tearDown() {
+
+    @Test
+    void getById_success() {
+        when(appUserRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+        when(appUserMapper.toDto(mockUser)).thenReturn(mockDto);
+        AppUserDTO result = appUserService.getById(userId);
+        assertNotNull(result);
+        assertEquals(mockDto, result);
+        verify(appUserRepository).findById(userId);
     }
 
     @Test
-    void getById() {
+    void getById_failure_throws_EntityNotFoundException() {
+        when(appUserRepository.findById(null)).thenThrow(new EntityNotFoundException("User not found"));
+        assertThrows(EntityNotFoundException.class, () -> appUserService.getById(null));
     }
 
     @Test
+    @DisplayName("Should create a valid user, Mapper and Repository should be called correctly")
     void create() {
+
+        when(appUserMapper.toEntity(mockDto, null)).thenReturn(mockUser);
+        when(appUserRepository.save(mockUser)).thenReturn(mockUser);
+        when(appUserMapper.toDto(mockUser)).thenReturn(mockDto);
+
+        AppUserDTO result = appUserService.create(mockDto);
+
+        assertNotNull(result);
+        assertEquals(mockDto, result);
+
+        verify(appUserMapper).toEntity(mockDto, null);
+        verify(appUserRepository).save(mockUser);
+        verify(appUserMapper).toDto(mockUser);
     }
 
     @Test
-    void update() {
-    }
+    @DisplayName("Return a list of users with certain fields to show on website, sorted by last name")
+    void getListForWebsite() {
 
-    @Test
-    void deleteById() {
-    }
+        Role roleADMIN = new Role(UUID.randomUUID(), Roles.ROLE_ADMIN.name(), Set.of());
+        Role roleUSER = new Role(UUID.randomUUID(), Roles.ROLE_USER.name(), Set.of());
 
-    @Test
-    void search() {
-    }
+        AppUser appUser2 = AppUser.builder()
+                .id(UUID.randomUUID())
+                .name("1")
+                .email("nicolas2@gmail.com")
+                .lastName("Test")
+                .enabled(true)
+                .roles(Set.of(roleADMIN))
+                .build();
 
-    @Test
-    void getOptions() {
-    }
+        AppUser appUser3 = AppUser.builder()
+                .id(UUID.randomUUID())
+                .name("12")
+                .email("nicolas3@gmail.com")
+                .lastName("Test")
+                .enabled(true)
+                .roles(Set.of(roleUSER))
+                .build();
 
-    @Test
-    void getEntityById() {
+        List<AppUser> users = List.of(mockUser, appUser2, appUser3);
+        Page<AppUser> userPage = new PageImpl<>(users);
+        when(appUserRepository.findAll(any(Pageable.class))).thenReturn(userPage);
+        when(appUserMapper.toDto(any(AppUser.class))).thenReturn(mockDto); //it will result a page with the same 3 DTOS but its fine for this test.
+
+        Page<AppUserDTO> result = appUserService.getListForWebsite(0, 10);
+
+        assertNotNull(result);
+        assertEquals(3, result.getTotalElements());
+        assertEquals(mockDto, result.getContent().get(0));
+
+        verify(appUserRepository).findAll(any(Pageable.class));
+
     }
 }

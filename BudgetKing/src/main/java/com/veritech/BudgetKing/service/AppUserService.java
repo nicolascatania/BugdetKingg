@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,7 +61,7 @@ public class AppUserService implements ICrudService<AppUserDTO, UUID, AppUserFil
     public Page<AppUserDTO> search(AppUserFilter filter) {
         Page<AppUser> users;
 
-        Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize());
+        Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize(), Sort.by(Sort.Direction.ASC, "lastName"));
 
         if (filter == null) {
             users = repository.findAll(pageable);
@@ -80,5 +82,15 @@ public class AppUserService implements ICrudService<AppUserDTO, UUID, AppUserFil
     public AppUser getEntityById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    /**
+     * Returns a list of users for website
+     * Only accesible for admin users
+     * @return
+     */
+    public Page<AppUserDTO> getListForWebsite(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "lastName"));
+        return repository.findAll(pageable).map(mapper::toDto);
     }
 }
