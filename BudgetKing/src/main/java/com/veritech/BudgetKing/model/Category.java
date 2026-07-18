@@ -17,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class Category extends AuditedEntity {
 
     @Id
