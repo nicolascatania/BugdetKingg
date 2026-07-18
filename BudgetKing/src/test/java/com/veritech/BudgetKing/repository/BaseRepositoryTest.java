@@ -31,9 +31,8 @@ public abstract class BaseRepositoryTest {
     @Autowired
     protected TestEntityManager entityManager;
 
-    @Container
     @ServiceConnection
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.36");
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.36").withExposedPorts(3306);
 
     protected AppUser savedUser;
     protected Account savedAccount;
