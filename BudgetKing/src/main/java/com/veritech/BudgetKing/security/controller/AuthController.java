@@ -37,19 +37,23 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
-             authenticationManager.authenticate(
+             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
                             request.getPassword()
                     )
             );
+            var userDetails = (org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal();
+            String token = jwtUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new AuthResponse(token));
+
         }catch (Exception e) {
             log.error(e.getMessage());
             throw e;
         }
 
-        String token = jwtUtil.generateToken(request.getEmail());
-        return ResponseEntity.ok(new AuthResponse(token));
+
+
     }
 
     @PostMapping("/register")
@@ -75,7 +79,9 @@ public class AuthController {
 
         appUserRepository.save(user);
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        var userDetails = new com.veritech.BudgetKing.security.UserDetailsImpl(user);
+
+        String token = jwtUtil.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthResponse(token));
     }

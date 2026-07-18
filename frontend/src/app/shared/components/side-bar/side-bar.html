@@ -44,7 +44,7 @@
     </a>
 
 
-    <a routerLink="/users" routerLinkActive="bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
+    <a *ngIf="isAdmin" routerLink="/users" routerLinkActive="bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent transition-all">
       <i class="fa-solid fa-users w-5 text-center"></i>
       <span *ngIf="sidebarOpen()" class="font-medium">Users</span>

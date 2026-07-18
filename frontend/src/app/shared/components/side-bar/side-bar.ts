@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
 import { CommonModule } from '@angular/common';
@@ -16,8 +21,8 @@ export class SideBar {
 
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   toggleSidebar() {
     this.toggleSideBarEvent.emit();
@@ -26,5 +31,9 @@ export class SideBar {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 }
