@@ -5,11 +5,18 @@ import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.model.Transaction;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,10 +24,16 @@ import java.util.HashSet;
 
 @DataJpaTest
 @WithMockUser(username = "nico@budgetking.com")
+@Testcontainers
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public abstract class BaseRepositoryTest {
 
     @Autowired
     protected TestEntityManager entityManager;
+
+    @Container
+    @ServiceConnection
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.36");
 
     protected AppUser savedUser;
     protected Account savedAccount;
@@ -82,4 +95,5 @@ public abstract class BaseRepositoryTest {
         entityManager.flush();
         entityManager.clear();
     }
+
 }

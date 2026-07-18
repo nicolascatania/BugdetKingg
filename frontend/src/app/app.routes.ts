@@ -10,31 +10,36 @@ import { Accounts } from './features/home/components/accounts/accounts';
 import { TransactionList } from './features/transactions/pages/transaction-list/transaction-list';
 import { AccountList } from './features/accounts/pages/account-list/account-list';
 import { CategoryList } from './features/categories/pages/category-list/category-list';
+import { UserListComponent } from './features/users/pages/user-list/user-list.component';
 
 export const routes: Routes = [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
 
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+  {
+    path: '',
+    component: AuthLayout,
+    children: [
+      { path: 'login', component: Login },
+      { path: 'register', component: Register },
+    ],
+  },
 
-    {
-        path: '',
-        component: AuthLayout,
-        children: [
-            { path: 'login', component: Login },
-            { path: 'register', component: Register },
-        ]
-    },
+  {
+    path: '',
+    component: MainLayout,
+    children: [
+      { path: 'home', component: Home, canActivate: [AuthGuard] },
+      {
+        path: 'transactions',
+        component: TransactionList,
+        canActivate: [AuthGuard],
+      },
+      { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] },
+      { path: 'accounts', component: AccountList, canActivate: [AuthGuard] },
+      { path: 'categories', component: CategoryList, canActivate: [AuthGuard] },
+      { path: 'users', component: UserListComponent, canActivate: [AuthGuard] },
+    ],
+  },
 
-    {
-        path: '',
-        component: MainLayout,
-        children: [
-            { path: 'home', component: Home, canActivate: [AuthGuard] },
-            { path: 'transactions', component: TransactionList, canActivate: [AuthGuard] },
-            { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] },
-            { path: 'accounts', component: AccountList, canActivate: [AuthGuard] },
-            { path: 'categories', component: CategoryList, canActivate: [AuthGuard] },
-        ]
-    },
-
-    { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];
