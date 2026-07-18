@@ -1,9 +1,13 @@
-1. Budget planner, divide % for categories... alerts when reaching the limits. Like 10% for social, 15% for to spend on what i want (choose categories plus others) 50% for food and education (cateogires for that) etc.
-2. Connect to browsers voice api.
-3. CSV export
-4. Skeleton screens
-5. Input masking for ammounts inputs.
-6. Savings view or some way to tell the user you saved this money last month, or you spent less money than last month.
-7. Streak badge.
-8. Auto categorizing
-9. 
+1. Budget planner, divide % for categories... alerts when reaching the limits. Like 10% for social, 15% for to spend on what i want (choose categories plus others) 50% for food and education (categories for that) etc.
+	1st step modal with categories to choose
+	2nd step configure with some bars or something cool percentage levels
+	3rd step go to another view to see how much money acorrding to a monthly income i can spend (aprox)
+		this will be adapted to new incomes. high
+2. Connect to browsers voice api. high
+3. CSV export medium
+4. Skeleton screens DONE
+5. Input masking for ammounts inputs. low
+6. Savings view or some way to tell the user you saved this money last month, or you spent less money than last month. high
+7. Streak badge. low
+8. Auto categorizing low
+9. Goals ... Set a goal that has certain money to be acomplished and a progress bar... low
