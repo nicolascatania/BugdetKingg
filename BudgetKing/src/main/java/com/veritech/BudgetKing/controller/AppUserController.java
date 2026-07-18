@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.controller;
 
 import com.veritech.BudgetKing.dto.AppUserDTO;
+import com.veritech.BudgetKing.dto.AppUserForListDTO;
 import com.veritech.BudgetKing.filter.AppUserFilter;
 import com.veritech.BudgetKing.interfaces.ICrudController;
 import com.veritech.BudgetKing.interfaces.ICrudService;
@@ -34,8 +35,8 @@ public class AppUserController implements
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<AppUserDTO>> getListForWebsite(@RequestParam int page, @RequestParam int size) {
-        Page<AppUserDTO> result = service.getListForWebsite(page, size);
+    public ResponseEntity<Page<AppUserForListDTO>> getListForWebsite(@RequestParam int page, @RequestParam int size) {
+        Page<AppUserForListDTO> result = service.getListForWebsite(page, size);
         return ResponseEntity.ok(result);
     }
 

@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.mapper;
 
 import com.veritech.BudgetKing.dto.AppUserDTO;
+import com.veritech.BudgetKing.dto.AppUserForListDTO;
 import com.veritech.BudgetKing.interfaces.ICrudMapper;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Role;
@@ -16,13 +17,13 @@ public class AppUserMapper implements ICrudMapper<AppUser, AppUserDTO, Void> {
         return new AppUserDTO(
                 entity.getId(),
                 entity.getEmail(),
-                null,
                 entity.getName(),
                 entity.getLastName(),
                 entity.getRoles()
                         .stream()
                         .map(Role::getName)
-                        .collect(Collectors.toSet())
+                        .collect(Collectors.toSet()),
+                entity.isEnabled()
         );
     }
 
@@ -33,5 +34,19 @@ public class AppUserMapper implements ICrudMapper<AppUser, AppUserDTO, Void> {
         user.setName(dto.name());
         user.setLastName(dto.lastName());
         return user;
+    }
+
+
+    public AppUserForListDTO toAppUserForListDTO(AppUser user) {
+        return new AppUserForListDTO(
+                user.getId(),
+                user.getName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.isEnabled(),
+                user.getRoles().stream()
+                        .map(Role::getName)
+                        .toList()
+        );
     }
 }

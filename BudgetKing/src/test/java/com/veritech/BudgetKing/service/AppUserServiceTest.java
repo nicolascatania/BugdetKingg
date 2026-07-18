@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.AppUserDTO;
+import com.veritech.BudgetKing.dto.AppUserForListDTO;
 import com.veritech.BudgetKing.dto.CategoryDTO;
 import com.veritech.BudgetKing.mapper.AppUserMapper;
 import com.veritech.BudgetKing.mapper.CategoryMapper;
@@ -56,12 +57,11 @@ class AppUserServiceTest {
                 .id(userId)
                 .email("nicolas@gmail.com")
                 .name("Nico")
-                .passwordHash("123")
                 .lastName("Ar")
                 .enabled(true)
                 .roles(Set.of(roleADMIN))
                 .build();
-        mockDto = new AppUserDTO(userId, "nicolas@gmail.com", "123", "Nico", "Ar", Collections.singleton(Roles.ROLE_ADMIN.name()));
+        mockDto = new AppUserDTO(userId, "nicolas@gmail.com", "Nico", "Ar", Collections.singleton(Roles.ROLE_ADMIN.name()), true);
 
 
     }
@@ -106,38 +106,31 @@ class AppUserServiceTest {
     void getListForWebsite() {
 
         Role roleADMIN = new Role(UUID.randomUUID(), Roles.ROLE_ADMIN.name(), Set.of());
-        Role roleUSER = new Role(UUID.randomUUID(), Roles.ROLE_USER.name(), Set.of());
+        AppUser appUser2 = AppUser.builder().id(UUID.randomUUID()).name("1").lastName("Test").build();
 
-        AppUser appUser2 = AppUser.builder()
-                .id(UUID.randomUUID())
-                .name("1")
-                .email("nicolas2@gmail.com")
-                .lastName("Test")
-                .enabled(true)
-                .roles(Set.of(roleADMIN))
-                .build();
+        AppUserForListDTO listDto1 = new AppUserForListDTO(userId, "Nico", "Ar", "nicolas@gmail.com", true, List.of("ROLE_ADMIN"));
+        AppUserForListDTO listDto2 = new AppUserForListDTO(appUser2.getId(), "1", "Test", "nico2@gmail.com", true, List.of("ROLE_ADMIN"));
 
-        AppUser appUser3 = AppUser.builder()
-                .id(UUID.randomUUID())
-                .name("12")
-                .email("nicolas3@gmail.com")
-                .lastName("Test")
-                .enabled(true)
-                .roles(Set.of(roleUSER))
-                .build();
-
-        List<AppUser> users = List.of(mockUser, appUser2, appUser3);
+        List<AppUser> users = List.of(mockUser, appUser2);
         Page<AppUser> userPage = new PageImpl<>(users);
-        when(appUserRepository.findAll(any(Pageable.class))).thenReturn(userPage);
-        when(appUserMapper.toDto(any(AppUser.class))).thenReturn(mockDto); //it will result a page with the same 3 DTOS but its fine for this test.
 
-        Page<AppUserDTO> result = appUserService.getListForWebsite(0, 10);
+
+        when(appUserRepository.findAll(any(Pageable.class))).thenReturn(userPage);
+
+
+        when(appUserMapper.toAppUserForListDTO(mockUser)).thenReturn(listDto1);
+        when(appUserMapper.toAppUserForListDTO(appUser2)).thenReturn(listDto2);
+
+        // 3. Ejecución
+        Page<AppUserForListDTO> result = appUserService.getListForWebsite(0, 10);
 
         assertNotNull(result);
-        assertEquals(3, result.getTotalElements());
-        assertEquals(mockDto, result.getContent().get(0));
+        assertEquals(2, result.getTotalElements());
+        assertEquals("Nico", result.getContent().get(0).name());
+        assertEquals("Test", result.getContent().get(1).lastName());
 
         verify(appUserRepository).findAll(any(Pageable.class));
-
+        verify(appUserMapper).toAppUserForListDTO(mockUser);
+        verify(appUserMapper).toAppUserForListDTO(appUser2);
     }
 }

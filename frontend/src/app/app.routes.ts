@@ -6,11 +6,10 @@ import { Register } from './features/login/register/register';
 import { MainLayout } from './core/layouts/main-layout/main-layout';
 import { AuthLayout } from './core/layouts/auth-layout/auth-layout';
 import { AuthGuard } from './core/guard/auth-guard';
-import { Accounts } from './features/home/components/accounts/accounts';
 import { TransactionList } from './features/transactions/pages/transaction-list/transaction-list';
 import { AccountList } from './features/accounts/pages/account-list/account-list';
 import { CategoryList } from './features/categories/pages/category-list/category-list';
-import { UserListComponent } from './features/users/pages/user-list/user-list.component';
+import { UserList } from './features/users/pages/user-list/user-list.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -37,7 +36,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] },
       { path: 'accounts', component: AccountList, canActivate: [AuthGuard] },
       { path: 'categories', component: CategoryList, canActivate: [AuthGuard] },
-      { path: 'users', component: UserListComponent, canActivate: [AuthGuard] },
+      { path: 'users', component: UserList, canActivate: [AuthGuard] },
     ],
   },
 

@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.AppUserDTO;
+import com.veritech.BudgetKing.dto.AppUserForListDTO;
 import com.veritech.BudgetKing.dto.OptionDTO;
 import com.veritech.BudgetKing.filter.AppUserFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
@@ -49,6 +50,7 @@ public class AppUserService implements ICrudService<AppUserDTO, UUID, AppUserFil
         existing.setEmail(updated.getEmail());
         existing.setName(updated.getName());
         existing.setLastName(updated.getLastName());
+        existing.setEnabled(updated.isEnabled());
         return mapper.toDto(repository.save(existing));
     }
 
@@ -89,8 +91,8 @@ public class AppUserService implements ICrudService<AppUserDTO, UUID, AppUserFil
      * Only accesible for admin users
      * @return
      */
-    public Page<AppUserDTO> getListForWebsite(int page, int size) {
+    public Page<AppUserForListDTO> getListForWebsite(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "lastName"));
-        return repository.findAll(pageable).map(mapper::toDto);
+        return repository.findAll(pageable).map(mapper::toAppUserForListDTO);
     }
 }

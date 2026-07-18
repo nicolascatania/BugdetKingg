@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,14 +37,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
                             request.getPassword()
                     )
             );
         }catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw e;
         }
 

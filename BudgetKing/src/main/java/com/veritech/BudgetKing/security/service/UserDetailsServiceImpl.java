@@ -21,15 +21,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String email) {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        AppUser user = userRepository
+        AppUser appUser = userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        user.getRoles().size();
+        appUser.getRoles().size();
 
-        return new UserDetailsImpl(user);
+        return new UserDetailsImpl(appUser);
     }
 
 

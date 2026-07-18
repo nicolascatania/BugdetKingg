@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../../core/services/NotificationService';
 
 @Component({
   selector: 'app-login',
@@ -22,17 +23,28 @@ export class Login {
     private authService: AuthService,
     private fb: FormBuilder,
     private router: Router,
+    private notificationService: NotificationService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
       password: ['', [Validators.required]],
     });
   }
+
   onSubmit(): void {
     if (this.loginForm.invalid) return;
+
     this.authService.login(this.loginForm.value).subscribe({
       next: () => this.router.navigate(['/home']),
-      error: (err) => console.error('Login error', err),
+      error: (err) => {
+        const errorMessage =
+          typeof err.error === 'string'
+            ? err.error
+            : err.error?.message ||
+              'Login error, please contact an administrator';
+
+        this.notificationService.error(errorMessage);
+      },
     });
   }
 }
