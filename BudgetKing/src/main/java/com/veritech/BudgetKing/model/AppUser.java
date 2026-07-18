@@ -40,6 +40,7 @@ public class AppUser {
     private String lastName;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -52,5 +53,6 @@ public class AppUser {
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private Set<Category> categories = new HashSet<>();
 }
