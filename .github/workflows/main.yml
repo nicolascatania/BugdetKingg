@@ -9,20 +9,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
-    # Definimos la base de datos para que los tests tengan donde conectarse
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: budget_db
-          MYSQL_ROOT_PASSWORD: root_password
-          MYSQL_USER: user_budget
-          MYSQL_PASSWORD: user_password
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
@@ -32,39 +18,30 @@ jobs:
         with:
           java-version: "21"
           distribution: "temurin"
-          cache: "maven"
+          cache: "maven" # Esto ya es bueno, asegúrate de que el path sea correcto
 
-      - name: Wait for MySQL to be ready
-        run: sleep 10
-
-      - name: Check DB Port
-        run: |
-          echo "Checkeando si el puerto 3306 está abierto..."
-          nc -zv 127.0.0.1 3306
-
+      # Testcontainers necesita Docker. Ubuntu ya lo tiene.
+      # Para reutilizar el contenedor, configuramos la variable de entorno:
       - name: Run Tests con Maven
+        env:
+          TESTCONTAINERS_REUSE_ENABLE: true
         run: |
           cd BudgetKing
-          mvn clean test \
-            -Dspring.datasource.url=jdbc:mysql://127.0.0.1:3306/budget_db?allowPublicKeyRetrieval=true\&useSSL=false \
-            -Dspring.datasource.username=user_budget \
-            -Dspring.datasource.password=user_password \
-            -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+          mvn clean test -B # -B (Batch mode) reduce el ruido del log en la consola
 
       - name: Build with Maven (Skip Tests)
         run: |
           cd BudgetKing
-          mvn clean package -DskipTests
+          mvn clean package -DskipTests -B
 
-      # --- A partir de aquí empieza el CD (Docker) ---
-
+      # --- CD ---
       - name: Log in to Docker Hub
-        if: github.event_name == 'push' # Solo sube imagen si haces push a main
+        if: github.event_name == 'push'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+      
       - name: Build and Push Docker Image
         if: github.event_name == 'push'
         uses: docker/build-push-action@v5

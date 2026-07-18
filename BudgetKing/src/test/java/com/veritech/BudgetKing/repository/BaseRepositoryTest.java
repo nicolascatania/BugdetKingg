@@ -32,7 +32,7 @@ public abstract class BaseRepositoryTest {
     protected TestEntityManager entityManager;
 
     @ServiceConnection
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.36").withExposedPorts(3306);
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.36").withReuse(true);
 
     protected AppUser savedUser;
     protected Account savedAccount;
