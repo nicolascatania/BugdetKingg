@@ -9,6 +9,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: BudgetKingApp/BudgetKing
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
@@ -18,21 +21,16 @@ jobs:
         with:
           java-version: "21"
           distribution: "temurin"
-          cache: "maven" # Esto ya es bueno, asegúrate de que el path sea correcto
+          cache: "maven"
+          cache-dependency-path: BudgetKingApp/BudgetKing/pom.xml
 
-      # Testcontainers necesita Docker. Ubuntu ya lo tiene.
-      # Para reutilizar el contenedor, configuramos la variable de entorno:
       - name: Run Tests con Maven
         env:
           TESTCONTAINERS_REUSE_ENABLE: true
-        run: |
-          cd BudgetKing
-          mvn clean test -B # -B (Batch mode) reduce el ruido del log en la consola
+        run: mvn clean test -B
 
       - name: Build with Maven (Skip Tests)
-        run: |
-          cd BudgetKing
-          mvn clean package -DskipTests -B
+        run: mvn clean package -DskipTests -B
 
       # --- CD ---
       - name: Log in to Docker Hub
@@ -46,7 +44,7 @@ jobs:
         if: github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
-          context: ./BudgetKing
-          file: ./BudgetKing/Dockerfile
+          context: ./BudgetKingApp/BudgetKing
+          file: ./BudgetKingApp/BudgetKing/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/budget-king-backend:latest
