@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: BudgetKingApp/BudgetKing
+        working-directory: BudgetKing
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
@@ -22,7 +22,7 @@ jobs:
           java-version: "21"
           distribution: "temurin"
           cache: "maven"
-          cache-dependency-path: BudgetKingApp/BudgetKing/pom.xml
+          cache-dependency-path: BudgetKing/pom.xml
 
       - name: Run Tests con Maven
         env:
@@ -30,7 +30,7 @@ jobs:
         run: mvn clean test -B
 
       - name: Build with Maven (Skip Tests)
-        run: mvn clean package -DskipTests -B
+        run: mvn package -DskipTests -B
 
       # --- CD ---
       - name: Log in to Docker Hub
@@ -44,7 +44,7 @@ jobs:
         if: github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
-          context: ./BudgetKingApp/BudgetKing
-          file: ./BudgetKingApp/BudgetKing/Dockerfile
+          context: ./BudgetKing
+          file: ./BudgetKing/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/budget-king-backend:latest
