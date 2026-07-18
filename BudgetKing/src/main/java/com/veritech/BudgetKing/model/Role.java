@@ -30,5 +30,6 @@ public class Role {
     private String name; // ROLE_ADMIN, ROLE_USER
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @Builder.Default
     private Set<AppUser> users = new HashSet<>();
 }

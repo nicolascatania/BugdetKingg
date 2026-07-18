@@ -4,10 +4,14 @@ import com.veritech.BudgetKing.filter.generic.PageableFilter;
 import com.veritech.BudgetKing.filter.generic.SpecificationFilter;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class AccountFilter extends PageableFilter implements SpecificationFilter<Account> {
 
 

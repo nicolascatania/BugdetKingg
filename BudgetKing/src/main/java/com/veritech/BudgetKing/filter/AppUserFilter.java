@@ -5,10 +5,12 @@ import com.veritech.BudgetKing.filter.generic.PageableFilter;
 import com.veritech.BudgetKing.filter.generic.SpecificationFilter;
 import com.veritech.BudgetKing.model.AppUser;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.Specification;
 
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class AppUserFilter extends PageableFilter implements SpecificationFilter<AppUser> {
 
     private String firstName;

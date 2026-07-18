@@ -39,5 +39,6 @@ public class Category extends AuditedEntity {
     private AppUser user;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @Builder.Default
     private Set<Transaction> transactions = new HashSet<>();
 }

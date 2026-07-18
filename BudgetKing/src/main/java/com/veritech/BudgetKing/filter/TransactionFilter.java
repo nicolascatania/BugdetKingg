@@ -9,12 +9,14 @@ import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.model.dict.Transaction_;
 import com.veritech.BudgetKing.utils.StringUtils;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class TransactionFilter extends PageableFilter implements SpecificationFilter<Transaction> {
 
     private LocalDateTime dateFrom;
