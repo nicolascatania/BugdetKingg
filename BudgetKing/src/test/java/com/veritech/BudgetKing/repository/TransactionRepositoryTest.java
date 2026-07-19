@@ -3,7 +3,7 @@ package com.veritech.BudgetKing.repository;
 import com.veritech.BudgetKing.dto.IncomeExpenseDTO;
 import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.enumerator.TransactionType;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
@@ -12,88 +12,99 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @DataJpaTest
+@DisplayName("Transaction Repository Specification")
 class TransactionRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
     private TransactionRepository repository;
 
-    @Test
-    void findByUser() {
-        var transactions = repository.findByUser(savedUser);
-        assertEquals(2, transactions.size());
+    private LocalDateTime start;
+    private LocalDateTime end;
+    private BigDecimal expectedIncome;
+    private BigDecimal expectedExpense;
+
+    @BeforeEach
+    void setUpDefaults() {
+        start = LocalDateTime.of(2024, 1, 1, 0, 0);
+        end = LocalDateTime.of(2024, 2, 1, 0, 0);
+        expectedIncome = new BigDecimal("50.00");
+        expectedExpense = new BigDecimal("20.00");
     }
 
     @Test
-    void findByUserAndType() {
+    @DisplayName("Should retrieve all transactions for a user")
+    void shouldRetrieveAllTransactionsByUser() {
+        var transactions = repository.findByUser(savedUser);
+        assertEquals(2, transactions.size(), () -> "Should find 2 transactions");
+    }
+
+    @Test
+    @DisplayName("Should retrieve transactions filtered by type")
+    void shouldRetrieveTransactionsByUserAndType() {
         var expenses = repository.findByUserAndType(savedUser, TransactionType.EXPENSE);
-        assertEquals(1, expenses.size());
-        assertEquals("Steam Game", expenses.get(0).getDescription());
+        assertEquals(1, expenses.size(), () -> "Should find 1 expense");
+        assertEquals("Steam Game", expenses.get(0).getDescription(), () -> "Description mismatch");
 
         var income = repository.findByUserAndType(savedUser, TransactionType.INCOME);
-        assertEquals(1, income.size());
-        assertEquals("Netflix", income.get(0).getDescription());
+        assertEquals(1, income.size(), () -> "Should find 1 income");
+        assertEquals("Netflix", income.get(0).getDescription(), () -> "Description mismatch");
     }
 
     @Test
-    void findByIdAndUser() {
+    @DisplayName("Should retrieve specific transaction by ID and user")
+    void shouldRetrieveTransactionByIdAndUser() {
         var transaction = repository.findByIdAndUser(savedNetflixTransaction.getId(), savedUser);
-        assertTrue(transaction.isPresent());
-        assertEquals(new BigDecimal("50.00"), transaction.get().getAmount());
+        assertTrue(transaction.isPresent(), () -> "Transaction should be present");
+        assertEquals(0, expectedIncome.compareTo(transaction.get().getAmount()), () -> "Amount mismatch");
     }
 
     @Test
-    void findByUserAndDateBetween() {
-        LocalDateTime start = LocalDateTime.of(2024, 1, 1, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 1, 31, 23, 59);
-
-        var results = repository.findByUserAndDateBetween(savedUser, start, end);
-        assertEquals(2, results.size(), "Should find both transactions in January");
+    @DisplayName("Should retrieve transactions within a specific date range")
+    void shouldRetrieveTransactionsByUserAndDateRange() {
+        var results = repository.findByUserAndDateBetween(savedUser, start, end.minusMinutes(1));
+        assertEquals(2, results.size(), () -> "Should find both transactions in January");
     }
 
     @Test
-    void getMonthlyReport() {
-        LocalDateTime start = LocalDateTime.of(2024, 1, 1, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 2, 1, 0, 0);
-
+    @DisplayName("Should generate accurate monthly report")
+    void shouldGetMonthlyReport() {
         MonthlyTransactionReportDTO report = repository.getMonthlyReport(savedUser, start, end);
 
-        assertNotNull(report);
-        assertEquals(0, new BigDecimal("50.00").compareTo(report.income()));
-        assertEquals(0, new BigDecimal("20.00").compareTo(report.outcome()));
+        assertNotNull(report, () -> "Report should not be null");
+        assertEquals(0, expectedIncome.compareTo(report.income()), () -> "Income mismatch");
+        assertEquals(0, expectedExpense.compareTo(report.outcome()), () -> "Outcome mismatch");
     }
 
     @Test
-    void getIncomeAndExpense() {
-        LocalDateTime start = LocalDateTime.of(2024, 1, 1, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 2, 1, 0, 0);
-
+    @DisplayName("Should retrieve income and expense totals")
+    void shouldGetIncomeAndExpenseTotals() {
         IncomeExpenseDTO dto = repository.getIncomeAndExpense(savedUser, start, end);
 
-        assertEquals(0, new BigDecimal("50.00").compareTo(dto.income()));
-        assertEquals(0, new BigDecimal("20.00").compareTo(dto.expense()));
+        assertEquals(0, expectedIncome.compareTo(dto.income()), () -> "Income mismatch");
+        assertEquals(0, expectedExpense.compareTo(dto.expense()), () -> "Expense mismatch");
     }
 
     @Test
-    void getExpensesByCategory() {
-        LocalDateTime start = LocalDateTime.of(2024, 1, 1, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 2, 1, 0, 0);
-
+    @DisplayName("Should group expenses by category")
+    void shouldGetExpensesByCategory() {
         List<Object[]> result = repository.getExpensesByCategory(savedUser, start, end);
 
-        assertFalse(result.isEmpty());
-        assertEquals("Entertainment", result.get(0)[0]);
-        assertEquals(0, new BigDecimal("20.00").compareTo((BigDecimal) result.get(0)[1]));
+        assertFalse(result.isEmpty(), () -> "Result list should not be empty");
+        assertEquals("Entertainment", result.get(0)[0], () -> "Category name mismatch");
+        assertEquals(0, expectedExpense.compareTo((BigDecimal) result.get(0)[1]), () -> "Amount mismatch");
     }
 
     @Test
-    void getIncomeExpenseByMonth() {
+    @DisplayName("Should retrieve income and expense by month")
+    void shouldGetIncomeExpenseByMonth() {
         var report = repository.getIncomeExpenseByMonth(savedUser, 2024, null);
 
-        assertFalse(report.isEmpty());
+        assertFalse(report.isEmpty(), () -> "Report list should not be empty");
         var januaryReport = report.get(0);
-        assertEquals(1, januaryReport.month()); // Enero
-        assertEquals(0, new BigDecimal("50.00").compareTo(januaryReport.income()));
-        assertEquals(0, new BigDecimal("20.00").compareTo(januaryReport.expense()));
+        assertEquals(1, januaryReport.month(), () -> "Month mismatch");
+        assertEquals(0, expectedIncome.compareTo(januaryReport.income()), () -> "Income mismatch");
+        assertEquals(0, expectedExpense.compareTo(januaryReport.expense()), () -> "Expense mismatch");
     }
 }
