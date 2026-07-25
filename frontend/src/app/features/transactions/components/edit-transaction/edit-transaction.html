@@ -1,4 +1,4 @@
-<ui-modal [open]="true" [title]="transaction ? 'Edit Transaction' : 'New Transaction'" (closed)="close(false)">
+<ui-modal [open]="true" maxWidth="max-w-2xl" [title]="transaction ? 'Edit Transaction' : 'New Transaction'" (closed)="close(false)">
   <div modal-body>
     <form [formGroup]="form" class="space-y-5">
 
