@@ -18,6 +18,10 @@ import { TransactionType } from '../../../../shared/models/TransactionType.enum'
 import { EditTransaction } from '../../components/edit-transaction/edit-transaction';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { PaginationComponent } from '../../../../shared/components/PaginationComponent/PaginationComponent';
+import {
+  MonthQuickPicker,
+  MonthQuickRange,
+} from '../../../../shared/components/month-quick-picker/month-quick-picker';
 import { TransactionFilter } from '../../interfaces/TransactionFilter.interface';
 import {
   createPaginationState,
@@ -31,6 +35,7 @@ import {
     ReactiveFormsModule,
     EditTransaction,
     PaginationComponent,
+    MonthQuickPicker,
   ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
@@ -124,6 +129,10 @@ export class TransactionList {
 
   onSearch() {
     this.searchTrigger.update((v) => v + 1);
+  }
+
+  onMonthRangeSelected(range: MonthQuickRange) {
+    this.form.patchValue({ dateFrom: range.from, dateTo: range.to });
   }
 
   onClear() {
