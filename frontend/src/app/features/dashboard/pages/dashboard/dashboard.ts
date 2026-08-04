@@ -20,6 +20,11 @@ import { NotificationService } from '../../../../core/services/NotificationServi
 import { HttpErrorResponse } from '@angular/common/http';
 import { LastMoves } from '../../../home/components/last-moves/last-moves';
 import { ExpensesIncomeEachMonth } from '../../components/expenses-income-each-month/expenses-income-each-month';
+import {
+  MonthQuickPicker,
+  MonthQuickRange,
+} from '../../../../shared/components/month-quick-picker/month-quick-picker';
+import { getMonthDateRange } from '../../../../shared/utils/datesUtils';
 
 Chart.register(PieController, ArcElement, Tooltip, Legend);
 
@@ -31,6 +36,7 @@ Chart.register(PieController, ArcElement, Tooltip, Legend);
     ReactiveFormsModule,
     LastMoves,
     ExpensesIncomeEachMonth,
+    MonthQuickPicker,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
@@ -63,11 +69,10 @@ export class Dashboard implements OnInit {
 
   ngOnInit() {
     const now = new Date();
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const defaultRange = getMonthDateRange(now.getMonth(), now.getFullYear());
 
-    this.fromDate = firstDay.toISOString().split('T')[0];
-    this.toDate = lastDay.toISOString().split('T')[0];
+    this.fromDate = defaultRange.from;
+    this.toDate = defaultRange.to;
 
     this.filterForm = this.fb.group({
       dateFrom: [this.fromDate],
@@ -152,6 +157,10 @@ export class Dashboard implements OnInit {
 
   applyFilters() {
     this.filterTrigger.update((v) => v + 1);
+  }
+
+  onMonthRangeSelected(range: MonthQuickRange) {
+    this.filterForm.patchValue({ dateFrom: range.from, dateTo: range.to });
   }
 
   private renderExpenseChart(data: CategoryExpense[]) {

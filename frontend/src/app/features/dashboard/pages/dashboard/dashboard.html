@@ -9,8 +9,11 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">To</label>
-          <input type="date" formControlName="dateTo"
-            class="w-full rounded-lg bg-slate-950/50 border border-slate-800/80 px-3 py-2 text-sm text-slate-200 [color-scheme:dark]" />
+          <div class="flex items-center gap-2">
+            <input type="date" formControlName="dateTo"
+              class="w-full rounded-lg bg-slate-950/50 border border-slate-800/80 px-3 py-2 text-sm text-slate-200 [color-scheme:dark]" />
+            <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
+          </div>
         </div>
       </div>
       <button type="submit"

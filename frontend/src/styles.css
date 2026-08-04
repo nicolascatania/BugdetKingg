@@ -3,6 +3,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Structural CSS the Angular Material CDK overlay (mat-menu, matTooltip) needs to
+   position/animate itself. No Material color theme is imported on purpose — the
+   app already has its own Tailwind dark design system, so menu/tooltip panels are
+   hand-styled below to match it instead of pulling in a full Material theme. */
+@import '@angular/cdk/overlay-prebuilt.css';
+
+.mat-mdc-menu-panel {
+  background-color: #0f172a !important;
+  /* slate-900 */
+  border: 1px solid #1e293b !important;
+  /* slate-800 */
+  border-radius: 0.75rem !important;
+}
+
+.mat-mdc-menu-item {
+  color: #cbd5e1 !important;
+  /* slate-300 */
+  min-height: 36px !important;
+}
+
+.mat-mdc-menu-item:hover {
+  background-color: #1e293b !important;
+  /* slate-800 */
+}
+
+.mat-mdc-tooltip .mdc-tooltip__surface {
+  background-color: #0f172a !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #1e293b !important;
+  font-size: 11px !important;
+}
+
 
 html,
 body {
