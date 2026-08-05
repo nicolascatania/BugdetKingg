@@ -1,7 +1,7 @@
 <div class="space-y-5 text-slate-200">
   <div class="p-4 rounded-xl border border-slate-800/80 bg-slate-900/30 shadow-xl">
     <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="flex flex-col md:flex-row items-end gap-4">
-      <div class="w-full md:w-auto flex-1 grid grid-cols-2 gap-4">
+      <div class="w-full md:w-auto flex-1 lg:flex-none grid grid-cols-2 gap-4 lg:grid-cols-[8rem_8rem_auto]">
         <div>
           <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">From</label>
           <input type="date" formControlName="dateFrom"
@@ -12,8 +12,14 @@
           <div class="flex items-center gap-2">
             <input type="date" formControlName="dateTo"
               class="w-full rounded-lg bg-slate-950/50 border border-slate-800/80 px-3 py-2 text-sm text-slate-200 [color-scheme:dark]" />
-            <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
+            <span class="lg:hidden">
+              <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
+            </span>
           </div>
+        </div>
+        <div class="hidden lg:flex lg:flex-col lg:justify-end">
+          <label class="block text-xs font-bold uppercase tracking-wider mb-1.5 invisible">Month</label>
+          <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
         </div>
       </div>
       <button type="submit"
