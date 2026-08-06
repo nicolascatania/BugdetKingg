@@ -14,11 +14,11 @@ export class Accounts {
   private accountService = inject(AccountService);
   accounts = this.accountService.accounts;
   
-  // Signal local para el skeleton
+  // Local signal driving the skeleton placeholders.
   loading = signal(true);
 
   constructor() {
-    // Cuando las cuentas cambian, si ya hay datos, apagamos el skeleton
+    // As soon as the accounts signal emits, the skeleton can be dismissed.
     effect(() => {
       if (this.accounts().length >= 0) {
         this.loading.set(false);

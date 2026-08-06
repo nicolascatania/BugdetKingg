@@ -8,6 +8,7 @@ export interface MultiSelectOption {
 
 @Component({
   selector: 'app-multiselect',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './multiselect.html',
   styleUrl: './multiselect.css',

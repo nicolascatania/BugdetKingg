@@ -1,253 +1,307 @@
-<div class="w-full px-4 py-6">
-  <h1 class="text-2xl font-bold tracking-tight text-slate-100 mb-6">Transactions</h1>
+<div class="mx-auto w-full max-w-screen-2xl space-y-6">
+  <!-- Header -->
+  <div appReveal class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="page-title">Transactions</h1>
+      <p class="mt-1 text-sm text-muted">
+        {{ paginationState.totalElements() }} movements match your filters.
+      </p>
+    </div>
 
-  <div class="space-y-6 my-5">
-    <div class="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/30 shadow-2xl">
-      <form [formGroup]="form" (ngSubmit)="onSearch()" class="space-y-5">
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        class="btn-secondary lg:hidden"
+        (click)="toggleFilters()"
+        [attr.aria-expanded]="filtersOpen()"
+      >
+        <i class="fa-solid fa-sliders text-xs"></i>
+        Filters
+        @if (activeFilterCount() > 0) {
+          <span class="chip-brand ml-1 !px-1.5 !py-0">{{ activeFilterCount() }}</span>
+        }
+      </button>
 
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 lg:grid-cols-[1fr_1fr_auto_1fr_1fr_1fr]">
-          <div>
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">From</label>
-            <input type="date" formControlName="dateFrom"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">To</label>
-            <div class="flex items-center gap-2">
-              <input type="date" formControlName="dateTo"
-                class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]" />
-              <span class="lg:hidden">
-                <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
-              </span>
-            </div>
-          </div>
-
-          <div class="hidden lg:flex lg:flex-col lg:justify-end">
-            <label class="block text-xs font-bold uppercase tracking-wider mb-1.5 invisible">Month</label>
-            <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Account</label>
-            <select formControlName="account"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer">
-              <option value="" class="bg-slate-900">All</option>
-              @for (account of accounts(); track account.id) {
-              <option [value]="account.id" class="bg-slate-900">{{ account.value }}</option>
-              }
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Category</label>
-            <select formControlName="category"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer">
-              <option value="" class="bg-slate-900">All</option>
-              @for (category of categories(); track category.id) {
-              <option [value]="category.id" class="bg-slate-900">{{ category.value }}</option>
-              }
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Type</label>
-            <select formControlName="type"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all cursor-pointer">
-              <option value="" class="bg-slate-900">All</option>
-              @for (type of transactionTypes; track type) {
-              <option [value]="type" class="bg-slate-900">{{ type }}</option>
-              }
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 lg:grid-cols-10">
-          <div class="lg:col-span-1">
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Min amount</label>
-            <input type="number" formControlName="minAmount" placeholder="0.00"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
-          </div>
-
-          <div class="lg:col-span-1">
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Max amount</label>
-            <input type="number" formControlName="maxAmount" placeholder="0.00"
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
-          </div>
-
-          <div class="lg:col-span-2">
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
-            <input type="text" formControlName="description" placeholder="Search details..."
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
-          </div>
-
-          <div class="lg:col-span-2">
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Counterparty</label>
-            <input type="text" formControlName="counterparty" placeholder="Search counterparty..."
-              class="w-full rounded-xl bg-slate-950/40 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-2">
-          <button type="button"
-            class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/40 text-sm font-semibold transition-colors active:scale-[0.98]"
-            (click)="onClear()">
-            Clear
-          </button>
-
-          <button type="submit"
-            class="px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/10 text-sm font-semibold transition-all active:scale-[0.98]">
-            Apply Filters
-          </button>
-        </div>
-      </form>
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="openNewTransactionModal()"
+        [disabled]="!userHasAccounts"
+        [title]="userHasAccounts ? 'Record a new transaction' : 'Create an account first'"
+      >
+        <i class="fa-solid fa-plus text-xs"></i>
+        New transaction
+      </button>
     </div>
   </div>
 
-  <div class="flex flex-wrap gap-4 mb-6">
-    <button (click)="openNewTransactionModal()"
-      class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-600/15 active:scale-[0.98]"
-      [disabled]="!userHasAccounts" [ngClass]="{ 'opacity-40 cursor-not-allowed shadow-none': !userHasAccounts }">
-      <i class="fa-solid fa-plus text-xs"></i>
-      Transaction
-    </button>
-  </div>
+  <!-- Filters -->
+  <section
+    appReveal
+    [revealDelay]="60"
+    class="card p-4 sm:p-5 lg:!block"
+    [class.hidden]="!filtersOpen()"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSearch()" class="space-y-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div>
+          <label for="tx-from" class="field-label">From</label>
+          <input id="tx-from" type="date" formControlName="dateFrom" class="field-input" />
+        </div>
 
-  <div class="hidden md:block bg-slate-900/30 border border-slate-800/80 rounded-2xl p-2 shadow-2xl">
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm text-left border-separate border-spacing-y-0.5">
-        <thead class="bg-[#0b0f19] text-slate-400 text-xs font-bold uppercase tracking-wider">
+        <div>
+          <label for="tx-to" class="field-label">To</label>
+          <div class="flex items-end gap-2">
+            <input id="tx-to" type="date" formControlName="dateTo" class="field-input" />
+            <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
+          </div>
+        </div>
+
+        <div>
+          <label for="tx-account" class="field-label">Account</label>
+          <select id="tx-account" formControlName="account" class="field-select">
+            <option value="">All</option>
+            @for (account of accounts(); track account.id) {
+              <option [value]="account.id">{{ account.value }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="tx-category" class="field-label">Category</label>
+          <select id="tx-category" formControlName="category" class="field-select">
+            <option value="">All</option>
+            @for (category of categories(); track category.id) {
+              <option [value]="category.id">{{ category.value }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="tx-type" class="field-label">Type</label>
+          <select id="tx-type" formControlName="type" class="field-select">
+            <option value="">All</option>
+            @for (type of transactionTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="tx-min" class="field-label">Min</label>
+            <input id="tx-min" type="number" formControlName="minAmount" placeholder="0" class="field-input" />
+          </div>
+          <div>
+            <label for="tx-max" class="field-label">Max</label>
+            <input id="tx-max" type="number" formControlName="maxAmount" placeholder="0" class="field-input" />
+          </div>
+        </div>
+
+        <div class="sm:col-span-2 xl:col-span-3">
+          <label for="tx-description" class="field-label">Description</label>
+          <div class="relative">
+            <i
+              class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-subtle"
+            ></i>
+            <input
+              id="tx-description"
+              type="text"
+              formControlName="description"
+              placeholder="Search details…"
+              class="field-input pl-10"
+            />
+          </div>
+        </div>
+
+        <div class="sm:col-span-2 xl:col-span-3">
+          <label for="tx-counterparty" class="field-label">Counterparty</label>
+          <div class="relative">
+            <i
+              class="fa-solid fa-building pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-subtle"
+            ></i>
+            <input
+              id="tx-counterparty"
+              type="text"
+              formControlName="counterparty"
+              placeholder="Search counterparty…"
+              class="field-input pl-10"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col-reverse gap-3 border-t border-line pt-4 sm:flex-row sm:justify-end">
+        <button type="button" class="btn-secondary sm:w-32" (click)="onClear()">
+          <i class="fa-solid fa-eraser text-xs"></i>
+          Clear
+        </button>
+        <button type="submit" class="btn-primary sm:w-40">
+          <i class="fa-solid fa-filter text-xs"></i>
+          Apply filters
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Table (tablet and up) -->
+  <section appReveal [revealDelay]="100" class="card hidden overflow-hidden md:block">
+    <div class="custom-scroll overflow-x-auto">
+      <table class="w-full min-w-[880px] text-left text-sm">
+        <thead
+          class="bg-surface-2 text-[11px] font-bold uppercase tracking-wider text-muted"
+        >
           <tr>
-            <th class="px-5 py-4 rounded-l-xl">Date</th>
-            <th class="px-5 py-4">Account</th>
-            <th class="px-5 py-4">Type</th>
-            <th class="px-5 py-4">Category</th>
-            <th class="px-5 py-4 text-right">Amount</th>
-            <th class="px-5 py-4 pl-8">Description</th>
-            <th class="px-5 py-4 text-right rounded-r-xl">Counterparty</th>
+            <th class="px-5 py-3.5 font-bold">Date</th>
+            <th class="px-5 py-3.5 font-bold">Account</th>
+            <th class="px-5 py-3.5 font-bold">Type</th>
+            <th class="px-5 py-3.5 font-bold">Category</th>
+            <th class="px-5 py-3.5 text-right font-bold">Amount</th>
+            <th class="px-5 py-3.5 font-bold">Description</th>
+            <th class="px-5 py-3.5 text-right font-bold">Counterparty</th>
           </tr>
         </thead>
 
         <tbody>
           @if (loading()) {
-          @for (i of [1, 2, 3, 4, 5]; track i) {
-          <tr class="animate-pulse">
-            @for (col of [1, 2, 3, 4, 5, 6, 7]; track col) {
-            <td class="px-5 py-4">
-              <div class="h-4 bg-slate-800 rounded w-full"></div>
-            </td>
+            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+              <tr class="border-t border-line">
+                @for (col of [1, 2, 3, 4, 5, 6, 7]; track col) {
+                  <td class="px-5 py-4"><div class="skeleton h-4 w-full"></div></td>
+                }
+              </tr>
             }
-          </tr>
-          }
           } @else {
-          @for (transaction of transactions(); track transaction.id) {
-          <tr class="hover:bg-indigo-500/[0.02] transition-all duration-150">
-            <td class="px-5 py-4 text-slate-400 font-normal border-b border-slate-800/40">
-              {{ transaction.date }}
-            </td>
-            <td class="px-5 py-4 font-semibold text-slate-200 border-b border-slate-800/40">
-              {{ transaction.accountName }}
-            </td>
-
-            <td class="px-5 py-4 border-b border-slate-800/40">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded border uppercase inline-block" [ngClass]="{
-                'bg-teal-500/[0.06] text-teal-400 border-teal-500/20': transaction.type === TRANSACTION_TYPE.INCOME,
-                'bg-rose-500/[0.06] text-rose-400/90 border-rose-500/20': transaction.type === TRANSACTION_TYPE.EXPENSE,
-                'bg-slate-800 text-slate-400 border-slate-700': transaction.type === TRANSACTION_TYPE.TRANSFER
-              }">
-                {{ transaction.type }}
-              </span>
-            </td>
-
-            <td class="px-5 py-4 text-slate-300 border-b border-slate-800/40">
-              {{ transaction.categoryName }}
-            </td>
-
-            <td class="px-5 py-4 text-right font-bold tracking-tight text-slate-200 border-b border-slate-800/40">
-              {{ transaction.type === TRANSACTION_TYPE.EXPENSE ? '-' : '' }}{{ transaction.amount |
-              currency:'ARS':'symbol':'1.2-2' }}
-            </td>
-
-            <td
-              class="px-5 py-4 text-left pl-8 text-slate-400 font-normal max-w-[220px] truncate border-b border-slate-800/40"
-              [title]="transaction.description">
-              {{ transaction.description || '—' }}
-            </td>
-
-            <td class="px-5 py-4 text-right text-slate-400 font-normal border-b border-slate-800/40">
-              {{ transaction.counterparty || '—' }}
-            </td>
-          </tr>
-          }
+            @for (transaction of transactions(); track transaction.id) {
+              <tr class="tx-row border-t border-line transition-colors duration-150 hover:bg-brand/[0.04]">
+                <td class="tabular whitespace-nowrap px-5 py-3.5 text-muted">{{ transaction.date }}</td>
+                <td class="px-5 py-3.5 font-semibold">{{ transaction.accountName }}</td>
+                <td class="px-5 py-3.5">
+                  <span
+                    [ngClass]="{
+                      'chip-positive': transaction.type === TRANSACTION_TYPE.INCOME,
+                      'chip-negative': transaction.type === TRANSACTION_TYPE.EXPENSE,
+                      'chip-neutral': transaction.type === TRANSACTION_TYPE.TRANSFER
+                    }"
+                  >
+                    {{ transaction.type }}
+                  </span>
+                </td>
+                <td class="px-5 py-3.5 text-muted">{{ transaction.categoryName }}</td>
+                <td
+                  class="tabular whitespace-nowrap px-5 py-3.5 text-right font-bold"
+                  [ngClass]="{
+                    'text-positive': transaction.type === TRANSACTION_TYPE.INCOME,
+                    'text-negative': transaction.type === TRANSACTION_TYPE.EXPENSE
+                  }"
+                >
+                  {{ transaction.type === TRANSACTION_TYPE.EXPENSE ? '-' : '' }}{{
+                    transaction.amount | currency: 'ARS' : 'symbol' : '1.2-2'
+                  }}
+                </td>
+                <td class="max-w-[220px] truncate px-5 py-3.5 text-muted" [title]="transaction.description">
+                  {{ transaction.description || '—' }}
+                </td>
+                <td class="px-5 py-3.5 text-right text-muted">{{ transaction.counterparty || '—' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="px-5 py-16 text-center">
+                  <i class="fa-solid fa-receipt mb-3 block text-2xl text-subtle"></i>
+                  <p class="text-sm text-muted">No transactions match these filters.</p>
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>
-
-      <div class="w-full pt-4 pb-2">
-        <app-pagination [page]="paginationState.currentPage()" [size]="paginationState.pageSize()"
-          [totalElements]="paginationState.totalElements()" [totalPages]="paginationState.totalPages()"
-          (changePage)="onPageChange($event)"></app-pagination>
-      </div>
     </div>
-  </div>
 
-  <div class="md:hidden space-y-3">
+    <div class="px-5">
+      <app-pagination
+        [page]="paginationState.currentPage()"
+        [size]="paginationState.pageSize()"
+        [totalElements]="paginationState.totalElements()"
+        [totalPages]="paginationState.totalPages()"
+        (changePage)="onPageChange($event)"
+      ></app-pagination>
+    </div>
+  </section>
+
+  <!-- Cards (phones) -->
+  <section class="space-y-3 md:hidden">
     @if (loading()) {
-    @for (i of [1, 2, 3]; track i) {
-    <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4 animate-pulse h-28"></div>
-    }
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton h-28 rounded-2xl"></div>
+      }
     } @else {
-    @for (transaction of transactions(); track transaction.id) {
-    <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4 shadow-md">
-      <div class="flex justify-between items-center w-full">
-        <div class="flex flex-col">
-          <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{{ transaction.date }}</span>
-          <span class="mt-1 font-bold text-sm text-slate-200">{{ transaction.categoryName }}</span>
+      @for (transaction of transactions(); track transaction.id) {
+        <article class="tx-row card p-4">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="tabular text-[10px] font-bold uppercase tracking-wider text-subtle">
+                {{ transaction.date }}
+              </p>
+              <p class="mt-0.5 truncate text-sm font-bold">{{ transaction.categoryName }}</p>
+            </div>
+
+            <p
+              class="tabular shrink-0 text-base font-bold"
+              [ngClass]="{
+                'text-positive': transaction.type === TRANSACTION_TYPE.INCOME,
+                'text-negative': transaction.type === TRANSACTION_TYPE.EXPENSE
+              }"
+            >
+              {{ transaction.type === TRANSACTION_TYPE.EXPENSE ? '-' : '' }}{{
+                transaction.amount | currency: 'ARS' : 'symbol' : '1.2-2'
+              }}
+            </p>
+          </div>
+
+          <div class="mt-3 flex items-center justify-between gap-3 border-t border-line pt-2.5">
+            <span class="truncate text-xs font-medium text-muted">{{ transaction.accountName }}</span>
+            <span
+              [ngClass]="{
+                'chip-positive': transaction.type === TRANSACTION_TYPE.INCOME,
+                'chip-negative': transaction.type === TRANSACTION_TYPE.EXPENSE,
+                'chip-neutral': transaction.type === TRANSACTION_TYPE.TRANSFER
+              }"
+            >
+              {{ transaction.type }}
+            </span>
+          </div>
+
+          @if (transaction.description) {
+            <p class="mt-2.5 break-words rounded-lg bg-surface-2 p-2.5 text-xs text-muted">
+              {{ transaction.description }}
+            </p>
+          }
+
+          @if (transaction.counterparty) {
+            <p class="mt-2 flex items-center gap-1.5 text-[11px] text-subtle">
+              <i class="fa-solid fa-building text-[10px]"></i>
+              {{ transaction.counterparty }}
+            </p>
+          }
+        </article>
+      } @empty {
+        <div class="card p-10 text-center">
+          <i class="fa-solid fa-receipt mb-3 block text-2xl text-subtle"></i>
+          <p class="text-sm text-muted">No transactions match these filters.</p>
         </div>
-
-        <span class="text-base font-bold text-slate-200 tracking-tight">
-          {{ transaction.type === TRANSACTION_TYPE.EXPENSE ? '-' : '' }}{{ transaction.amount |
-          currency:'ARS':'symbol':'1.2-2' }}
-        </span>
-      </div>
-
-      <div class="mt-3 flex items-center justify-between border-t border-slate-800/40 pt-2.5">
-        <span class="text-xs text-slate-400 font-medium">
-          {{ transaction.accountName }}
-        </span>
-
-        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase inline-block" [ngClass]="{
-          'bg-teal-500/[0.06] text-teal-400 border-teal-500/20': transaction.type === TRANSACTION_TYPE.INCOME,
-          'bg-rose-500/[0.06] text-rose-400/90 border-rose-500/20': transaction.type === TRANSACTION_TYPE.EXPENSE,
-          'bg-slate-800 text-slate-400 border-slate-700': transaction.type === TRANSACTION_TYPE.TRANSFER
-        }">
-          {{ transaction.type }}
-        </span>
-      </div>
-
-      @if (transaction.description) {
-      <div class="mt-2 text-xs text-slate-400 bg-slate-950/20 rounded-lg p-2 border border-slate-800/30 break-words">
-        {{ transaction.description }}
-      </div>
       }
-      @if (transaction.counterparty) {
-      <div class="mt-2 text-[11px] text-slate-500 flex items-center gap-1">
-        <i class="fa-solid fa-building text-[10px]"></i>
-        {{ transaction.counterparty }}
-      </div>
-      }
-    </div>
-    }
     }
 
-    <div class="w-full py-4">
-      <app-pagination [page]="paginationState.currentPage()" [size]="paginationState.pageSize()"
-        [totalElements]="paginationState.totalElements()" [totalPages]="paginationState.totalPages()"
-        (changePage)="onPageChange($event)"></app-pagination>
-    </div>
-  </div>
+    <app-pagination
+      [page]="paginationState.currentPage()"
+      [size]="paginationState.pageSize()"
+      [totalElements]="paginationState.totalElements()"
+      [totalPages]="paginationState.totalPages()"
+      (changePage)="onPageChange($event)"
+    ></app-pagination>
+  </section>
 </div>
 
 @if (isTransactionModalOpen()) {
-<app-edit-transaction [transaction]="null" [accounts]="accounts()" (closed)="onTransactionModalClosed($event)" />
+  <app-edit-transaction [transaction]="null" [accounts]="accounts()" (closed)="onTransactionModalClosed($event)" />
 }

@@ -2,17 +2,14 @@
   display: block;
 }
 
-/* Forzar la estética del calendario nativo del motor webkit a modo oscuro */
-input[type="date"] {
-  color-scheme: dark;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
+/* Native date pickers follow the active theme (the tokens set `color-scheme`
+   on :root), so only the indicator affordance needs tweaking here. */
+input[type='date']::-webkit-calendar-picker-indicator {
   cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.15s ease;
+  opacity: 0.55;
+  transition: opacity 150ms ease;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
+input[type='date']::-webkit-calendar-picker-indicator:hover {
   opacity: 0.9;
 }

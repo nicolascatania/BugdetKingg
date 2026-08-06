@@ -1,7 +1,7 @@
 export interface IconOption {
-  value: string; // Clase CSS o identificador
-  label: string; // Texto legible
-  preview: string; // Carácter o clase para renderizar
+  value: string; // CSS class or identifier
+  label: string; // Human-readable text
+  preview: string; // Character or class used to render the preview
 }
 
 export const FINANCIAL_ICONS: IconOption[] = [

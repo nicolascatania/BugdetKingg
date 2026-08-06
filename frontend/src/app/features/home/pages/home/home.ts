@@ -12,9 +12,11 @@ import { LastMoves } from '../../components/last-moves/last-moves';
 import { AccountService } from '../../../accounts/services/AccountService';
 import { EditAccountModal } from '../../../accounts/components/edit-account-modal/edit-account-modal';
 import { EditTransaction } from '../../../transactions/components/edit-transaction/edit-transaction';
+import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
 @Component({
   selector: 'home',
+  standalone: true,
   imports: [
     Heading,
     Accounts,
@@ -22,6 +24,7 @@ import { EditTransaction } from '../../../transactions/components/edit-transacti
     LastMoves,
     EditAccountModal,
     EditTransaction,
+    RevealDirective,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

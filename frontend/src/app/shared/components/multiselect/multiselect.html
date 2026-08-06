@@ -1,55 +1,66 @@
-<div
-  class="w-full multi-select-dropdown relative"
-  (document:click)="onDocumentClick($event)"
->
-  <label *ngIf="label" class="block text-sm text-slate-300 mb-1"
-    >{{ label }}</label
-  >
+<div class="multi-select-dropdown relative w-full" (document:click)="onDocumentClick($event)">
+  @if (label) {
+    <label class="field-label">{{ label }}</label>
+  }
 
   <div
-    class="flex flex-wrap gap-1 p-2 border rounded-lg bg-card cursor-text w-full min-h-[38px] items-center"
-    [class.border-border]="!isFocused()"
-    [class.border-accent-green]="isFocused()"
+    class="flex w-full min-h-[46px] cursor-text flex-wrap items-center gap-1.5 rounded-xl border bg-surface-2 p-2
+           transition-all duration-200 ease-smooth"
+    [ngClass]="isFocused() ? 'border-brand ring-4 ring-brand/15' : 'border-line'"
   >
-    @if(selectedItems().length > 0){ @for(item of selectedItems(); track $index)
-    {
-    <span
-      class="bg-accent-green text-black px-2 py-1 rounded flex items-center gap-1"
-    >
-      {{ item[labelField] }}
-      <button
-        type="button"
-        (click)="$event.stopPropagation(); removeItem(item)"
-        class="ml-1"
+    @for (item of selectedItems(); track $index) {
+      <span
+        class="animate-scale-in inline-flex items-center gap-1.5 rounded-lg bg-brand/12 px-2 py-1
+               text-xs font-semibold text-brand"
       >
-        &times;
-      </button>
-    </span>
-    } }@else {
-    <span class="text-sm text-slate-400">No Options Available</span>
+        {{ item[labelField] }}
+        <button
+          type="button"
+          (click)="$event.stopPropagation(); removeItem(item)"
+          class="flex h-4 w-4 items-center justify-center rounded transition-colors hover:bg-brand/20"
+          [attr.aria-label]="'Remove ' + item[labelField]"
+        >
+          <i class="fa-solid fa-xmark text-[9px]"></i>
+        </button>
+      </span>
     }
 
     <input
       type="text"
-      placeholder="{{ selectedItems().length ? '' : placeholder }}"
-      class="flex-1 bg-card text-white outline-none"
+      [placeholder]="selectedItems().length ? '' : placeholder"
+      class="min-w-[100px] flex-1 bg-transparent text-sm text-body outline-none placeholder:text-subtle"
       [(ngModel)]="searchTerm"
       (focus)="onFocus()"
     />
   </div>
 
-  <ul
-    *ngIf="dropdownOpen()"
-    class="absolute z-10 mt-1 w-full max-h-60 overflow-auto border border-border rounded-lg bg-card shadow-lg"
-  >
-    @for(item of filteredOptions(); track $index) {
-    <li
-      (click)="selectItem(item)"
-      class="px-3 py-2 cursor-pointer hover:bg-accent-green/20"
-      [ngClass]="isSelected(item) ? 'bg-accent-green/30' : ''"
+  @if (dropdownOpen()) {
+    <ul
+      class="custom-scroll animate-scale-in absolute z-20 mt-1.5 max-h-60 w-full overflow-auto
+             rounded-xl border border-line bg-surface p-1 shadow-lifted"
+      role="listbox"
     >
-      {{ item[labelField] }}
-    </li>
-    }
-  </ul>
+      @for (item of filteredOptions(); track $index) {
+        <li
+          (click)="selectItem(item)"
+          class="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm
+                 transition-colors duration-150"
+          [ngClass]="
+            isSelected(item)
+              ? 'bg-brand/12 text-brand font-semibold'
+              : 'text-muted hover:bg-surface-2'
+          "
+          [attr.aria-selected]="isSelected(item)"
+          role="option"
+        >
+          {{ item[labelField] }}
+          @if (isSelected(item)) {
+            <i class="fa-solid fa-check text-[10px]"></i>
+          }
+        </li>
+      } @empty {
+        <li class="px-3 py-3 text-center text-xs text-subtle">No options available.</li>
+      }
+    </ul>
+  }
 </div>

@@ -1,28 +1,55 @@
-<div class="mb-14">
-  <h2 class="text-lg font-bold tracking-tight text-slate-100 mb-5">Monthly Summary</h2>
+<section>
+  <h2 class="section-title mb-4">Monthly summary</h2>
 
   @if (monthlyReport() === null) {
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 animate-pulse">
-    @for (i of [1, 2, 3]; track i) {
-    <div class="bg-slate-900/40 rounded-xl p-5 border border-slate-800 h-24"></div>
-    }
-  </div>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton h-[108px] rounded-2xl"></div>
+      }
+    </div>
   } @else {
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-    <div class="bg-slate-900/40 rounded-xl p-5 border border-slate-800/80">
-      <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Income</p>
-      <p class="text-2xl font-bold text-teal-400 mt-2">{{ monthlyReport()?.income | currency:'ARS':'symbol':'1.2-2' }}
-      </p>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <article class="card-interactive p-5">
+        <div class="flex items-center justify-between">
+          <p class="eyebrow">Income</p>
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-positive/10 text-positive">
+            <i class="fa-solid fa-arrow-trend-up text-xs"></i>
+          </span>
+        </div>
+        <p class="tabular mt-3 text-2xl font-bold text-positive">
+          {{ monthlyReport()?.income | currency: 'ARS' : 'symbol' : '1.2-2' }}
+        </p>
+      </article>
+
+      <article class="card-interactive p-5">
+        <div class="flex items-center justify-between">
+          <p class="eyebrow">Outcome</p>
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-negative/10 text-negative">
+            <i class="fa-solid fa-arrow-trend-down text-xs"></i>
+          </span>
+        </div>
+        <p class="tabular mt-3 text-2xl font-bold text-negative">
+          {{ monthlyReport()?.outcome | currency: 'ARS' : 'symbol' : '1.2-2' }}
+        </p>
+      </article>
+
+      <!-- The net result gets the brand treatment: it is the number that matters. -->
+      <article
+        class="card-interactive relative overflow-hidden border-brand/30 bg-gradient-to-br from-brand/10 to-transparent p-5"
+      >
+        <div class="flex items-center justify-between">
+          <p class="eyebrow text-brand">Balance</p>
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/15 text-brand">
+            <i class="fa-solid fa-scale-balanced text-xs"></i>
+          </span>
+        </div>
+        <p
+          class="tabular mt-3 text-2xl font-extrabold"
+          [ngClass]="balance() >= 0 ? 'text-body' : 'text-negative'"
+        >
+          {{ balance() | currency: 'ARS' : 'symbol' : '1.2-2' }}
+        </p>
+      </article>
     </div>
-    <div class="bg-slate-900/40 rounded-xl p-5 border border-slate-800/80">
-      <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Outcome</p>
-      <p class="text-2xl font-bold text-rose-400/90 mt-2">{{ monthlyReport()?.outcome | currency:'ARS':'symbol':'1.2-2'
-        }}</p>
-    </div>
-    <div class="bg-slate-900/40 rounded-xl p-5 border border-indigo-500/20">
-      <p class="text-indigo-300 text-xs font-bold uppercase tracking-wider">Balance</p>
-      <p class="text-2xl font-black mt-2 text-white">{{ balance() | currency:'ARS':'symbol':'1.2-2' }}</p>
-    </div>
-  </div>
   }
-</div>
+</section>

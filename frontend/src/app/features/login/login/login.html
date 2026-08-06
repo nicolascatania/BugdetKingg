@@ -1,54 +1,109 @@
-<div class="relative min-h-screen w-full bg-slate-950 overflow-hidden">
-
-  <div class="fixed inset-0 z-0 pointer-events-none">
-    <div class="block absolute top-[-10%] left-[-10%] w-96 h-96 rounded-full bg-indigo-600/20 bg-blur animate-float">
+<div class="w-full max-w-md">
+  <!-- Brand -->
+  <div class="mb-8 flex flex-col items-center text-center">
+    <div class="relative">
+      <span
+        class="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl
+               bg-gradient-to-br from-brand to-accent text-brand-contrast shadow-glow"
+      >
+        <i class="fa-solid fa-crown text-2xl"></i>
+      </span>
+      <!-- Slow halo that keeps the mark feeling alive. -->
+      <span
+        class="absolute inset-0 rounded-2xl bg-brand/40 animate-pulse-ring"
+        aria-hidden="true"
+      ></span>
     </div>
-    <div class="block absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full bg-indigo-900/20 bg-blur animate-float"
-      style="animation-delay: -4s;"></div>
 
-    <i class="block fa-solid fa-chart-line absolute top-[15%] left-[10%] text-indigo-500/20 text-7xl animate-float"></i>
-    <i class="block fa-solid fa-wallet absolute top-[60%] right-[15%] text-indigo-500/20 text-8xl animate-float"
-      style="animation-delay: -2s;"></i>
-    <i class="block fa-solid fa-tags absolute bottom-[20%] left-[20%] text-indigo-500/20 text-6xl animate-float"
-      style="animation-delay: -5s;"></i>
-    <i class="block fa-solid fa-credit-card absolute top-[20%] right-[20%] text-indigo-500/20 text-7xl animate-float"
-      style="animation-delay: -3s;"></i>
-    <i class="block fa-solid fa-piggy-bank absolute bottom-[10%] right-[5%] text-indigo-500/20 text-9xl animate-float"
-      style="animation-delay: -6s;"></i>
+    <h1 class="mt-6 font-display text-3xl font-extrabold tracking-tight">
+      Budget<span class="text-gradient-brand">King</span>
+    </h1>
+    <p class="mt-2 text-sm text-muted">Welcome back. Your money is waiting.</p>
   </div>
 
-  <div class="relative z-10 flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <div
-        class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.2)] relative">
-        <i class="fa-solid fa-crown text-indigo-400 text-3xl"></i>
-        <span class="absolute text-indigo-950 font-black text-sm mt-1">$</span>
+  <!-- Card -->
+  <div class="auth-card card-sheen rounded-3xl border border-line bg-surface/80 p-6 shadow-lifted backdrop-blur-2xl sm:p-8">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
+      <div>
+        <label for="login-email" class="field-label">Email address</label>
+        <div class="relative">
+          <i
+            class="fa-solid fa-envelope pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-subtle"
+          ></i>
+          <input
+            id="login-email"
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            class="field-input pl-10"
+            [class.border-negative]="showError('email')"
+          />
+        </div>
+        @if (showError('email')) {
+          <p class="mt-1.5 animate-fade-in text-xs font-medium text-negative">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i>
+            Enter a valid email address.
+          </p>
+        }
       </div>
-      <h2 class="mt-8 text-center text-3xl font-extrabold tracking-tight text-white">BudgetKing</h2>
-      <p class="mt-2 text-center text-slate-400">Sign in to your account</p>
+
+      <div>
+        <label for="login-password" class="field-label">Password</label>
+        <div class="relative">
+          <i
+            class="fa-solid fa-lock pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-subtle"
+          ></i>
+          <input
+            id="login-password"
+            formControlName="password"
+            [type]="passwordVisible() ? 'text' : 'password'"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            class="field-input px-10"
+            [class.border-negative]="showError('password')"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center
+                   rounded-lg text-subtle transition-colors hover:text-brand"
+            [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
+          >
+            <i class="fa-solid text-xs" [class.fa-eye]="!passwordVisible()" [class.fa-eye-slash]="passwordVisible()"></i>
+          </button>
+        </div>
+        @if (showError('password')) {
+          <p class="mt-1.5 animate-fade-in text-xs font-medium text-negative">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i>
+            Password is required.
+          </p>
+        }
+      </div>
+
+      <button type="submit" class="btn-primary w-full" [disabled]="submitting()">
+        @if (submitting()) {
+          <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+          <span>Signing in…</span>
+        } @else {
+          <span>Sign in</span>
+          <i class="fa-solid fa-arrow-right text-xs transition-transform duration-300 group-hover:translate-x-1"></i>
+        }
+      </button>
+    </form>
+
+    <div class="my-6 flex items-center gap-3">
+      <span class="h-px flex-1 bg-line"></span>
+      <span class="text-[11px] font-semibold uppercase tracking-widest text-subtle">New here</span>
+      <span class="h-px flex-1 bg-line"></span>
     </div>
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        <div>
-          <label class="block text-sm font-medium text-slate-300">Email address</label>
-          <input formControlName="email" type="email"
-            class="mt-2 block w-full rounded-xl bg-slate-900/50 border border-slate-700/50 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-300">Password</label>
-          <input formControlName="password" type="password"
-            class="mt-2 block w-full rounded-xl bg-slate-900/50 border border-slate-700/50 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
-        </div>
-        <button type="submit" [disabled]="loginForm.invalid"
-          class="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-50">
-          Sign in
-        </button>
-      </form>
-      <p class="mt-10 text-center text-sm text-slate-400">
-        Not a member? <a routerLink="/register"
-          class="font-semibold text-indigo-400 hover:text-indigo-300 cursor-pointer">Register</a>
-      </p>
-    </div>
+    <a routerLink="/register" class="btn-secondary w-full">
+      Create an account
+    </a>
   </div>
+
+  <p class="mt-6 text-center text-xs text-subtle">
+    Track accounts, categories and every move — in one place.
+  </p>
 </div>

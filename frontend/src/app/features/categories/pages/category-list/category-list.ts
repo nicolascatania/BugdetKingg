@@ -17,11 +17,12 @@ import {
   createPaginationState,
   PaginationState,
 } from '../../../../core/utils/pagination.util';
+import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
 @Component({
   selector: 'app-category-list',
-  standalone: true, // Asegurado como standalone
-  imports: [CommonModule, EditCategory, PaginationComponent],
+  standalone: true,
+  imports: [CommonModule, EditCategory, PaginationComponent, RevealDirective],
   templateUrl: './category-list.html',
   styleUrl: './category-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

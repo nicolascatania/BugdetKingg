@@ -3,10 +3,10 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 /**
- * Mixin que proporciona lógica de notificación de cambios para servicios CRUD
- * Útil para servicios que necesitan notificar a otros componentes/servicios cuando sus datos cambian
- * 
- * Uso:
+ * Mixin providing change-notification logic for CRUD services.
+ * Useful for services that need to notify other components/services when their data changes.
+ *
+ * Usage:
  * ```typescript
  * export class MyService extends BaseService<MyDTO> {
  *   private refreshable = new RefreshableCrudService();
@@ -23,16 +23,16 @@ export class RefreshableCrudService {
   readonly refresh$: Signal<number> = this.refreshSignal.asReadonly();
 
   /**
-   * Notifica a todos los observadores que hay cambios
+   * Notifies every observer that data has changed.
    */
   protected notifyRefresh(): void {
     this.refreshSignal.update(v => v + 1);
   }
 
   /**
-   * Envuelve un observable CRUD con notificación automática
-   * @param observable Observable de operación CRUD
-   * @returns Observable con notificación de refresh al completarse
+   * Wraps a CRUD observable so a refresh is emitted automatically.
+   * @param observable Observable of the CRUD operation
+   * @returns Observable that notifies a refresh once it completes
    */
   wrapWithRefresh<T>(observable: Observable<T>): Observable<T> {
     return observable.pipe(
@@ -41,7 +41,7 @@ export class RefreshableCrudService {
   }
 
   /**
-   * Obtiene el observable de cambios (read-only)
+   * Returns the read-only change signal.
    */
   getRefreshSignal(): Signal<number> {
     return this.refresh$;

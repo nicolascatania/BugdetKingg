@@ -1,3 +1,33 @@
 :host {
   display: block;
 }
+
+/* Result rows fade in so a new search reads as a refresh, not a hard swap. */
+.tx-row {
+  animation: row-enter 360ms ease-out both;
+}
+
+.tx-row:nth-child(1) { animation-delay: 20ms; }
+.tx-row:nth-child(2) { animation-delay: 45ms; }
+.tx-row:nth-child(3) { animation-delay: 70ms; }
+.tx-row:nth-child(4) { animation-delay: 95ms; }
+.tx-row:nth-child(5) { animation-delay: 120ms; }
+.tx-row:nth-child(6) { animation-delay: 145ms; }
+.tx-row:nth-child(n + 7) { animation-delay: 165ms; }
+
+@keyframes row-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tx-row {
+    animation: none;
+  }
+}

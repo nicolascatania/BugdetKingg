@@ -1,23 +1,33 @@
-<main class="flex-1 bg-[#0b0f19] min-h-screen p-6 md:p-10 transition-colors duration-300">
-  <section class="w-full max-w-screen-xl mx-auto space-y-10">
-    <!-- Balance -->
+<div class="mx-auto w-full max-w-screen-2xl space-y-8">
+  <div appReveal>
     <heading (newAccount)="openNewAccountModal()" (newTransaction)="openNewTransactionModal()"></heading>
+  </div>
 
-    <!-- Accounts -->
+  <div appReveal [revealDelay]="60">
     <accounts></accounts>
+  </div>
 
-    <!-- Monthly summary -->
+  <div appReveal [revealDelay]="120">
     <monthly-summary></monthly-summary>
+  </div>
 
-    <!-- Recent transactions -->
+  <section appReveal [revealDelay]="180">
+    <div class="mb-4 flex items-center justify-between gap-4">
+      <h2 class="section-title">Recent activity</h2>
+      <span class="chip-brand">This month</span>
+    </div>
     <last-moves></last-moves>
   </section>
-</main>
+</div>
 
-@if(isAccountModalOpen){
-<app-edit-account-modal [account]="selectedAccount" (closed)="onModalClosed($event)"></app-edit-account-modal>
+@if (isAccountModalOpen) {
+  <app-edit-account-modal [account]="selectedAccount" (closed)="onModalClosed($event)"></app-edit-account-modal>
+}
 
-}@if (isTransactionModalOpen) {
-<app-edit-transaction [transaction]="selectedTransaction" [accounts]="accounts()"
-  (closed)="onTransactionModalClosed($event)" />
+@if (isTransactionModalOpen) {
+  <app-edit-transaction
+    [transaction]="selectedTransaction"
+    [accounts]="accounts()"
+    (closed)="onTransactionModalClosed($event)"
+  />
 }

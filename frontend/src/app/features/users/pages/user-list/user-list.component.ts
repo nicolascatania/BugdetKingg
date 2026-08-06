@@ -17,12 +17,14 @@ import {
   PaginationState,
 } from '../../../../core/utils/pagination.util';
 import { UserService } from '../../services/user-service';
+import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [PaginationComponent],
+  imports: [PaginationComponent, RevealDirective],
   templateUrl: './user-list.component.html',
+  styleUrl: './user-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserList implements OnInit {

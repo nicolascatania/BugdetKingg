@@ -1,63 +1,89 @@
-<div class="w-full px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto space-y-6 text-slate-200">
-  <div class="flex items-center justify-between gap-4">
-    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-100 whitespace-nowrap">My Accounts</h1>
-    <button (click)="openAccountModal(null)"
-      class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-indigo-600 text-slate-100 text-xs sm:text-sm font-semibold hover:bg-indigo-500 active:scale-[0.98] transition-all">
-      <i class="fa-solid fa-plus"></i> <span>New Account</span>
+<div class="mx-auto w-full max-w-screen-2xl space-y-6">
+  <!-- Header -->
+  <div appReveal class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="page-title">My accounts</h1>
+      <p class="mt-1 text-sm text-muted">Everywhere your money lives, in one view.</p>
+    </div>
+
+    <button type="button" (click)="openAccountModal(null)" class="btn-primary">
+      <i class="fa-solid fa-plus text-xs"></i>
+      New account
     </button>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+  <!-- Grid -->
+  <div appReveal [revealDelay]="60" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
     @if (loading()) {
-    @for (i of [1, 2, 3]; track i) {
-    <div
-      class="bg-slate-900/30 border border-slate-800 rounded-xl p-5 min-h-[150px] animate-pulse flex flex-col justify-between">
-      <div class="flex items-start justify-between gap-3 w-full">
-        <div class="w-10 h-10 rounded-lg bg-slate-800"></div>
-        <div class="flex gap-2">
-          <div class="w-6 h-6 rounded bg-slate-800"></div>
-          <div class="w-6 h-6 rounded bg-slate-800"></div>
-        </div>
-      </div>
-      <div class="w-full h-8 bg-slate-800 rounded mt-4"></div>
-    </div>
-    }
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton h-[168px] rounded-2xl"></div>
+      }
     } @else {
-    @for (account of accounts(); track account.id) {
-    <div
-      class="group relative bg-card border border-border rounded-xl p-4 sm:p-5 shadow-lg flex flex-col justify-between min-h-[150px]">
-      <div class="flex items-start justify-between gap-3 w-full">
-        <div class="flex items-center gap-3 min-w-0 flex-1">
-          <div class="rounded-lg p-3 bg-slate-900/40 text-indigo-400 shrink-0 border border-slate-800">
-            <i class="fa-solid" [ngClass]="account.icon || 'fa-wallet'"></i>
+      @for (account of accounts(); track account.id) {
+        <article class="account-card card-interactive card-sheen group flex flex-col justify-between p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex min-w-0 flex-1 items-center gap-3">
+              <span
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand
+                       transition-transform duration-300 ease-spring group-hover:scale-105"
+              >
+                <i class="fa-solid text-sm" [ngClass]="account.icon || 'fa-wallet'"></i>
+              </span>
+
+              <div class="min-w-0 flex-1">
+                <h3 class="truncate text-sm font-bold sm:text-base">{{ account.name }}</h3>
+                <p class="mt-0.5 truncate text-xs text-muted">
+                  {{ account.description || 'No description' }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Actions stay visible on touch devices, where hover does not exist. -->
+            <div class="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                (click)="openAccountModal(account)"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-all duration-200 hover:bg-brand/10 hover:text-brand"
+                [attr.aria-label]="'Edit ' + account.name"
+              >
+                <i class="fa-solid fa-pen-to-square text-xs"></i>
+              </button>
+              <button
+                type="button"
+                (click)="deleteAccount(account)"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-all duration-200 hover:bg-negative/10 hover:text-negative"
+                [attr.aria-label]="'Delete ' + account.name"
+              >
+                <i class="fa-solid fa-trash text-xs"></i>
+              </button>
+            </div>
           </div>
-          <div class="min-w-0 flex-1">
-            <h3 class="text-sm sm:text-base font-bold text-slate-100 truncate">{{ account.name }}</h3>
-            <p class="text-xs text-slate-400 mt-0.5 truncate">{{ account.description || 'No description' }}</p>
+
+          <div class="mt-5 flex items-end justify-between gap-3 border-t border-line pt-4">
+            <p class="eyebrow">Balance</p>
+            <p
+              class="tabular text-xl font-extrabold tracking-tight"
+              [ngClass]="account.balance >= 0 ? 'text-positive' : 'text-negative'"
+            >
+              {{ account.balance | currency: 'ARS' : 'symbol' : '1.0-0' }}
+            </p>
           </div>
+        </article>
+      } @empty {
+        <div class="col-span-full rounded-2xl border border-dashed border-line bg-surface/50 p-12 text-center">
+          <i class="fa-solid fa-building-columns mb-3 block text-3xl text-subtle"></i>
+          <p class="text-sm font-semibold">No accounts registered</p>
+          <p class="mt-1 text-xs text-muted">Create your first account to start tracking movements.</p>
+          <button type="button" (click)="openAccountModal(null)" class="btn-primary mx-auto mt-5">
+            <i class="fa-solid fa-plus text-xs"></i>
+            New account
+          </button>
         </div>
-        <div class="flex items-center gap-1.5 shrink-0">
-          <button (click)="openAccountModal(account)" class="p-1 text-slate-400 hover:text-indigo-400"><i
-              class="fa-solid fa-pen-to-square"></i></button>
-          <button (click)="deleteAccount(account)" class="p-1 text-slate-400 hover:text-red-400"><i
-              class="fa-solid fa-trash"></i></button>
-        </div>
-      </div>
-      <div class="mt-5 border-t border-slate-800 pt-4 flex items-center justify-between">
-        <p class="text-xs font-bold text-slate-400 uppercase">Balance</p>
-        <p class="text-xl font-black text-right" [ngClass]="account.balance >= 0 ? 'text-green-400' : 'text-red-400'">
-          {{ account.balance | currency:'ARS':'symbol':'1.0-0' }}
-        </p>
-      </div>
-    </div>
-    } @empty {
-    <div class="col-span-full bg-card border border-dashed border-slate-800 rounded-xl p-12 text-center">
-      <p class="text-slate-500">No Accounts Registered</p>
-    </div>
-    }
+      }
     }
   </div>
 </div>
-@if(isModalOpen()) {
-<app-edit-account-modal [account]="selectedAccount()" (closed)="onAccountModalClose($event)"></app-edit-account-modal>
+
+@if (isModalOpen()) {
+  <app-edit-account-modal [account]="selectedAccount()" (closed)="onAccountModalClose($event)"></app-edit-account-modal>
 }

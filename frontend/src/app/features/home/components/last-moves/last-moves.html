@@ -1,69 +1,123 @@
-<div class="bg-slate-900/30 rounded-2xl border border-slate-800/80 p-2 shadow-2xl">
-  <div class="max-h-[440px] overflow-y-auto custom-scroll">
-    <table class="w-full text-sm text-left border-separate border-spacing-y-1">
-      <thead class="bg-[#0b0f19] text-slate-400 text-xs font-bold uppercase tracking-wider sticky top-0 z-10">
+<div class="card overflow-hidden">
+  <!-- Desktop / tablet: full table -->
+  <div class="custom-scroll hidden max-h-[440px] overflow-auto md:block">
+    <table class="w-full text-left text-sm">
+      <thead
+        class="sticky top-0 z-10 bg-surface-2/95 text-[11px] font-bold uppercase tracking-wider text-muted backdrop-blur"
+      >
         <tr>
-          <th class="px-6 py-4 rounded-l-xl">Date</th>
-          <th class="px-6 py-4">Account</th>
-          <th class="px-6 py-4">Type</th>
-          <th class="px-6 py-4">Category</th>
-          <th class="px-6 py-4 text-right">Amount</th>
-          <th class="px-6 py-4 pl-10">Description</th>
-          <th class="px-6 py-4 text-right rounded-r-xl">CounterParty</th>
+          <th class="px-5 py-3.5 font-bold">Date</th>
+          <th class="px-5 py-3.5 font-bold">Account</th>
+          <th class="px-5 py-3.5 font-bold">Type</th>
+          <th class="px-5 py-3.5 font-bold">Category</th>
+          <th class="px-5 py-3.5 text-right font-bold">Amount</th>
+          <th class="px-5 py-3.5 font-bold">Description</th>
+          <th class="px-5 py-3.5 text-right font-bold">Counterparty</th>
         </tr>
       </thead>
 
       <tbody>
         @if (loading()) {
-        @for (i of [1, 2, 3, 4, 5]; track i) {
-        <tr class="animate-pulse">
-          <td class="px-6 py-4">
-            <div class="h-4 bg-slate-800 rounded w-20"></div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="h-4 bg-slate-800 rounded w-24"></div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="h-6 bg-slate-800 rounded w-16"></div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="h-4 bg-slate-800 rounded w-24"></div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="h-4 bg-slate-800 rounded w-16 ml-auto"></div>
-          </td>
-          <td class="px-6 py-4 pl-10">
-            <div class="h-4 bg-slate-800 rounded w-32"></div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="h-4 bg-slate-800 rounded w-20 ml-auto"></div>
-          </td>
-        </tr>
-        }
-        }
-        @else {
-        @for(tx of txs(); track tx.id) {
-        <tr class="hover:bg-indigo-500/[0.02] transition-all duration-150">
-          <td class="px-6 py-4 text-slate-400 font-normal border-b border-slate-800/40">{{ tx.date }}</td>
-          <td class="px-6 py-4 font-semibold text-slate-200 border-b border-slate-800/40">{{ tx.accountName }}</td>
-          <td class="px-6 py-4 border-b border-slate-800/40">
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded border uppercase inline-block" [ngClass]="{
-                  'bg-teal-500/[0.06] text-teal-400 border-teal-500/20': tx.type === TRANSACTION_TYPES.INCOME,
-                  'bg-rose-500/[0.06] text-rose-400/90 border-rose-500/20': tx.type === TRANSACTION_TYPES.EXPENSE,
-                  'bg-slate-800 text-slate-400 border-slate-700': tx.type === TRANSACTION_TYPES.TRANSFER
-                }">{{ tx.type }}</span>
-          </td>
-          <td class="px-6 py-4 border-b border-slate-800/40">{{ tx.category }}</td>
-          <td class="px-6 py-4 text-right font-bold text-slate-200 border-b border-slate-800/40">
-            {{ tx.type === TRANSACTION_TYPES.EXPENSE ? '-' : '' }}{{ tx.amount | currency:'ARS':'symbol':'1.2-2' }}
-          </td>
-          <td class="px-6 py-4 text-left pl-10 text-slate-400 truncate max-w-[200px]" [title]="tx.description">{{
-            tx.description || '-' }}</td>
-          <td class="px-6 py-4 text-right text-slate-400 border-b border-slate-800/40">{{ tx.counterparty || '-' }}</td>
-        </tr>
-        }
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <tr class="border-t border-line">
+              @for (col of [1, 2, 3, 4, 5, 6, 7]; track col) {
+                <td class="px-5 py-4"><div class="skeleton h-4 w-full"></div></td>
+              }
+            </tr>
+          }
+        } @else {
+          @for (tx of txs(); track tx.id) {
+            <tr class="tx-row border-t border-line transition-colors duration-150 hover:bg-brand/[0.04]">
+              <td class="tabular whitespace-nowrap px-5 py-3.5 text-muted">{{ tx.date }}</td>
+              <td class="px-5 py-3.5 font-semibold">{{ tx.accountName }}</td>
+              <td class="px-5 py-3.5">
+                <span
+                  [ngClass]="{
+                    'chip-positive': tx.type === TRANSACTION_TYPES.INCOME,
+                    'chip-negative': tx.type === TRANSACTION_TYPES.EXPENSE,
+                    'chip-neutral': tx.type === TRANSACTION_TYPES.TRANSFER
+                  }"
+                >
+                  {{ tx.type }}
+                </span>
+              </td>
+              <td class="px-5 py-3.5 text-muted">{{ tx.category }}</td>
+              <td
+                class="tabular whitespace-nowrap px-5 py-3.5 text-right font-bold"
+                [ngClass]="{
+                  'text-positive': tx.type === TRANSACTION_TYPES.INCOME,
+                  'text-negative': tx.type === TRANSACTION_TYPES.EXPENSE
+                }"
+              >
+                {{ tx.type === TRANSACTION_TYPES.EXPENSE ? '-' : '' }}{{
+                  tx.amount | currency: 'ARS' : 'symbol' : '1.2-2'
+                }}
+              </td>
+              <td class="max-w-[220px] truncate px-5 py-3.5 text-muted" [title]="tx.description">
+                {{ tx.description || '—' }}
+              </td>
+              <td class="px-5 py-3.5 text-right text-muted">{{ tx.counterparty || '—' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="px-5 py-10 text-center text-sm text-subtle">
+                No movements this month yet.
+              </td>
+            </tr>
+          }
         }
       </tbody>
     </table>
+  </div>
+
+  <!-- Phones: one card per movement -->
+  <div class="custom-scroll max-h-[440px] space-y-2 overflow-y-auto p-2 md:hidden">
+    @if (loading()) {
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton h-24 rounded-xl"></div>
+      }
+    } @else {
+      @for (tx of txs(); track tx.id) {
+        <article class="tx-row rounded-xl border border-line bg-surface-2 p-3.5">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="tabular text-[10px] font-bold uppercase tracking-wider text-subtle">{{ tx.date }}</p>
+              <p class="mt-0.5 truncate text-sm font-bold">{{ tx.category }}</p>
+              <p class="mt-0.5 truncate text-xs text-muted">{{ tx.accountName }}</p>
+            </div>
+
+            <div class="shrink-0 text-right">
+              <p
+                class="tabular text-sm font-bold"
+                [ngClass]="{
+                  'text-positive': tx.type === TRANSACTION_TYPES.INCOME,
+                  'text-negative': tx.type === TRANSACTION_TYPES.EXPENSE
+                }"
+              >
+                {{ tx.type === TRANSACTION_TYPES.EXPENSE ? '-' : '' }}{{
+                  tx.amount | currency: 'ARS' : 'symbol' : '1.0-0'
+                }}
+              </p>
+              <span
+                class="mt-1 inline-block"
+                [ngClass]="{
+                  'chip-positive': tx.type === TRANSACTION_TYPES.INCOME,
+                  'chip-negative': tx.type === TRANSACTION_TYPES.EXPENSE,
+                  'chip-neutral': tx.type === TRANSACTION_TYPES.TRANSFER
+                }"
+              >
+                {{ tx.type }}
+              </span>
+            </div>
+          </div>
+
+          @if (tx.description) {
+            <p class="mt-2.5 border-t border-line pt-2 text-xs text-muted">{{ tx.description }}</p>
+          }
+        </article>
+      } @empty {
+        <p class="py-10 text-center text-sm text-subtle">No movements this month yet.</p>
+      }
+    }
   </div>
 </div>

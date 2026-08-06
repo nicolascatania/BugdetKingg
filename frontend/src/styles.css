@@ -1,101 +1,482 @@
-/* You can add global styles to this file, and also import other style files */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Structural CSS the Angular Material CDK overlay (mat-menu, matTooltip) needs to
-   position/animate itself. No Material color theme is imported on purpose — the
-   app already has its own Tailwind dark design system, so menu/tooltip panels are
-   hand-styled below to match it instead of pulling in a full Material theme. */
+/* Structural CSS the Angular Material CDK overlay (mat-menu, matTooltip,
+   mat-snack-bar) needs to position/animate itself. No Material colour theme is
+   imported on purpose — the app ships its own token-based design system, so the
+   few Material surfaces are hand-styled below to match it. */
 @import '@angular/cdk/overlay-prebuilt.css';
 
+/* ==========================================================================
+   1. DESIGN TOKENS
+   Colours are stored as raw "R G B" channels so Tailwind can apply opacity
+   modifiers (`bg-surface/60`). The light theme is the default; adding `.dark`
+   to <html> swaps the values, so no component needs `dark:` variants.
+   ========================================================================== */
+@layer base {
+  :root {
+    /* Surfaces — never pure white, a hint of green keeps the brand present. */
+    --color-app: 244 248 246;
+    --color-surface: 255 255 255;
+    --color-surface-2: 238 244 241;
+    --color-surface-3: 226 234 230;
+    --color-line: 219 228 224;
+    --color-line-strong: 197 210 204;
+
+    /* Content */
+    --color-text: 12 27 22;
+    --color-text-muted: 84 104 96;
+    --color-text-subtle: 128 146 139;
+
+    /* Brand & semantics */
+    --color-brand: 4 132 94;
+    --color-brand-strong: 3 105 75;
+    --color-brand-soft: 214 243 231;
+    --color-brand-contrast: 255 255 255;
+    --color-accent: 13 148 136;
+    --color-positive: 4 132 94;
+    --color-negative: 206 40 68;
+    --color-warning: 176 106 8;
+
+    --shadow-color: 12 46 36;
+
+    /* Ambient background wash used by the shell and the auth screens. */
+    --wash-1: 4 132 94;
+    --wash-2: 13 148 136;
+
+    color-scheme: light;
+  }
+
+  .dark {
+    --color-app: 6 14 12;
+    --color-surface: 13 24 21;
+    --color-surface-2: 19 33 29;
+    --color-surface-3: 26 43 38;
+    --color-line: 33 52 46;
+    --color-line-strong: 48 72 64;
+
+    --color-text: 231 240 236;
+    --color-text-muted: 151 172 165;
+    --color-text-subtle: 116 138 131;
+
+    --color-brand: 52 211 153;
+    --color-brand-strong: 16 185 129;
+    --color-brand-soft: 6 62 47;
+    --color-brand-contrast: 4 26 20;
+    --color-accent: 45 212 191;
+    --color-positive: 52 211 153;
+    --color-negative: 251 113 133;
+    --color-warning: 251 191 36;
+
+    --shadow-color: 0 0 0;
+
+    --wash-1: 16 185 129;
+    --wash-2: 45 212 191;
+
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    @apply bg-app font-sans text-body antialiased;
+  }
+
+  /* Money and metrics must not jitter while values change. */
+  .tabular,
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A single, consistent keyboard focus treatment across the whole app. */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid rgb(var(--color-brand));
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
+  ::selection {
+    background-color: rgb(var(--color-brand) / 0.25);
+  }
+}
+
+/* ==========================================================================
+   2. COMPONENT PRIMITIVES
+   Shared classes so every view styles inputs, buttons and cards identically.
+   ========================================================================== */
+@layer components {
+  /* ---- Surfaces ---------------------------------------------------------- */
+  .card {
+    @apply rounded-2xl border border-line bg-surface shadow-soft;
+  }
+
+  .card-interactive {
+    @apply card transition-all duration-300 ease-smooth hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-lifted;
+  }
+
+  /* Subtle top highlight that gives cards a lit edge in both themes. */
+  .card-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-sheen::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--color-brand) / 0.55),
+      transparent
+    );
+    opacity: 0;
+    transition: opacity 320ms ease;
+  }
+
+  .card-sheen:hover::before {
+    opacity: 1;
+  }
+
+  .panel {
+    @apply rounded-2xl border border-line bg-surface/70 backdrop-blur-xl;
+  }
+
+  /* ---- Forms ------------------------------------------------------------- */
+  .field-label {
+    @apply mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted;
+  }
+
+  .field-hint {
+    @apply mt-1.5 block text-[11px] text-subtle;
+  }
+
+  .field-input {
+    @apply w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-body
+           placeholder:text-subtle transition-all duration-200 ease-smooth
+           hover:border-line-strong
+           focus:border-brand focus:bg-surface focus:outline-none focus:ring-4 focus:ring-brand/15
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Native pickers follow the active theme instead of always rendering dark. */
+  .field-input[type='date'],
+  .field-input[type='datetime-local'] {
+    color-scheme: inherit;
+  }
+
+  .field-select {
+    @apply field-input cursor-pointer appearance-none bg-no-repeat pr-9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2.2' stroke='%23708a80'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+  }
+
+  /* ---- Buttons ----------------------------------------------------------- */
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-semibold transition-all duration-200 ease-smooth
+           active:scale-[0.97]
+           disabled:pointer-events-none disabled:opacity-40;
+    min-height: 44px; /* Comfortable touch target on every breakpoint. */
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand text-brand-contrast shadow-soft hover:bg-brand-strong hover:shadow-glow;
+  }
+
+  .btn-secondary {
+    @apply btn border border-line bg-surface-2 text-body hover:border-line-strong hover:bg-surface-3;
+  }
+
+  .btn-ghost {
+    @apply btn text-muted hover:bg-surface-2 hover:text-body;
+  }
+
+  .btn-danger {
+    @apply btn bg-negative/10 text-negative hover:bg-negative/20;
+  }
+
+  .btn-icon {
+    @apply btn px-2.5;
+    min-width: 44px;
+  }
+
+  /* Sweep highlight that runs across the primary button on hover. */
+  .btn-primary {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      transparent 20%,
+      rgb(255 255 255 / 0.28) 50%,
+      transparent 80%
+    );
+    transform: translate3d(-120%, 0, 0);
+    transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn-primary:hover::after {
+    transform: translate3d(120%, 0, 0);
+  }
+
+  /* ---- Chips & badges ---------------------------------------------------- */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5
+           text-[10px] font-bold uppercase tracking-wider;
+  }
+
+  .chip-positive {
+    @apply chip border-positive/25 bg-positive/10 text-positive;
+  }
+
+  .chip-negative {
+    @apply chip border-negative/25 bg-negative/10 text-negative;
+  }
+
+  .chip-neutral {
+    @apply chip border-line bg-surface-2 text-muted;
+  }
+
+  .chip-brand {
+    @apply chip border-brand/25 bg-brand/10 text-brand;
+  }
+
+  /* ---- Typography -------------------------------------------------------- */
+  .page-title {
+    @apply font-display text-2xl font-bold tracking-tight text-body sm:text-3xl;
+  }
+
+  .section-title {
+    @apply font-display text-base font-bold tracking-tight text-body;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.14em] text-muted;
+  }
+
+  /* ---- Skeletons --------------------------------------------------------- */
+  .skeleton {
+    @apply relative overflow-hidden rounded-lg bg-surface-2;
+  }
+
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translate3d(-100%, 0, 0);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--color-line-strong) / 0.55),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+}
+
+/* ==========================================================================
+   3. MOTION
+   These keyframes are declared explicitly (rather than relying on Tailwind's
+   `animation-*` utilities) because the rules below reference them from plain
+   CSS, and Tailwind only emits a @keyframes block when a matching utility
+   class is actually found in the markup.
+   ========================================================================== */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Motion utilities
+   Entrance animations are opt-in through these utilities. `.reveal` pairs with
+   the `appReveal` directive, which adds `.is-visible` once the element scrolls
+   into view; without JavaScript the content still renders (see the fallback).
+   ========================================================================== */
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    transition:
+      opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Staggered list entrance: set `--i` per item (index) on the child. */
+  .stagger-item {
+    animation: fade-up 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  .stagger-row {
+    animation: fade-in 380ms ease-out both;
+    animation-delay: calc(var(--i, 0) * 35ms);
+  }
+
+  .hover-lift {
+    @apply transition-transform duration-300 ease-smooth hover:-translate-y-0.5;
+  }
+
+  /* Soft ambient blobs behind the auth screens and the app shell. */
+  .wash {
+    filter: blur(90px);
+    will-change: transform;
+  }
+
+  .text-gradient-brand {
+    background-image: linear-gradient(
+      110deg,
+      rgb(var(--color-brand)),
+      rgb(var(--color-accent))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-line-strong)) transparent;
+  }
+
+  .custom-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--color-line-strong));
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--color-brand) / 0.7);
+  }
+}
+
+/* Users who ask for less motion get state changes without travel. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   4. ANGULAR MATERIAL OVERLAY SURFACES
+   ========================================================================== */
 .mat-mdc-menu-panel {
-  background-color: #0f172a !important;
-  /* slate-900 */
-  border: 1px solid #1e293b !important;
-  /* slate-800 */
-  border-radius: 0.75rem !important;
+  background-color: rgb(var(--color-surface)) !important;
+  border: 1px solid rgb(var(--color-line)) !important;
+  border-radius: 1rem !important;
+  box-shadow:
+    0 2px 4px rgb(var(--shadow-color) / 0.06),
+    0 12px 32px -8px rgb(var(--shadow-color) / 0.18) !important;
 }
 
 .mat-mdc-menu-item {
-  color: #cbd5e1 !important;
-  /* slate-300 */
+  color: rgb(var(--color-text-muted)) !important;
   min-height: 36px !important;
+  border-radius: 0.5rem !important;
+  transition: background-color 160ms ease, color 160ms ease !important;
 }
 
 .mat-mdc-menu-item:hover {
-  background-color: #1e293b !important;
-  /* slate-800 */
+  background-color: rgb(var(--color-brand) / 0.12) !important;
+  color: rgb(var(--color-brand)) !important;
 }
 
 .mat-mdc-tooltip .mdc-tooltip__surface {
-  background-color: #0f172a !important;
-  color: #cbd5e1 !important;
-  border: 1px solid #1e293b !important;
+  background-color: rgb(var(--color-surface-3)) !important;
+  color: rgb(var(--color-text)) !important;
+  border: 1px solid rgb(var(--color-line)) !important;
+  border-radius: 0.5rem !important;
   font-size: 11px !important;
 }
 
-
-html,
-body {
-  height: 100%;
+/* Snackbars: the NotificationService tags each toast with one of these. */
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: rgb(var(--color-surface));
+  --mdc-snackbar-supporting-text-color: rgb(var(--color-text));
+  --mat-snack-bar-button-color: rgb(var(--color-brand));
 }
 
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  border: 1px solid rgb(var(--color-line)) !important;
+  border-radius: 0.875rem !important;
+  border-left-width: 4px !important;
+  box-shadow: 0 12px 32px -8px rgb(var(--shadow-color) / 0.28) !important;
 }
 
-@keyframes float {
-  0% {
-    transform: translateY(0px) translateX(0px);
-  }
-
-  50% {
-    transform: translateY(-30px) translateX(20px);
-  }
-
-  100% {
-    transform: translateY(0px) translateX(0px);
-  }
+.snackbar-success .mdc-snackbar__surface {
+  border-left-color: rgb(var(--color-positive)) !important;
 }
 
-.animate-float {
-  animation: float 8s ease-in-out infinite;
+.snackbar-error .mdc-snackbar__surface {
+  border-left-color: rgb(var(--color-negative)) !important;
 }
 
-.bg-blur {
-  filter: blur(100px);
+.snackbar-warning .mdc-snackbar__surface {
+  border-left-color: rgb(var(--color-warning)) !important;
 }
 
-.custom-scroll::-webkit-scrollbar {
-  width: 10px;
-}
-
-.custom-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scroll::-webkit-scrollbar-thumb {
-  background-color: #334155;
-  /* slate-700 aprox */
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: content-box;
-}
-
-.custom-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: #475569;
-  /* slate-600 */
-}
-
-
-
-@keyframes pulse-skeleton {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.animate-skeleton {
-  animation: pulse-skeleton 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.snackbar-info .mdc-snackbar__surface {
+  border-left-color: rgb(var(--color-accent)) !important;
 }

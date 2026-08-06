@@ -12,7 +12,7 @@ import { catchError, delay, of } from 'rxjs';
 
 @Component({
   selector: 'monthly-summary',
-  standalone: true, // Asegúrate de que sea standalone
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './monthly-summary.html',
   styleUrl: './monthly-summary.css',

@@ -1,63 +1,130 @@
-<div class="relative min-h-screen w-full bg-slate-950 overflow-hidden">
-
-  <div class="fixed inset-0 z-0 pointer-events-none">
-    <div class="block absolute top-[-5%] right-[-5%] w-96 h-96 rounded-full bg-indigo-600/20 bg-blur animate-float">
+<div class="w-full max-w-lg">
+  <!-- Brand -->
+  <div class="mb-8 flex flex-col items-center text-center">
+    <div class="relative">
+      <span
+        class="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl
+               bg-gradient-to-br from-brand to-accent text-brand-contrast shadow-glow"
+      >
+        <i class="fa-solid fa-user-plus text-xl"></i>
+      </span>
+      <span class="absolute inset-0 rounded-2xl bg-brand/40 animate-pulse-ring" aria-hidden="true"></span>
     </div>
-    <div class="block absolute bottom-[-5%] left-[-5%] w-96 h-96 rounded-full bg-indigo-900/20 bg-blur animate-float"
-      style="animation-delay: -5s;"></div>
 
-    <i class="block fa-solid fa-user-plus absolute top-[10%] right-[10%] text-indigo-500/20 text-7xl animate-float"></i>
-    <i class="block fa-solid fa-shield-halved absolute top-[40%] left-[5%] text-indigo-500/20 text-8xl animate-float"
-      style="animation-delay: -3s;"></i>
-    <i class="block fa-solid fa-bell absolute bottom-[15%] right-[20%] text-indigo-500/20 text-6xl animate-float"
-      style="animation-delay: -4s;"></i>
-    <i class="block fa-solid fa-chart-pie absolute bottom-[20%] left-[15%] text-indigo-500/20 text-7xl animate-float"
-      style="animation-delay: -2s;"></i>
+    <h1 class="mt-6 font-display text-3xl font-extrabold tracking-tight">
+      Create your <span class="text-gradient-brand">account</span>
+    </h1>
+    <p class="mt-2 text-sm text-muted">Two minutes now, full control of your budget after.</p>
   </div>
 
-  <div class="relative z-10 flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <div
-        class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.2)] relative">
-        <i class="fa-solid fa-crown text-indigo-400 text-3xl"></i>
-        <span class="absolute text-indigo-950 font-black text-sm mt-1">$</span>
-      </div>
-      <h2 class="mt-8 text-center text-3xl font-extrabold tracking-tight text-white">Create your account</h2>
-    </div>
+  <!-- Card -->
+  <div class="auth-card card-sheen rounded-3xl border border-line bg-surface/80 p-6 shadow-lifted backdrop-blur-2xl sm:p-8">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div>
+          <label for="register-name" class="field-label">Name</label>
+          <input
+            id="register-name"
+            formControlName="name"
+            type="text"
+            autocomplete="given-name"
+            placeholder="Ada"
+            class="field-input"
+            [class.border-negative]="showError('name')"
+          />
+          @if (showError('name')) {
+            <p class="mt-1.5 animate-fade-in text-xs font-medium text-negative">Name is required.</p>
+          }
+        </div>
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-slate-300">Name</label>
-            <input formControlName="name" type="text"
-              class="mt-2 block w-full rounded-xl bg-slate-900/50 border border-slate-700/50 px-4 py-3 text-white" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-300">Last Name</label>
-            <input formControlName="lastName" type="text"
-              class="mt-2 block w-full rounded-xl bg-slate-900/50 border border-slate-700/50 px-4 py-3 text-white" />
-          </div>
-        </div>
         <div>
-          <label class="block text-sm font-medium text-slate-300">Email</label>
-          <input formControlName="email" type="email"
-            class="mt-2 block w-full rounded-xl bg-slate-900/50 border border-slate-700/50 px-4 py-3 text-white" />
+          <label for="register-lastname" class="field-label">Last name</label>
+          <input
+            id="register-lastname"
+            formControlName="lastName"
+            type="text"
+            autocomplete="family-name"
+            placeholder="Lovelace"
+            class="field-input"
+            [class.border-negative]="showError('lastName')"
+          />
+          @if (showError('lastName')) {
+            <p class="mt-1.5 animate-fade-in text-xs font-medium text-negative">Last name is required.</p>
+          }
         </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-300">Password</label>
-          <input formControlName="password" type="password"
-            class="mt-2 block w-full rounded-xl bg-slate-900/50 border border-slate-700/50 px-4 py-3 text-white" />
+      </div>
+
+      <div>
+        <label for="register-email" class="field-label">Email</label>
+        <div class="relative">
+          <i
+            class="fa-solid fa-envelope pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-subtle"
+          ></i>
+          <input
+            id="register-email"
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            class="field-input pl-10"
+            [class.border-negative]="showError('email')"
+          />
         </div>
-        <button type="submit" [disabled]="registerForm.invalid"
-          class="mt-4 w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-500 transition-all disabled:opacity-50">
-          Create account
-        </button>
-      </form>
-      <p class="mt-10 text-center text-sm text-slate-400">
-        Already a member? <a routerLink="/login"
-          class="font-semibold text-indigo-400 hover:text-indigo-300 cursor-pointer">Login</a>
-      </p>
-    </div>
+        @if (showError('email')) {
+          <p class="mt-1.5 animate-fade-in text-xs font-medium text-negative">Enter a valid email address.</p>
+        }
+      </div>
+
+      <div>
+        <label for="register-password" class="field-label">Password</label>
+        <div class="relative">
+          <i
+            class="fa-solid fa-lock pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-subtle"
+          ></i>
+          <input
+            id="register-password"
+            formControlName="password"
+            [type]="passwordVisible() ? 'text' : 'password'"
+            autocomplete="new-password"
+            placeholder="At least 6 characters"
+            class="field-input px-10"
+            [class.border-negative]="showError('password')"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center
+                   rounded-lg text-subtle transition-colors hover:text-brand"
+            [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
+          >
+            <i class="fa-solid text-xs" [class.fa-eye]="!passwordVisible()" [class.fa-eye-slash]="passwordVisible()"></i>
+          </button>
+        </div>
+        @if (showError('password')) {
+          <p class="mt-1.5 animate-fade-in text-xs font-medium text-negative">
+            Use at least 6 characters.
+          </p>
+        } @else {
+          <span class="field-hint">Minimum 6 characters.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn-primary w-full" [disabled]="submitting()">
+        @if (submitting()) {
+          <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+          <span>Creating account…</span>
+        } @else {
+          <span>Create account</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        }
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-muted">
+      Already a member?
+      <a routerLink="/login" class="font-semibold text-brand transition-colors hover:text-brand-strong">
+        Sign in
+      </a>
+    </p>
   </div>
 </div>

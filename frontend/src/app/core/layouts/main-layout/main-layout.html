@@ -1,26 +1,55 @@
-<div class="h-screen flex bg-primary text-slate-100 overflow-hidden">
-  <!-- Overlay mobile -->
-  @if (sidebarOpen()) {
+<div class="relative flex h-screen overflow-hidden bg-app text-body">
+  <!-- Ambient wash: a slow, very soft brand glow behind the whole shell. -->
+  <div class="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
     <div
-      class="fixed inset-0 bg-black/50 z-40 md:hidden"
-      (click)="toggleSidebar()"
+      class="wash absolute -left-40 -top-40 h-[28rem] w-[28rem] rounded-full bg-brand/10 animate-aurora-pan"
     ></div>
+    <div
+      class="wash absolute -bottom-52 -right-32 h-[32rem] w-[32rem] rounded-full bg-accent/10 animate-aurora-pan"
+      style="animation-delay: -9s"
+    ></div>
+  </div>
+
+  <!-- Backdrop for the mobile drawer -->
+  @if (mobileNavOpen()) {
+    <button
+      type="button"
+      class="fixed inset-0 z-40 animate-fade-in bg-black/50 backdrop-blur-sm md:hidden"
+      aria-label="Close navigation"
+      (click)="closeMobileNav()"
+    ></button>
   }
 
-  <!-- Sidebar -->
   <side-bar
-    class="z-50 h-full shrink-0"
-    [sidebarOpen]="sidebarOpen()"
-    (toggleSideBarEvent)="toggleSidebar()"
+    [expanded]="sidebarExpanded()"
+    [mobileOpen]="mobileNavOpen()"
+    (toggleExpandedEvent)="toggleSidebar()"
+    (closeMobileEvent)="closeMobileNav()"
   ></side-bar>
 
-  <!-- Main content -->
-  <main
-    class="
-      flex-1 overflow-y-auto p-6 md:p-8
-      transition-all duration-300
-    "
-  >
-    <router-outlet></router-outlet>
-  </main>
+  <div class="relative z-10 flex min-w-0 flex-1 flex-col">
+    <!-- Mobile top bar: the desktop rail is off-canvas at this size. -->
+    <header
+      class="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-line bg-surface/80 px-4 backdrop-blur-xl md:hidden"
+    >
+      <button
+        type="button"
+        class="btn-icon border border-line bg-surface-2 text-muted hover:text-brand"
+        (click)="toggleMobileNav()"
+        aria-label="Open navigation"
+      >
+        <i class="fa-solid fa-bars text-sm"></i>
+      </button>
+
+      <span class="font-display text-base font-bold tracking-tight">
+        Budget<span class="text-brand">King</span>
+      </span>
+
+      <app-theme-toggle />
+    </header>
+
+    <main class="custom-scroll flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>

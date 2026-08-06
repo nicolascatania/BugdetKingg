@@ -43,7 +43,7 @@ export class Heading {
 
   readonly totalBalance = this.accountService.totalBalance;
 
-  // isLoading solo es true si los datos críticos siguen en su valor inicial (0)
+  // Still loading while the critical market figures remain at their initial 0.
   isLoading = computed(
     () => this.dolarCompra() === 0 || this.inflationValue() === 0,
   );

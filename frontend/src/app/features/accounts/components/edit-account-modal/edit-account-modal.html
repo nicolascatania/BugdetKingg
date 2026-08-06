@@ -1,47 +1,58 @@
-<ui-modal [open]="true" [title]="account ? 'Edit Account' : 'Create Account'" (closed)="close(false)">
+<ui-modal [open]="true" [title]="account ? 'Edit account' : 'Create account'" (closed)="close(false)">
   <div modal-body>
-    <form [formGroup]="form" class="space-y-4">
+    <form [formGroup]="form" class="space-y-5">
       <div>
-        <label class="block text-xs font-medium text-slate-400 mb-1.5">Name</label>
-        <input type="text" formControlName="name" placeholder="e.g., Bank, Cash, Crypto"
-          class="w-full rounded-lg bg-slate-900/60 border border-border px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-accent-blue transition-colors" />
+        <label for="account-name" class="field-label">Name</label>
+        <input
+          id="account-name"
+          type="text"
+          formControlName="name"
+          placeholder="e.g. Bank, Cash, Crypto"
+          class="field-input"
+        />
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-400 mb-1.5">Description</label>
-        <textarea formControlName="description" placeholder="Optional details..." rows="3"
-          class="w-full rounded-lg bg-slate-900/60 border border-border px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-accent-blue transition-colors resize-none"></textarea>
+        <label for="account-description" class="field-label">Description</label>
+        <textarea
+          id="account-description"
+          formControlName="description"
+          placeholder="Optional details…"
+          rows="3"
+          class="field-input resize-none"
+        ></textarea>
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-400 mb-2">Account Icon</label>
+        <span class="field-label">Account icon</span>
 
-        <div class="grid grid-cols-4 gap-2 p-2.5 rounded-xl bg-slate-900/40 border border-border">
+        <div class="grid grid-cols-4 gap-2 rounded-2xl border border-line bg-surface-2 p-2.5 sm:grid-cols-6">
           @for (option of iconOptions; track option.value) {
-          <button type="button" (click)="form.patchValue({ icon: option.value })" [title]="option.label"
-            class="flex flex-col items-center justify-center p-3 rounded-lg border text-lg transition-all focus:outline-none"
-            [ngClass]="{
-        'bg-indigo-600/10 border-indigo-500 text-indigo-400 shadow-md shadow-indigo-500/5': form.get('icon')?.value === option.value,
-        'bg-slate-800/40 border-border/40 text-slate-400 hover:border-border hover:text-slate-200': form.get('icon')?.value !== option.value
-      }">
-            <i class="fa-solid" [ngClass]="option.preview"></i>
-          </button>
+            <button
+              type="button"
+              (click)="form.patchValue({ icon: option.value })"
+              [title]="option.label"
+              [attr.aria-label]="option.label"
+              [attr.aria-pressed]="form.get('icon')?.value === option.value"
+              class="flex aspect-square items-center justify-center rounded-xl border text-base
+                     transition-all duration-200 ease-spring hover:-translate-y-0.5"
+              [ngClass]="
+                form.get('icon')?.value === option.value
+                  ? 'border-brand bg-brand/12 text-brand shadow-soft'
+                  : 'border-line bg-surface text-muted hover:border-line-strong hover:text-body'
+              "
+            >
+              <i class="fa-solid" [ngClass]="option.preview"></i>
+            </button>
           }
         </div>
       </div>
     </form>
   </div>
 
-  <div modal-footer class="flex justify-end gap-2.5">
-    <button
-      class="px-4 py-2 text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-border transition-colors"
-      (click)="close(false)">
-      Cancel
-    </button>
-
-    <button
-      class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-slate-100 transition-colors disabled:opacity-40 disabled:hover:bg-indigo-600"
-      (click)="submit()" [disabled]="form.invalid">
+  <div modal-footer class="flex w-full justify-end gap-3">
+    <button type="button" class="btn-secondary" (click)="close(false)">Cancel</button>
+    <button type="button" class="btn-primary min-w-[6rem]" (click)="submit()" [disabled]="form.invalid">
       Save
     </button>
   </div>

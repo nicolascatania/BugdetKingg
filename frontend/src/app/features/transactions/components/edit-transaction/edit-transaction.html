@@ -1,129 +1,169 @@
-<ui-modal [open]="true" maxWidth="max-w-2xl" [title]="transaction ? 'Edit Transaction' : 'New Transaction'" (closed)="close(false)">
+<ui-modal
+  [open]="true"
+  maxWidth="max-w-2xl"
+  [title]="transaction ? 'Edit transaction' : 'New transaction'"
+  (closed)="close(false)"
+>
   <div modal-body>
     <form [formGroup]="form" class="space-y-5">
-
-
-      <div class="grid grid-cols-3 gap-2 p-1.5 bg-slate-950/60 border border-slate-800/80 rounded-xl items-center">
-
-        <button type="button" (click)="setType('EXPENSE')" [ngClass]="{
-            'bg-rose-500/[0.08] text-rose-400 border border-rose-500/20 font-semibold shadow-sm': form.get('type')?.value === 'EXPENSE',
-            'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'EXPENSE'
-          }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
+      <!-- Type selector: a segmented control, the type drives the rest of the form -->
+      <div
+        class="grid grid-cols-3 gap-1.5 rounded-2xl border border-line bg-surface-2 p-1.5"
+        role="radiogroup"
+        aria-label="Transaction type"
+      >
+        <button
+          type="button"
+          (click)="setType('EXPENSE')"
+          role="radio"
+          [attr.aria-checked]="form.get('type')?.value === 'EXPENSE'"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [ngClass]="
+            form.get('type')?.value === 'EXPENSE'
+              ? 'bg-negative/12 font-semibold text-negative shadow-soft'
+              : 'text-muted hover:bg-surface-3 hover:text-body'
+          "
+        >
           Expense
         </button>
 
-        <button type="button" (click)="setType('INCOME')" [ngClass]="{
-            'bg-teal-500/[0.08] text-teal-400 border border-teal-500/20 font-semibold shadow-sm': form.get('type')?.value === 'INCOME',
-            'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'INCOME'
-          }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
+        <button
+          type="button"
+          (click)="setType('INCOME')"
+          role="radio"
+          [attr.aria-checked]="form.get('type')?.value === 'INCOME'"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [ngClass]="
+            form.get('type')?.value === 'INCOME'
+              ? 'bg-positive/12 font-semibold text-positive shadow-soft'
+              : 'text-muted hover:bg-surface-3 hover:text-body'
+          "
+        >
           Income
         </button>
 
-        <button type="button" (click)="setType('TRANSFER')" [ngClass]="{
-            'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 font-semibold shadow-sm': form.get('type')?.value === 'TRANSFER',
-            'text-slate-400 hover:text-slate-200 border border-transparent': form.get('type')?.value !== 'TRANSFER'
-          }" class="py-2 px-3 rounded-lg text-sm transition-all duration-150">
+        <button
+          type="button"
+          (click)="setType('TRANSFER')"
+          role="radio"
+          [attr.aria-checked]="form.get('type')?.value === 'TRANSFER'"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [ngClass]="
+            form.get('type')?.value === 'TRANSFER'
+              ? 'bg-accent/12 font-semibold text-accent shadow-soft'
+              : 'text-muted hover:bg-surface-3 hover:text-body'
+          "
+        >
           Transfer
         </button>
-
       </div>
 
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <!-- Amount + quick add buttons -->
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Amount</label>
+          <label for="tx-amount" class="field-label">Amount</label>
           <div
-            class="relative flex items-center bg-slate-900/50 border border-slate-800/80 rounded-xl pr-2 focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/30 transition-all">
-            <span class="pl-3 text-slate-400 font-medium">$</span>
-            <input type="number" formControlName="amount" placeholder="0.00"
-              class="w-full bg-transparent pl-2 pr-2 py-2 text-slate-100 focus:outline-none font-bold placeholder-slate-600" />
+            class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
+                   focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
+          >
+            <span class="pl-3.5 text-sm font-semibold text-muted">$</span>
+            <input
+              id="tx-amount"
+              type="number"
+              formControlName="amount"
+              placeholder="0.00"
+              class="tabular w-full min-w-0 bg-transparent py-2.5 text-sm font-bold text-body outline-none placeholder:text-subtle"
+            />
 
-            <div class="flex gap-1.5">
-              <button type="button" (click)="setQuickAmount(1000)"
-                class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md font-semibold border border-slate-700/40 transition-colors">+1K</button>
-              <button type="button" (click)="setQuickAmount(5000)"
-                class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md font-semibold border border-slate-700/40 transition-colors">+5K</button>
-              <button type="button" (click)="setQuickAmount(10000)"
-                class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md font-semibold border border-slate-700/40 transition-colors">+10K</button>
+            <div class="flex shrink-0 gap-1">
+              @for (quick of [1000, 5000, 10000]; track quick) {
+                <button
+                  type="button"
+                  (click)="setQuickAmount(quick)"
+                  class="rounded-lg border border-line bg-surface px-2 py-1 text-[10px] font-bold text-muted
+                         transition-all duration-200 hover:border-brand/40 hover:text-brand active:scale-95"
+                >
+                  +{{ quick / 1000 }}K
+                </button>
+              }
             </div>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Origin Account</label>
-          <select formControlName="account"
-            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
+          <label for="tx-origin" class="field-label">Origin account</label>
+          <select id="tx-origin" formControlName="account" class="field-select">
             @for (account of accounts(); track account.id) {
-            <option [value]="account.id" class="bg-slate-900 text-white">{{ getAccountLabel(account) }}</option>
+              <option [value]="account.id">{{ getAccountLabel(account) }}</option>
             }
           </select>
         </div>
       </div>
 
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         @if (form.get('type')?.value === 'TRANSFER') {
-        <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Destination
-            Account</label>
-          <select formControlName="destinationAccount"
-            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
-            @for (account of filteredDestinationAccounts(); track account.id) {
-            <option [value]="account.id" class="bg-slate-900 text-white">{{ getAccountLabel(account) }}</option>
-            }
-          </select>
-        </div>
+          <div class="animate-fade-in">
+            <label for="tx-destination" class="field-label">Destination account</label>
+            <select id="tx-destination" formControlName="destinationAccount" class="field-select">
+              @for (account of filteredDestinationAccounts(); track account.id) {
+                <option [value]="account.id">{{ getAccountLabel(account) }}</option>
+              }
+            </select>
+          </div>
         } @else {
-        <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Category</label>
-          <select formControlName="category"
-            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
-            <option value="" class="bg-slate-900 text-slate-500">Select Category</option>
-            @for (category of categories; track category.id) {
-            <option [value]="category.id" class="bg-slate-900 text-white">{{ category.value }}</option>
-            }
-          </select>
-        </div>
+          <div class="animate-fade-in">
+            <label for="tx-category" class="field-label">Category</label>
+            <select id="tx-category" formControlName="category" class="field-select">
+              <option value="">Select category</option>
+              @for (category of categories; track category.id) {
+                <option [value]="category.id">{{ category.value }}</option>
+              }
+            </select>
+          </div>
         }
 
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Date</label>
-          <input type="datetime-local" formControlName="date"
-            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all [color-scheme:dark]" />
+          <label for="tx-date" class="field-label">Date</label>
+          <input id="tx-date" type="datetime-local" formControlName="date" class="field-input" />
         </div>
       </div>
 
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Counterparty</label>
-          <input type="text" formControlName="counterparty" placeholder="e.g. Supermarket, Employer"
-            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
+          <label for="tx-counterparty-field" class="field-label">Counterparty</label>
+          <input
+            id="tx-counterparty-field"
+            type="text"
+            formControlName="counterparty"
+            placeholder="e.g. Supermarket, Employer"
+            class="field-input"
+          />
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
-          <input type="text" formControlName="description" placeholder="Transaction details"
-            class="w-full rounded-xl bg-slate-900/50 border border-slate-800/80 px-3 py-2 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
+          <label for="tx-description-field" class="field-label">Description</label>
+          <input
+            id="tx-description-field"
+            type="text"
+            formControlName="description"
+            placeholder="Transaction details"
+            class="field-input"
+          />
         </div>
       </div>
-
     </form>
   </div>
 
+  <div modal-footer class="flex w-full justify-end gap-3">
+    <button type="button" class="btn-secondary" (click)="close(false)">Cancel</button>
 
-  <div modal-footer class="flex justify-end gap-2.5">
     <button
-      class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold text-sm transition-colors active:scale-[0.98]"
-      (click)="close(false)">
-      Cancel
-    </button>
-
-    <button class="px-5 py-2.5 rounded-xl transition-all duration-150 text-sm font-semibold shadow-lg"
-      (click)="submit()" [disabled]="form.invalid" [ngClass]="{
-        'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/10 cursor-pointer active:scale-[0.98]': !form.invalid,
-        'bg-slate-950 text-slate-600 border border-slate-900/80 cursor-not-allowed shadow-none': form.invalid
-      }" [title]="form.invalid ? 'Form is invalid. Please complete all required fields.' : null">
+      type="button"
+      class="btn-primary min-w-[7rem]"
+      (click)="submit()"
+      [disabled]="form.invalid"
+      [title]="form.invalid ? 'Complete all required fields first' : null"
+    >
       {{ transaction ? 'Update' : 'Create' }}
     </button>
   </div>
