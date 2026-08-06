@@ -1,76 +1,119 @@
-<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 mb-12 border-b border-slate-800/60 pb-8">
-  <div class="flex flex-col gap-5">
-    <div>
-      <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Total Balance</p>
-      <h1 class="text-4xl font-black mt-2 flex items-center gap-3 tracking-tight text-white">
-        <i class="fa-solid fa-wallet text-3xl text-indigo-500 opacity-90"></i>
-        {{ totalBalance() | currency:'ARS':'symbol':'1.2-2' }}
-      </h1>
-    </div>
-    <div class="flex flex-wrap gap-3">
-      <button (click)="openNewTransactionModal()"
-        class="flex justify-center items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all">
-        <i class="fa-solid fa-plus text-xs"></i> Transaction
-      </button>
-      <button (click)="openNewAccountModal()"
-        class="flex justify-center items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-sm font-semibold">
-        <i class="fa-solid fa-building-columns text-xs text-indigo-400"></i> New Account
-      </button>
-    </div>
-  </div>
+<section
+  class="card-sheen relative overflow-hidden rounded-3xl border border-line bg-surface p-6 shadow-soft sm:p-8"
+>
+  <!-- Brand wash anchored to the corner of the hero card. -->
+  <div
+    class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-brand/10 blur-3xl"
+    aria-hidden="true"
+  ></div>
 
-  @if (isLoading()) {
-  <div class="flex flex-col sm:flex-row lg:flex-col gap-3 w-full sm:w-auto animate-pulse">
-    @for (i of [1, 2]; track i) {
-    <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 w-full lg:w-[350px] h-20"></div>
+  <div class="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+    <!-- Balance + primary actions -->
+    <div class="flex flex-col gap-6">
+      <div>
+        <p class="eyebrow flex items-center gap-2">
+          <span class="inline-flex h-1.5 w-1.5 rounded-full bg-brand"></span>
+          Total balance
+        </p>
+
+        <h1 class="mt-3 flex items-center gap-3 font-display text-2xl font-extrabold tracking-tight sm:gap-4 sm:text-4xl lg:text-5xl">
+          <!-- Hidden on phones: the icon steals the width the amount needs to fit on one line. -->
+          <span
+            class="hidden shrink-0 items-center justify-center rounded-2xl bg-brand/12 text-brand sm:flex sm:h-14 sm:w-14"
+          >
+            <i class="fa-solid fa-wallet text-2xl"></i>
+          </span>
+          <!-- break-words only splits as a last resort, so the amount never breaks mid-group when it fits. -->
+          <span class="tabular min-w-0 break-words">{{ totalBalance() | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+        </h1>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <button type="button" (click)="openNewTransactionModal()" class="btn-primary">
+          <i class="fa-solid fa-plus text-xs"></i>
+          New transaction
+        </button>
+
+        <button type="button" (click)="openNewAccountModal()" class="btn-secondary">
+          <i class="fa-solid fa-building-columns text-xs text-brand"></i>
+          New account
+        </button>
+      </div>
+    </div>
+
+    <!-- Market context -->
+    @if (isLoading()) {
+      <div class="grid w-full gap-3 sm:grid-cols-2 lg:w-[360px] lg:grid-cols-1">
+        @for (i of [1, 2]; track i) {
+          <div class="skeleton h-[118px] rounded-2xl lg:h-[86px]"></div>
+        }
+      </div>
+    } @else {
+      <div class="grid w-full gap-3 sm:grid-cols-2 lg:w-[360px] lg:grid-cols-1">
+        <!-- Dollar -->
+        <article class="hover-lift rounded-2xl border border-line bg-surface-2 p-4">
+          <!-- Stacked on phones (header on top, metrics below); single row from sm up. -->
+          <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-3">
+            <div class="flex items-center gap-3">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+                <i class="fa-solid fa-circle-dollar-to-slot text-sm"></i>
+              </span>
+
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-body">Dollar value</p>
+                <p class="text-[10px] font-medium text-subtle">Live quote</p>
+              </div>
+            </div>
+
+            <div
+              class="grid grid-cols-2 gap-3 border-t border-line pt-3 lg:flex lg:gap-4 lg:border-0 lg:pt-0 lg:text-right"
+            >
+              <div class="min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-subtle">Buy</p>
+                <p class="tabular truncate text-sm font-bold">
+                  {{ dolarCompra() | currency: 'ARS' : 'symbol' : '1.0-0' }}
+                </p>
+              </div>
+              <div class="min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-subtle">Sell</p>
+                <p class="tabular truncate text-sm font-bold">
+                  {{ dolarVenta() | currency: 'ARS' : 'symbol' : '1.0-0' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Inflation -->
+        <article class="hover-lift rounded-2xl border border-line bg-surface-2 p-4">
+          <!-- Stacked on phones (header on top, metrics below); single row from sm up. -->
+          <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-3">
+            <div class="flex items-center gap-3">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/12 text-accent">
+                <i class="fa-solid fa-chart-line text-sm"></i>
+              </span>
+
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-body">Inflation</p>
+                <p class="text-[10px] font-medium text-subtle">INDEC</p>
+              </div>
+            </div>
+
+            <div
+              class="grid grid-cols-2 gap-3 border-t border-line pt-3 lg:flex lg:gap-4 lg:border-0 lg:pt-0 lg:text-right"
+            >
+              <div class="min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-subtle">Date</p>
+                <p class="tabular truncate text-sm font-bold">{{ inflationDate() | date: 'MM/yyyy' }}</p>
+              </div>
+              <div class="min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-subtle">Value</p>
+                <p class="tabular truncate text-sm font-bold text-brand">{{ inflationValue() }}%</p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
     }
   </div>
-  } @else {
-  <div class="flex flex-col sm:flex-row lg:flex-col gap-3 w-full sm:w-auto">
-    <div class="flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-xl p-4 w-full lg:w-[350px]">
-      <div
-        class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-        <i class="fa-solid fa-circle-dollar-to-slot text-base"></i>
-      </div>
-      <div class="flex items-center justify-between flex-1">
-        <div>
-          <p class="text-xs text-slate-300 font-bold">Dollar Value</p>
-          <span class="text-[10px] text-slate-500 font-medium block">Live quote</span>
-        </div>
-        <div class="flex gap-4">
-          <div class="text-right">
-            <span class="text-[10px] text-slate-400 block uppercase font-bold">Buy</span>
-            <span class="text-sm font-bold text-slate-200">{{ dolarCompra() | currency:'ARS':'symbol':'1.0-0' }}</span>
-          </div>
-          <div class="text-right">
-            <span class="text-[10px] text-slate-400 block uppercase font-bold">Sell</span>
-            <span class="text-sm font-bold text-slate-200">{{ dolarVenta() | currency:'ARS':'symbol':'1.0-0' }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-xl p-4 w-full lg:w-[350px]">
-      <div
-        class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-        <i class="fa-solid fa-chart-line text-base"></i>
-      </div>
-      <div class="flex items-center justify-between flex-1">
-        <div>
-          <p class="text-xs text-slate-300 font-bold">Inflation</p>
-          <span class="text-[10px] text-slate-500 font-medium block">INDEC</span>
-        </div>
-        <div class="flex gap-4">
-          <div class="text-right">
-            <span class="text-[10px] text-slate-400 block uppercase font-bold">Date</span>
-            <span class="text-sm font-bold text-slate-200">{{ inflationDate() | date:'MM/yyyy' }}</span>
-          </div>
-          <div class="text-right">
-            <span class="text-[10px] text-slate-400 block uppercase font-bold">Value</span>
-            <span class="text-sm font-bold text-indigo-400">{{ inflationValue() }}%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  }
-</div>
+</section>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { AuthService } from '../../../core/services/auth';
 import {
   FormBuilder,
@@ -12,6 +12,7 @@ import { NotificationService } from '../../../core/services/NotificationService'
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -19,6 +20,13 @@ import { NotificationService } from '../../../core/services/NotificationService'
 })
 export class Login {
   loginForm: FormGroup;
+
+  /** Disables the form and shows progress while the request is in flight. */
+  readonly submitting = signal(false);
+
+  /** Reveals the password so users can check what they typed. */
+  readonly passwordVisible = signal(false);
+
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -31,12 +39,32 @@ export class Login {
     });
   }
 
+  togglePasswordVisibility(): void {
+    this.passwordVisible.update((visible) => !visible);
+  }
+
+  /** True once the field has been touched and is invalid — drives inline errors. */
+  showError(controlName: string): boolean {
+    const control = this.loginForm.get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid || this.submitting()) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    this.submitting.set(true);
 
     this.authService.login(this.loginForm.value).subscribe({
-      next: () => this.router.navigate(['/home']),
+      next: () => {
+        this.submitting.set(false);
+        this.router.navigate(['/home']);
+      },
       error: (err) => {
+        this.submitting.set(false);
+
         const errorMessage =
           typeof err.error === 'string'
             ? err.error

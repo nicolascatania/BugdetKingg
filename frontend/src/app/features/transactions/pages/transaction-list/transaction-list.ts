@@ -28,14 +28,18 @@ import {
   PaginationState,
 } from '../../../../core/utils/pagination.util';
 
+import { RevealDirective } from '../../../../shared/directives/reveal.directive';
+
 @Component({
   selector: 'app-transaction-list',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
     EditTransaction,
     PaginationComponent,
     MonthQuickPicker,
+    RevealDirective,
   ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
@@ -62,7 +66,14 @@ export class TransactionList {
 
   isTransactionModalOpen = signal(false);
 
-  // Trigger para recargar cuando cambia la búsqueda
+  /**
+   * Whether the filter panel is expanded. Collapsed by default on small
+   * screens so the transaction list itself is the first thing users see;
+   * the panel is always visible from `lg` up (handled in the template).
+   */
+  filtersOpen = signal(false);
+
+  // Bumped to re-run the search effect.
   private searchTrigger = signal(0);
 
   constructor() {
@@ -78,7 +89,7 @@ export class TransactionList {
       counterparty: [''],
     });
 
-    // Efecto: cuando searchTrigger cambia, busca transacciones
+    // Re-runs the search every time the trigger is bumped.
     effect(() => {
       this.searchTrigger();
       this.performSearch();
@@ -130,6 +141,18 @@ export class TransactionList {
   onSearch() {
     this.searchTrigger.update((v) => v + 1);
   }
+
+  toggleFilters(): void {
+    this.filtersOpen.update((open) => !open);
+  }
+
+  /** Number of filters currently applied, surfaced as a badge on the toggle. */
+  readonly activeFilterCount = computed(() => {
+    this.searchTrigger();
+    return Object.values(this.form.value ?? {}).filter(
+      (value) => value !== '' && value !== null && value !== undefined,
+    ).length;
+  });
 
   onMonthRangeSelected(range: MonthQuickRange) {
     this.form.patchValue({ dateFrom: range.from, dateTo: range.to });

@@ -1,61 +1,126 @@
-<aside class="bg-slate-950 flex flex-col border-r border-slate-800 h-full transition-all duration-300 ease-in-out"
-  [class.w-64]="sidebarOpen()" [class.w-16]="!sidebarOpen()">
+<!--
+  Two behaviours in one element:
+  - below `md` it is an off-canvas drawer driven by `mobileOpen`
+  - from `md` up it is docked and `expanded` switches between labels and icons
+-->
+<aside
+  class="fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col border-r border-line bg-surface/95 backdrop-blur-xl
+         transition-[transform,width] duration-300 ease-smooth md:static md:translate-x-0"
+  [ngClass]="{
+    'translate-x-0': mobileOpen(),
+    '-translate-x-full': !mobileOpen(),
+    'md:w-64': expanded(),
+    'md:w-[76px]': !expanded()
+  }"
+>
+  <!-- Brand -->
+  <div class="flex h-16 items-center gap-3 border-b border-line px-4">
+    <a
+      routerLink="/home"
+      (click)="closeMobile()"
+      class="group flex min-w-0 items-center gap-3"
+      aria-label="BudgetKing home"
+    >
+      <span
+        class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl
+               bg-gradient-to-br from-brand to-accent text-brand-contrast shadow-soft
+               transition-transform duration-300 ease-spring group-hover:scale-105"
+      >
+        <i class="fa-solid fa-crown text-sm"></i>
+      </span>
 
-  <div class="h-16 px-4 flex items-center justify-between border-b border-slate-800">
-    <span class="text-indigo-400 font-bold text-lg tracking-tight transition-opacity"
-      [class.hidden]="!sidebarOpen()">BudgetKing 👑</span>
-
-    <button (click)="toggleSidebar()"
-      class="p-2 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-indigo-400 transition">
-      <i class="fa-solid fa-bars"></i>
-    </button>
+      @if (expanded()) {
+        <span class="animate-fade-in truncate font-display text-base font-bold tracking-tight text-body">
+          Budget<span class="text-brand">King</span>
+        </span>
+      }
+    </a>
   </div>
 
-  <nav class="flex-1 px-3 py-6 space-y-1.5 text-sm">
-    <a routerLink="/home" routerLinkActive="bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent transition-all">
-      <i class="fa-solid fa-house w-5 text-center"></i>
-      <span *ngIf="sidebarOpen()" class="font-medium">Home</span>
-    </a>
+  <!-- Primary navigation -->
+  <nav class="nav-rail custom-scroll flex-1 space-y-1 overflow-y-auto px-3 py-5" aria-label="Main navigation">
+    @for (item of navItems(); track item.route) {
+      <a
+        [routerLink]="item.route"
+        [routerLinkActiveOptions]="{ exact: !!item.exact }"
+        routerLinkActive
+        #link="routerLinkActive"
+        (click)="closeMobile()"
+        [matTooltip]="expanded() ? '' : item.label"
+        matTooltipPosition="right"
+        class="nav-link group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm
+               transition-all duration-200 ease-smooth"
+        [ngClass]="{
+          'bg-brand/10 text-brand font-semibold': link.isActive,
+          'text-muted hover:bg-surface-2 hover:text-body': !link.isActive,
+          'md:justify-center': !expanded()
+        }"
+      >
+        <!-- Active marker: grows out of the left edge of the rail. -->
+        <span
+          class="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-brand
+                 transition-all duration-300 ease-spring"
+          [ngClass]="link.isActive ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'"
+        ></span>
 
-    <a routerLink="/transactions" routerLinkActive="bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent transition-all">
-      <i class="fa-solid fa-arrow-right-arrow-left w-5 text-center"></i>
-      <span *ngIf="sidebarOpen()" class="font-medium">Transactions</span>
-    </a>
+        <i
+          [ngClass]="item.icon"
+          class="fa-solid w-5 shrink-0 text-center text-[13px] transition-transform duration-300 ease-spring group-hover:scale-110"
+        ></i>
 
-    <a routerLink="/dashboard" routerLinkActive="bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent transition-all">
-      <i class="fa-solid fa-chart-line w-5 text-center"></i>
-      <span *ngIf="sidebarOpen()" class="font-medium">Dashboard</span>
-    </a>
-
-    <a routerLink="/accounts" routerLinkActive="bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent transition-all">
-      <i class="fa-solid fa-wallet w-5 text-center"></i>
-      <span *ngIf="sidebarOpen()" class="font-medium">Accounts</span>
-    </a>
-
-    <a routerLink="/categories" routerLinkActive="bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent transition-all">
-      <i class="fa-solid fa-tags w-5 text-center"></i>
-      <span *ngIf="sidebarOpen()" class="font-medium">Categories</span>
-    </a>
-
-
-    <a *ngIf="isAdmin" routerLink="/users" routerLinkActive="bg-indigo-600/10 border-indigo-500/50 text-indigo-400"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent transition-all">
-      <i class="fa-solid fa-users w-5 text-center"></i>
-      <span *ngIf="sidebarOpen()" class="font-medium">Users</span>
-    </a>
+        @if (expanded()) {
+          <span class="animate-fade-in truncate">{{ item.label }}</span>
+        }
+      </a>
+    }
   </nav>
 
-  <div class="p-4 border-t border-slate-800">
-    <button (click)="logout()"
-      class="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-rose-400/80 hover:bg-rose-950/30 hover:text-rose-400 transition">
-      <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
-      <span *ngIf="sidebarOpen()" class="font-medium">Logout</span>
+  <!-- Utilities -->
+  <div class="space-y-2 border-t border-line p-3">
+    <!--
+      Desktop-only controls. The mobile drawer already has a theme toggle in the
+      top bar and cannot be collapsed, so the whole row stays hidden below `md`.
+
+      Collapsed the rail is 76px wide (52px inside the padding), which cannot fit
+      two 44px targets side by side — so the row stacks vertically at that size.
+    -->
+    <div
+      class="hidden md:flex"
+      [ngClass]="expanded() ? 'flex-row items-center justify-between gap-2' : 'flex-col items-center gap-2'"
+    >
+      <app-theme-toggle />
+
+      <button
+        type="button"
+        (click)="toggleExpanded()"
+        class="btn-ghost h-11 w-11 shrink-0"
+        [matTooltip]="expanded() ? 'Collapse sidebar' : 'Expand sidebar'"
+        matTooltipPosition="right"
+        [attr.aria-label]="expanded() ? 'Collapse sidebar' : 'Expand sidebar'"
+        [attr.aria-expanded]="expanded()"
+      >
+        <i
+          class="fa-solid fa-angles-left text-xs transition-transform duration-300 ease-spring"
+          [ngClass]="expanded() ? 'rotate-0' : 'rotate-180'"
+        ></i>
+      </button>
+    </div>
+
+    <button
+      type="button"
+      (click)="logout()"
+      class="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium
+             text-muted transition-all duration-200 ease-smooth hover:bg-negative/10 hover:text-negative"
+      [ngClass]="{ 'md:justify-center': !expanded() }"
+      [matTooltip]="expanded() ? '' : 'Log out'"
+      matTooltipPosition="right"
+    >
+      <i
+        class="fa-solid fa-right-from-bracket w-5 shrink-0 text-center text-[13px] transition-transform duration-300 ease-spring group-hover:translate-x-0.5"
+      ></i>
+      @if (expanded()) {
+        <span class="animate-fade-in">Log out</span>
+      }
     </button>
   </div>
 </aside>

@@ -12,10 +12,12 @@ import { AccountDTO } from '../../interfaces/AccountDTO.interfaces';
 import { AccountService } from '../../services/AccountService';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { CommonModule } from '@angular/common';
+import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
 @Component({
   selector: 'app-account-list',
-  imports: [EditAccountModal, CommonModule],
+  standalone: true,
+  imports: [EditAccountModal, CommonModule, RevealDirective],
   templateUrl: './account-list.html',
   styleUrl: './account-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

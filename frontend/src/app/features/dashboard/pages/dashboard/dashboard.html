@@ -1,110 +1,167 @@
-<div class="space-y-5 text-slate-200">
-  <div class="p-4 rounded-xl border border-slate-800/80 bg-slate-900/30 shadow-xl">
-    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="flex flex-col md:flex-row items-end gap-4">
-      <div class="w-full md:w-auto flex-1 lg:flex-none grid grid-cols-2 gap-4 lg:grid-cols-[8rem_8rem_auto]">
+<div class="mx-auto w-full max-w-screen-2xl space-y-6">
+  <!-- Page header -->
+  <div appReveal class="flex flex-col gap-1">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="text-sm text-muted">Your income, spending and balance for the selected range.</p>
+  </div>
+
+  <!-- Range filter -->
+  <section appReveal [revealDelay]="60" class="card p-4 sm:p-5">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="flex flex-col gap-4 lg:flex-row lg:items-end">
+      <div class="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 lg:max-w-2xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">From</label>
-          <input type="date" formControlName="dateFrom"
-            class="w-full rounded-lg bg-slate-950/50 border border-slate-800/80 px-3 py-2 text-sm text-slate-200 [color-scheme:dark]" />
+          <label for="dash-from" class="field-label">From</label>
+          <input id="dash-from" type="date" formControlName="dateFrom" class="field-input" />
         </div>
+
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">To</label>
-          <div class="flex items-center gap-2">
-            <input type="date" formControlName="dateTo"
-              class="w-full rounded-lg bg-slate-950/50 border border-slate-800/80 px-3 py-2 text-sm text-slate-200 [color-scheme:dark]" />
+          <label for="dash-to" class="field-label">To</label>
+          <div class="flex items-end gap-2">
+            <input id="dash-to" type="date" formControlName="dateTo" class="field-input" />
             <span class="lg:hidden">
               <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
             </span>
           </div>
         </div>
+
         <div class="hidden lg:flex lg:flex-col lg:justify-end">
-          <label class="block text-xs font-bold uppercase tracking-wider mb-1.5 invisible">Month</label>
+          <span class="field-label invisible">Month</span>
           <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
         </div>
       </div>
-      <button type="submit"
-        class="w-full md:w-44 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-4 py-2 text-sm font-semibold shadow-md transition-all active:scale-[0.98]">
-        Apply Range
+
+      <button type="submit" class="btn-primary w-full lg:w-44">
+        <i class="fa-solid fa-filter text-xs"></i>
+        Apply range
       </button>
     </form>
-  </div>
+  </section>
 
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+  <!-- Key figures -->
+  <section appReveal [revealDelay]="100" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
     @if (loading()) {
-    @for (i of [1, 2, 3]; track i) { <div
-      class="bg-slate-900/30 rounded-xl p-4 border border-slate-800/80 h-24 animate-pulse"></div> }
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton h-[96px] rounded-2xl"></div>
+      }
     } @else {
-    <div
-      class="bg-gradient-to-r from-slate-900/50 to-indigo-950/30 rounded-xl p-4 border border-slate-800/80 shadow-md flex items-center justify-between px-5">
-      <div>
-        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Balance</p>
-        <p class="text-lg font-black text-slate-100 tracking-tight mt-1">{{ dashboardData()?.totalBalance |
-          currency:'ARS':'symbol':'1.0-0' }}</p>
-      </div>
-      <div class="rounded-lg p-2 bg-indigo-500/10 text-indigo-400 text-sm hidden sm:block"><i class="pi pi-wallet"></i>
-      </div>
-    </div>
-    <div
-      class="bg-slate-900/30 rounded-xl p-4 border border-slate-800/80 shadow-md flex items-center justify-between px-5">
-      <div>
-        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Expenses</p>
-        <p class="text-lg font-bold text-rose-400 tracking-tight mt-1">{{ dashboardData()?.expense |
-          currency:'ARS':'symbol':'1.0-0' }}</p>
-      </div>
-      <div class="rounded-lg p-2 bg-rose-500/10 text-rose-400 text-sm hidden sm:block"><i
-          class="pi pi-arrow-down-right"></i></div>
-    </div>
-    <div
-      class="bg-slate-900/30 rounded-xl p-4 border border-slate-800/80 shadow-md flex items-center justify-between px-5">
-      <div>
-        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Income</p>
-        <p class="text-lg font-bold text-teal-400 tracking-tight mt-1">{{ dashboardData()?.income |
-          currency:'ARS':'symbol':'1.0-0' }}</p>
-      </div>
-      <div class="rounded-lg p-2 bg-teal-500/10 text-teal-400 text-sm hidden sm:block"><i
-          class="pi pi-arrow-up-right"></i></div>
-    </div>
-    }
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-10 gap-5">
-    <div class="lg:col-span-7">
-      @if (loading()) { <div class="bg-slate-900/30 rounded-2xl p-6 border border-slate-800/80 h-72 animate-pulse">
-      </div> }
-      @else { <app-expenses-income-each-month [accounts]="accountsSignal()" [chartData]="annualChartData()"
-        (accountChanged)="onAccountFilterChanged($event)"></app-expenses-income-each-month> }
-    </div>
-
-    <div class="lg:col-span-3 bg-slate-900/30 rounded-2xl p-6 border border-slate-800/80 shadow-2xl">
-      <h3 class="text-xs font-bold tracking-tight text-slate-400 uppercase mb-6">Expenses by Category</h3>
-      @if (loading()) {
-      <div class="space-y-4">
-        <div class="h-40 w-40 rounded-full bg-slate-800 animate-pulse mx-auto"></div>
-        @for (i of [1, 2, 3]; track i) { <div class="h-8 bg-slate-800 rounded animate-pulse"></div> }
-      </div>
-      } @else {
-      <div class="h-64 w-full flex justify-center"><canvas id="expensePie"></canvas></div>
-      <div class="flex flex-col gap-1 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
-        @for (item of dashboardData()?.expensesByCategory; track item.name) {
-        <div class="flex items-center justify-between p-1.5 hover:bg-slate-800/50 rounded-md">
-          <div class="flex items-center gap-2 truncate">
-            <div class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 text-indigo-400"><i
-                class="fa-solid {{item.icon}} text-[10px]"></i></div>
-            <div class="flex flex-col truncate"><span class="text-[11px] font-medium text-slate-300">{{ item.name
-                }}</span><span class="text-[9px] text-slate-500">{{ item.percentage | number:'1.1-1' }}%</span></div>
+      <article class="card-interactive card-sheen relative overflow-hidden border-brand/30 p-5">
+        <div
+          class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-brand/10 blur-2xl"
+          aria-hidden="true"
+        ></div>
+        <div class="relative flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <p class="eyebrow">Total balance</p>
+            <p class="tabular mt-1.5 truncate text-xl font-extrabold">
+              {{ dashboardData()?.totalBalance | currency: 'ARS' : 'symbol' : '1.0-0' }}
+            </p>
           </div>
-          <span class="text-[11px] font-semibold text-slate-100">${{ item.amount.toLocaleString() }}</span>
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+            <i class="fa-solid fa-wallet text-sm"></i>
+          </span>
         </div>
-        }
-      </div>
+      </article>
+
+      <article class="card-interactive p-5">
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <p class="eyebrow">Expenses</p>
+            <p class="tabular mt-1.5 truncate text-xl font-bold text-negative">
+              {{ dashboardData()?.expense | currency: 'ARS' : 'symbol' : '1.0-0' }}
+            </p>
+          </div>
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-negative/10 text-negative">
+            <i class="fa-solid fa-arrow-trend-down text-sm"></i>
+          </span>
+        </div>
+      </article>
+
+      <article class="card-interactive p-5">
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <p class="eyebrow">Income</p>
+            <p class="tabular mt-1.5 truncate text-xl font-bold text-positive">
+              {{ dashboardData()?.income | currency: 'ARS' : 'symbol' : '1.0-0' }}
+            </p>
+          </div>
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-positive/10 text-positive">
+            <i class="fa-solid fa-arrow-trend-up text-sm"></i>
+          </span>
+        </div>
+      </article>
+    }
+  </section>
+
+  <!-- Charts -->
+  <section appReveal [revealDelay]="140" class="grid grid-cols-1 gap-5 xl:grid-cols-10">
+    <div class="xl:col-span-6">
+      @if (loading()) {
+        <div class="skeleton h-[360px] rounded-2xl"></div>
+      } @else {
+        <app-expenses-income-each-month
+          [accounts]="accountsSignal()"
+          [chartData]="annualChartData()"
+          (accountChanged)="onAccountFilterChanged($event)"
+        ></app-expenses-income-each-month>
       }
     </div>
-  </div>
 
-  <div class="space-y-2">
-    <h3 class="text-xs font-bold tracking-tight text-slate-400 uppercase px-1">Movements of this month</h3>
-    <div class="overflow-x-auto rounded-xl border border-slate-800/60 shadow-lg">
-      <last-moves></last-moves>
+    <div class="card p-5 xl:col-span-4">
+      <h3 class="section-title mb-4">Expenses by category</h3>
+
+      @if (loading()) {
+        <div class="space-y-3">
+          <div class="skeleton mx-auto h-44 w-44 rounded-full"></div>
+          @for (i of [1, 2, 3]; track i) {
+            <div class="skeleton h-8"></div>
+          }
+        </div>
+      } @else {
+        <div class="relative mx-auto h-56 w-full max-w-[260px]">
+          <canvas id="expensePie"></canvas>
+        </div>
+
+        <ul class="custom-scroll mt-4 max-h-[260px] space-y-0.5 overflow-y-auto pr-1">
+          @for (item of dashboardData()?.expensesByCategory; track item.name; let i = $index) {
+            <li
+              class="flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-surface-2"
+            >
+              <div class="flex min-w-0 items-center gap-2.5">
+                <!-- Swatch + icon: colour is never the only cue. -->
+                <span
+                  class="h-2.5 w-2.5 shrink-0 rounded-full"
+                  [style.background-color]="sliceColor(i)"
+                ></span>
+                <span
+                  class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-muted"
+                >
+                  <i class="fa-solid text-[10px]" [ngClass]="item.icon"></i>
+                </span>
+                <span class="min-w-0">
+                  <span class="block truncate text-xs font-medium">{{ item.name }}</span>
+                  <span class="tabular block text-[10px] text-subtle">
+                    {{ item.percentage | number: '1.1-1' }}%
+                  </span>
+                </span>
+              </div>
+
+              <span class="tabular shrink-0 text-xs font-bold">
+                {{ item.amount | currency: 'ARS' : 'symbol' : '1.0-0' }}
+              </span>
+            </li>
+          } @empty {
+            <li class="py-8 text-center text-xs text-subtle">No expenses in this range.</li>
+          }
+        </ul>
+      }
     </div>
-  </div>
+  </section>
+
+  <!-- Movements -->
+  <section appReveal [revealDelay]="180">
+    <div class="mb-4 flex items-center justify-between gap-4">
+      <h2 class="section-title">Movements of this month</h2>
+    </div>
+    <last-moves></last-moves>
+  </section>
 </div>

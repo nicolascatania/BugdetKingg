@@ -6,7 +6,7 @@ import {
   signal,
   OnInit,
 } from '@angular/core';
-import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart, DoughnutController, ArcElement, Tooltip, Legend } from 'chart.js';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TransactionService } from '../../../transactions/services/transaction-service';
 import { AccountService } from '../../../accounts/services/AccountService';
@@ -25,8 +25,15 @@ import {
   MonthQuickRange,
 } from '../../../../shared/components/month-quick-picker/month-quick-picker';
 import { getMonthDateRange } from '../../../../shared/utils/datesUtils';
+import {
+  categoricalPalette,
+  chartTheme,
+  chartTooltipStyle,
+} from '../../../../shared/utils/chartTheme';
+import { ThemeService } from '../../../../core/services/theme.service';
+import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
-Chart.register(PieController, ArcElement, Tooltip, Legend);
+Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
 @Component({
   selector: 'app-dashboard',
@@ -37,6 +44,7 @@ Chart.register(PieController, ArcElement, Tooltip, Legend);
     LastMoves,
     ExpensesIncomeEachMonth,
     MonthQuickPicker,
+    RevealDirective,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
@@ -55,15 +63,28 @@ export class Dashboard implements OnInit {
   filterTrigger = signal(0);
   loading = signal(true);
 
+  /** Last rendered slice data, kept so the chart can be repainted on theme change. */
+  private lastExpenseData: CategoryExpense[] = [];
+
   constructor(
     private fb: FormBuilder,
     private ns: NotificationService,
     private transactionService: TransactionService,
     private accountService: AccountService,
+    private themeService: ThemeService,
   ) {
     effect(() => {
       this.filterTrigger();
       this.loadDashboardData();
+    });
+
+    // Canvas colours are resolved at paint time, so the chart has to be
+    // redrawn whenever the theme flips.
+    effect(() => {
+      this.themeService.theme();
+      if (this.lastExpenseData.length > 0) {
+        this.renderExpenseChart(this.lastExpenseData);
+      }
     });
   }
 
@@ -163,7 +184,18 @@ export class Dashboard implements OnInit {
     this.filterForm.patchValue({ dateFrom: range.from, dateTo: range.to });
   }
 
+  /**
+   * Colour of the slice at `index`, so the legend below the chart can show the
+   * same swatch instead of relying on position alone to link the two.
+   */
+  sliceColor(index: number): string {
+    const palette = categoricalPalette();
+    return palette[index % palette.length];
+  }
+
   private renderExpenseChart(data: CategoryExpense[]) {
+    this.lastExpenseData = data;
+
     const labels = data.map((item) => item.name);
     const values = data.map((item) => item.amount);
     const total = values.reduce((a, b) => a + b, 0);
@@ -183,41 +215,33 @@ export class Dashboard implements OnInit {
       if (this.expenseChart) {
         this.expenseChart.destroy();
       }
+      const theme = chartTheme();
+
       this.expenseChart = new Chart(canvasElement, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
           labels: labelsWithPercentage,
           datasets: [
             {
               data: values,
-              backgroundColor: [
-                '#22c55e',
-                '#ef4444',
-                '#3b82f6',
-                '#f59e0b',
-                '#8b5cf6',
-                '#ec4899',
-              ],
-              borderColor: '#0b0f19',
-              borderWidth: 2,
-              hoverOffset: 4,
+              backgroundColor: categoricalPalette(),
+              borderColor: theme.surface,
+              borderWidth: 3,
+              hoverOffset: 10,
             },
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          cutout: '62%',
+          animation: { duration: 700, easing: 'easeOutQuart' },
           plugins: {
             legend: {
               display: false,
             },
             tooltip: {
-              backgroundColor: '#0f172a',
-              titleColor: '#f1f5f9',
-              bodyColor: '#94a3b8',
-              borderColor: '#334155',
-              borderWidth: 1,
-              padding: 10,
+              ...chartTooltipStyle(),
               callbacks: {
                 label: (context) => {
                   const value = context.raw as number;
