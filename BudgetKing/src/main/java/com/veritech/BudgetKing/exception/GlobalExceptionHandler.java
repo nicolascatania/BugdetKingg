@@ -86,4 +86,14 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(TransactionImportRuntimeException.class)
+    public ResponseEntity<?> handleTransactionImportException(TransactionImportRuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "CONFLICT",
+                        "message", ex.getMessage()
+                ));
+    }
 }

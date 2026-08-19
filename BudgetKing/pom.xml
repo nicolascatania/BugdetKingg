@@ -77,6 +77,15 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Used by the Transaction CSV import/export feature. Manual CSV parsing
+		     is failure-prone (quoting, escaping, embedded delimiters), so a small,
+		     well-tested library is used instead of hand-rolled parsing. -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.14.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
