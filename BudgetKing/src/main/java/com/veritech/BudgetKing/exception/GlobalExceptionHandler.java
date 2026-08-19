@@ -56,4 +56,14 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(BudgetRuntimeException.class)
+    public ResponseEntity<?> handleBudgetException(BudgetRuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "CONFLICT",
+                        "message", ex.getMessage()
+                ));
+    }
 }
