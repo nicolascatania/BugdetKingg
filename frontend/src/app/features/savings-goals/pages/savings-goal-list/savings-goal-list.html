@@ -1,0 +1,154 @@
+<div class="mx-auto w-full max-w-screen-2xl space-y-6">
+  <!-- Header -->
+  <div appReveal class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="page-title">Savings goals</h1>
+        <button
+          type="button"
+          class="btn-icon !min-h-0 h-9 w-9 text-muted hover:text-brand"
+          (click)="isTutorialOpen.set(true)"
+          aria-label="How savings goals work"
+          title="How savings goals work"
+        >
+          <i class="fa-solid fa-circle-info text-sm"></i>
+        </button>
+      </div>
+      <p class="mt-1 text-sm text-muted">What you're saving for, and how close you are.</p>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="openNewModal()">
+      <i class="fa-solid fa-plus text-xs"></i>
+      New goal
+    </button>
+  </div>
+
+  <!-- Summary -->
+  @if (summary(); as s) {
+    <section appReveal [revealDelay]="60" class="card grid grid-cols-2 gap-4 p-4 sm:grid-cols-4 sm:p-5">
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">Total saved</p>
+        <p class="tabular text-lg font-bold text-positive">{{ s.totalSaved | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
+      </div>
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">Total target</p>
+        <p class="tabular text-lg font-bold">{{ s.totalTarget | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
+      </div>
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">Progress</p>
+        <p class="tabular text-lg font-bold">{{ s.progressPercentage | number: '1.0-0' }}%</p>
+      </div>
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">Goals achieved</p>
+        <p class="tabular text-lg font-bold">{{ s.achievedGoals }} / {{ s.totalGoals }}</p>
+      </div>
+    </section>
+  }
+
+  <!-- Goals grid -->
+  <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    @if (loading()) {
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton h-48 rounded-2xl"></div>
+      }
+    } @else {
+      @for (goal of goals(); track goal.id) {
+        <article class="goal-card card p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex min-w-0 items-center gap-3">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+                <i class="fa-solid text-sm" [ngClass]="goal.icon || 'fa-piggy-bank'"></i>
+              </span>
+              <h3 class="truncate text-sm font-bold">{{ goal.name }}</h3>
+            </div>
+            @if (goal.achieved) {
+              <span class="chip-positive">Achieved</span>
+            }
+          </div>
+
+          <div class="mt-4 space-y-1.5">
+            <div class="flex items-baseline justify-between text-sm">
+              <span class="tabular font-bold">{{ goal.currentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+              <span class="tabular text-xs text-muted">of {{ goal.targetAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+            </div>
+
+            <div class="h-2 w-full overflow-hidden rounded-full bg-surface-2">
+              <div
+                class="h-full rounded-full bg-brand transition-all duration-500 ease-smooth"
+                [style.width.%]="goal.progressPercentage > 100 ? 100 : goal.progressPercentage"
+              ></div>
+            </div>
+
+            <p class="tabular text-xs text-muted">{{ goal.progressPercentage | number: '1.0-0' }}% complete</p>
+          </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-3 border-t border-line pt-3 text-xs">
+            <div>
+              <p class="text-subtle">Remaining</p>
+              <p class="tabular font-semibold">{{ goal.remainingAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
+            </div>
+            <div>
+              <p class="text-subtle">Monthly needed</p>
+              <p class="tabular font-semibold">{{ goal.monthlyRequired | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
+            </div>
+            <div>
+              <p class="text-subtle">Target date</p>
+              <p class="tabular font-semibold">{{ goal.targetDate }}</p>
+            </div>
+            <div>
+              <p class="text-subtle">Days left</p>
+              <p class="tabular font-semibold">{{ goal.daysRemaining }}</p>
+            </div>
+          </div>
+
+          @if (goal.linkedAccountName) {
+            <p class="mt-3 flex items-center gap-1.5 text-[11px] text-subtle">
+              <i class="fa-solid fa-link text-[10px]"></i>
+              Linked to {{ goal.linkedAccountName }}
+            </p>
+          }
+
+          <div class="mt-4 flex items-center justify-end gap-2 border-t border-line pt-3">
+            <button type="button" class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:text-brand" (click)="openEditModal(goal)">
+              <i class="fa-solid fa-pen text-[10px]"></i>
+              Edit
+            </button>
+            <button type="button" class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:bg-negative/10 hover:text-negative" (click)="deleteGoal(goal)">
+              <i class="fa-solid fa-trash text-[10px]"></i>
+              Delete
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <div class="card col-span-full p-12 text-center">
+          <i class="fa-solid fa-piggy-bank mb-3 block text-3xl text-subtle"></i>
+          <p class="text-sm font-semibold">No savings goals yet</p>
+          <p class="mt-1 text-xs text-muted">Set a target and start tracking your progress.</p>
+        </div>
+      }
+    }
+  </section>
+
+  @if (!loading() && paginationState.totalElements() > 0) {
+    <app-pagination
+      [page]="paginationState.currentPage()"
+      [size]="paginationState.pageSize()"
+      [totalElements]="paginationState.totalElements()"
+      [totalPages]="paginationState.totalPages()"
+      (changePage)="onPageChange($event)"
+    ></app-pagination>
+  }
+</div>
+
+@if (isModalOpen()) {
+  <app-edit-savings-goal [goal]="selectedGoal()" (submitEvent)="onModalClosed($event)" />
+}
+
+@if (isTutorialOpen()) {
+  <app-tutorial-modal
+    title="How savings goals work"
+    intro="Savings goals let you set a target amount and date for something you're saving for, and see your progress toward it at a glance."
+    [sections]="tutorialSections"
+    (closed)="isTutorialOpen.set(false)"
+  />
+}

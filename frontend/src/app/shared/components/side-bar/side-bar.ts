@@ -48,6 +48,9 @@ export class SideBar {
   private readonly allItems: readonly NavItem[] = [
     { label: 'Home', route: '/home', icon: 'fa-house', exact: true },
     { label: 'Transactions', route: '/transactions', icon: 'fa-arrow-right-arrow-left' },
+    { label: 'Recurring', route: '/recurring-transactions', icon: 'fa-rotate' },
+    { label: 'Budgets', route: '/budgets', icon: 'fa-chart-pie' },
+    { label: 'Savings Goals', route: '/savings-goals', icon: 'fa-piggy-bank' },
     { label: 'Dashboard', route: '/dashboard', icon: 'fa-chart-line' },
     { label: 'Accounts', route: '/accounts', icon: 'fa-wallet' },
     { label: 'Categories', route: '/categories', icon: 'fa-tags' },

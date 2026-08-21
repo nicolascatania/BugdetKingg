@@ -1,0 +1,55 @@
+<ui-modal [open]="true" [title]="isEdit() ? 'Edit budget' : 'New budget'" (closed)="close()">
+  <div modal-body>
+    <form [formGroup]="form" class="space-y-5">
+      <div>
+        <label for="budget-category" class="field-label">Category</label>
+        <select id="budget-category" formControlName="category" class="field-select">
+          <option value="">Select category</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.value }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="budget-month" class="field-label">Month</label>
+          <select id="budget-month" formControlName="month" class="field-select">
+            @for (m of months; track m.value) {
+              <option [value]="m.value">{{ m.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="budget-year" class="field-label">Year</label>
+          <input id="budget-year" type="number" formControlName="year" class="field-input" />
+        </div>
+      </div>
+
+      <div>
+        <label for="budget-limit" class="field-label">Limit amount</label>
+        <div
+          class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
+                 focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
+        >
+          <span class="pl-3.5 text-sm font-semibold text-muted">$</span>
+          <input
+            id="budget-limit"
+            type="number"
+            formControlName="limitAmount"
+            placeholder="0.00"
+            class="tabular w-full min-w-0 bg-transparent py-2.5 text-sm font-bold text-body outline-none placeholder:text-subtle"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div modal-footer class="flex w-full justify-end gap-3">
+    <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+    <button type="button" class="btn-primary min-w-[7rem]" (click)="submit()" [disabled]="form.invalid">
+      {{ isEdit() ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</ui-modal>

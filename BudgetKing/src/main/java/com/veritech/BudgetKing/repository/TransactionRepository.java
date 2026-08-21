@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -157,5 +158,20 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
 
 
     Page<Transaction> findAllByUser(AppUser user, Pageable pageRequest);
+
+    /**
+     * Used by the CSV import to flag rows that look like they already exist for the user,
+     * so they are not imported twice. The match is a simple heuristic on the fields carried
+     * by the CSV file (date, amount, description, type) - it does not consider account or
+     * counterparty since those are not always comparable (account is stamped by the client
+     * only at commit time).
+     */
+    boolean existsByUserAndDateAndAmountAndDescriptionAndType(
+            AppUser user,
+            LocalDateTime date,
+            BigDecimal amount,
+            String description,
+            TransactionType type
+    );
 
 }

@@ -56,4 +56,44 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(BudgetRuntimeException.class)
+    public ResponseEntity<?> handleBudgetException(BudgetRuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "CONFLICT",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(RecurringTransactionRuntimeException.class)
+    public ResponseEntity<?> handleRecurringTransactionException(RecurringTransactionRuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "CONFLICT",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(SavingsGoalRuntimeException.class)
+    public ResponseEntity<?> handleSavingsGoalException(SavingsGoalRuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "CONFLICT",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(TransactionImportRuntimeException.class)
+    public ResponseEntity<?> handleTransactionImportException(TransactionImportRuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "CONFLICT",
+                        "message", ex.getMessage()
+                ));
+    }
 }

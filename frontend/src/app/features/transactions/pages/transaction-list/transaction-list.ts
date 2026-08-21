@@ -29,6 +29,8 @@ import {
 } from '../../../../core/utils/pagination.util';
 
 import { RevealDirective } from '../../../../shared/directives/reveal.directive';
+import { ImportTransactions } from '../../components/import-transactions/import-transactions';
+import { TransactionImportExportService } from '../../services/transaction-import-export-service';
 
 @Component({
   selector: 'app-transaction-list',
@@ -40,6 +42,7 @@ import { RevealDirective } from '../../../../shared/directives/reveal.directive'
     PaginationComponent,
     MonthQuickPicker,
     RevealDirective,
+    ImportTransactions,
   ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
@@ -51,8 +54,10 @@ export class TransactionList {
   private accountsService = inject(AccountService);
   private categoryService = inject(CategoryService);
   private ns = inject(NotificationService);
+  private importExportService = inject(TransactionImportExportService);
 
   loading = signal(false);
+  isImportModalOpen = signal(false);
 
   TRANSACTION_TYPE = TransactionType;
   transactionTypes = Object.values(TransactionType);
@@ -189,5 +194,28 @@ export class TransactionList {
   onPageChange(newPage: number) {
     this.paginationState.goToPage(newPage);
     this.onSearch();
+  }
+
+  openImportModal(): void {
+    this.isImportModalOpen.set(true);
+  }
+
+  onImportModalClosed(imported: boolean): void {
+    this.isImportModalOpen.set(false);
+    if (imported) this.onSearch();
+  }
+
+  exportCsv(): void {
+    this.importExportService.exportTransactions(this.form.value).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = 'transactions.csv';
+        anchor.click();
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => this.ns.error(err?.error?.message ?? 'Error exporting transactions'),
+    });
   }
 }
