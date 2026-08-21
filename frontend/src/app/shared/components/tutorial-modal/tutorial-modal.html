@@ -1,0 +1,27 @@
+<ui-modal [open]="true" maxWidth="max-w-2xl" [title]="title()" (closed)="close()">
+  <div modal-body>
+    <div class="space-y-6">
+      @if (intro()) {
+        <p class="text-sm leading-relaxed text-muted">{{ intro() }}</p>
+      }
+
+      <div class="space-y-4">
+        @for (section of sections(); track section.heading) {
+          <div class="flex gap-3.5 rounded-2xl border border-line bg-surface-2 p-4">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+              <i class="fa-solid text-sm" [ngClass]="section.icon"></i>
+            </span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-bold">{{ section.heading }}</h3>
+              <p class="mt-1 text-sm leading-relaxed text-muted">{{ section.body }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div modal-footer class="flex w-full justify-end">
+    <button type="button" class="btn-primary" (click)="close()">Got it</button>
+  </div>
+</ui-modal>

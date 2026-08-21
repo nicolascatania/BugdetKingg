@@ -1,0 +1,129 @@
+<ui-modal [open]="true" maxWidth="max-w-3xl" title="Import transactions from CSV" (closed)="close()">
+  <div modal-body>
+    @if (step() === 'select') {
+      <div class="space-y-5">
+        <div class="rounded-xl border border-line bg-surface-2 p-4 text-xs text-muted">
+          <p class="font-semibold text-body">Expected columns, in order:</p>
+          <p class="tabular mt-1">date, description, amount, type, category, counterparty</p>
+        </div>
+
+        <div>
+          <label for="import-file" class="field-label">CSV file</label>
+          <input
+            id="import-file"
+            type="file"
+            accept=".csv,text/csv"
+            (change)="onFileSelected($event)"
+            class="field-input file:mr-3 file:rounded-lg file:border-0 file:bg-brand file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-brand-contrast"
+          />
+        </div>
+      </div>
+    }
+
+    @if (step() === 'preview' && preview(); as p) {
+      <div class="space-y-4">
+        <div class="grid grid-cols-3 gap-3">
+          <div class="rounded-xl border border-line bg-surface-2 p-3 text-center">
+            <p class="text-lg font-bold text-positive">{{ p.validRows }}</p>
+            <p class="text-[11px] text-muted">Valid</p>
+          </div>
+          <div class="rounded-xl border border-line bg-surface-2 p-3 text-center">
+            <p class="text-lg font-bold text-warning">{{ p.duplicateRows }}</p>
+            <p class="text-[11px] text-muted">Duplicate</p>
+          </div>
+          <div class="rounded-xl border border-line bg-surface-2 p-3 text-center">
+            <p class="text-lg font-bold text-negative">{{ p.errorRows }}</p>
+            <p class="text-[11px] text-muted">Errors</p>
+          </div>
+        </div>
+
+        <div>
+          <label for="import-account" class="field-label">Import into account</label>
+          <select
+            id="import-account"
+            class="field-select"
+            [ngModel]="selectedAccount()"
+            (ngModelChange)="selectedAccount.set($event)"
+            name="importAccount"
+          >
+            @for (account of accounts(); track account.id) {
+              <option [value]="account.id">{{ account.value }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="custom-scroll max-h-64 overflow-y-auto rounded-xl border border-line">
+          <table class="w-full min-w-[560px] text-left text-xs">
+            <thead class="bg-surface-2 text-[10px] font-bold uppercase tracking-wider text-muted">
+              <tr>
+                <th class="px-3 py-2">Line</th>
+                <th class="px-3 py-2">Date</th>
+                <th class="px-3 py-2">Description</th>
+                <th class="px-3 py-2 text-right">Amount</th>
+                <th class="px-3 py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of p.rows; track row.lineNumber) {
+                <tr class="border-t border-line">
+                  <td class="tabular px-3 py-2">{{ row.lineNumber }}</td>
+                  <td class="px-3 py-2">{{ row.date }}</td>
+                  <td class="max-w-[160px] truncate px-3 py-2">{{ row.description }}</td>
+                  <td class="tabular px-3 py-2 text-right">{{ row.amount ?? '—' }}</td>
+                  <td class="px-3 py-2">
+                    @if (!row.valid) {
+                      <span class="chip-negative" [title]="row.errorMessage ?? ''">Error</span>
+                    } @else if (row.duplicate) {
+                      <span class="chip-neutral">Duplicate</span>
+                    } @else {
+                      <span class="chip-positive">Valid</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (step() === 'done' && preview(); as p) {
+      <div class="flex flex-col items-center gap-3 py-6 text-center">
+        <span class="flex h-14 w-14 items-center justify-center rounded-full bg-positive/12 text-positive">
+          <i class="fa-solid fa-check text-xl"></i>
+        </span>
+        <p class="text-sm font-semibold">{{ p.validRows }} transactions imported successfully.</p>
+        @if (p.duplicateRows > 0 || p.errorRows > 0) {
+          <p class="text-xs text-muted">
+            {{ p.duplicateRows }} duplicate and {{ p.errorRows }} invalid rows were skipped.
+          </p>
+        }
+      </div>
+    }
+  </div>
+
+  <div modal-footer class="flex w-full justify-end gap-3">
+    @if (step() === 'select') {
+      <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+      <button type="button" class="btn-primary min-w-[7rem]" [disabled]="!selectedFile() || loading()" (click)="runPreview()">
+        Preview
+      </button>
+    }
+
+    @if (step() === 'preview') {
+      <button type="button" class="btn-secondary" (click)="backToSelect()">Back</button>
+      <button
+        type="button"
+        class="btn-primary min-w-[7rem]"
+        [disabled]="!selectedAccount() || loading() || preview()!.validRows === 0"
+        (click)="commit()"
+      >
+        Import {{ preview()!.validRows }} rows
+      </button>
+    }
+
+    @if (step() === 'done') {
+      <button type="button" class="btn-primary min-w-[7rem]" (click)="close()">Done</button>
+    }
+  </div>
+</ui-modal>

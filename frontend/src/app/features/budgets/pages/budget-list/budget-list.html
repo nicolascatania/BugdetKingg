@@ -1,0 +1,125 @@
+<div class="mx-auto w-full max-w-screen-2xl space-y-6">
+  <!-- Header -->
+  <div appReveal class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="page-title">Budgets</h1>
+        <button
+          type="button"
+          class="btn-icon !min-h-0 h-9 w-9 text-muted hover:text-brand"
+          (click)="isTutorialOpen.set(true)"
+          aria-label="How budgets work"
+          title="How budgets work"
+        >
+          <i class="fa-solid fa-circle-info text-sm"></i>
+        </button>
+      </div>
+      <p class="mt-1 text-sm text-muted">Set a monthly limit per category and track it live.</p>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="openNewBudgetModal()">
+      <i class="fa-solid fa-plus text-xs"></i>
+      New budget
+    </button>
+  </div>
+
+  <!-- Period selector -->
+  <section appReveal [revealDelay]="60" class="card p-4 sm:p-5">
+    <form [formGroup]="periodForm" class="flex items-center gap-3">
+      <div>
+        <label for="budget-period-month" class="field-label">Month</label>
+        <select id="budget-period-month" formControlName="month" class="field-select">
+          @for (m of months; track m.value) {
+            <option [value]="m.value">{{ m.label }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label for="budget-period-year" class="field-label">Year</label>
+        <select id="budget-period-year" formControlName="year" class="field-select">
+          @for (y of years; track y) {
+            <option [value]="y">{{ y }}</option>
+          }
+        </select>
+      </div>
+    </form>
+  </section>
+
+  <!-- Progress cards -->
+  <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    @if (loading()) {
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton h-40 rounded-2xl"></div>
+      }
+    } @else {
+      @for (p of progress(); track p.budgetId) {
+        <article class="budget-card card p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex min-w-0 items-center gap-3">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+                <i class="fa-solid text-sm" [ngClass]="p.categoryIcon || 'fa-tags'"></i>
+              </span>
+              <h3 class="truncate text-sm font-bold">{{ p.categoryName }}</h3>
+            </div>
+            <span [ngClass]="statusChip(p.status)">{{ p.status }}</span>
+          </div>
+
+          <div class="mt-4 space-y-1.5">
+            <div class="flex items-baseline justify-between text-sm">
+              <span class="tabular font-bold">{{ p.spentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+              <span class="tabular text-xs text-muted">of {{ p.limitAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+            </div>
+
+            <div class="h-2 w-full overflow-hidden rounded-full bg-surface-2">
+              <div
+                class="h-full rounded-full transition-all duration-500 ease-smooth"
+                [ngClass]="barColor(p.status)"
+                [style.width.%]="p.percentage > 100 ? 100 : p.percentage"
+              ></div>
+            </div>
+
+            <p class="tabular text-xs text-muted">
+              {{ p.percentage | number: '1.0-0' }}% used ·
+              {{ p.remainingAmount | currency: 'ARS' : 'symbol' : '1.2-2' }} remaining
+            </p>
+          </div>
+
+          <div class="mt-4 flex items-center justify-end gap-2 border-t border-line pt-3">
+            <button type="button" class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:text-brand" (click)="openEditBudgetModal(p)">
+              <i class="fa-solid fa-pen text-[10px]"></i>
+              Edit
+            </button>
+            <button type="button" class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:bg-negative/10 hover:text-negative" (click)="deleteBudget(p)">
+              <i class="fa-solid fa-trash text-[10px]"></i>
+              Delete
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <div class="card col-span-full p-12 text-center">
+          <i class="fa-solid fa-chart-pie mb-3 block text-3xl text-subtle"></i>
+          <p class="text-sm font-semibold">No budgets for this period</p>
+          <p class="mt-1 text-xs text-muted">Create one to start tracking a category's spend.</p>
+        </div>
+      }
+    }
+  </section>
+</div>
+
+@if (isModalOpen()) {
+  <app-edit-budget
+    [budget]="selectedBudget()"
+    [defaultYear]="periodForm.value.year"
+    [defaultMonth]="periodForm.value.month"
+    (submitEvent)="onModalClosed($event)"
+  />
+}
+
+@if (isTutorialOpen()) {
+  <app-tutorial-modal
+    title="How budgets work"
+    intro="Budgets let you cap how much you spend on a category during a given month, and see live how close you are to that cap."
+    [sections]="tutorialSections"
+    (closed)="isTutorialOpen.set(false)"
+  />
+}

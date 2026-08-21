@@ -10,6 +10,9 @@ import { TransactionList } from './features/transactions/pages/transaction-list/
 import { AccountList } from './features/accounts/pages/account-list/account-list';
 import { CategoryList } from './features/categories/pages/category-list/category-list';
 import { UserList } from './features/users/pages/user-list/user-list.component';
+import { BudgetList } from './features/budgets/pages/budget-list/budget-list';
+import { RecurringTransactionList } from './features/recurring-transactions/pages/recurring-transaction-list/recurring-transaction-list';
+import { SavingsGoalList } from './features/savings-goals/pages/savings-goal-list/savings-goal-list';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -36,6 +39,13 @@ export const routes: Routes = [
       { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] },
       { path: 'accounts', component: AccountList, canActivate: [AuthGuard] },
       { path: 'categories', component: CategoryList, canActivate: [AuthGuard] },
+      { path: 'budgets', component: BudgetList, canActivate: [AuthGuard] },
+      {
+        path: 'recurring-transactions',
+        component: RecurringTransactionList,
+        canActivate: [AuthGuard],
+      },
+      { path: 'savings-goals', component: SavingsGoalList, canActivate: [AuthGuard] },
       { path: 'users', component: UserList, canActivate: [AuthGuard] },
     ],
   },

@@ -1,0 +1,169 @@
+<ui-modal
+  [open]="true"
+  maxWidth="max-w-2xl"
+  [title]="isEdit() ? 'Edit recurring transaction' : 'New recurring transaction'"
+  (closed)="close()"
+>
+  <div modal-body>
+    <form [formGroup]="form" class="space-y-5">
+      <!-- Type selector -->
+      <div
+        class="grid grid-cols-3 gap-1.5 rounded-2xl border border-line bg-surface-2 p-1.5"
+        role="radiogroup"
+        aria-label="Transaction type"
+      >
+        <button
+          type="button"
+          (click)="setType('EXPENSE')"
+          role="radio"
+          [attr.aria-checked]="form.get('type')?.value === 'EXPENSE'"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [ngClass]="
+            form.get('type')?.value === 'EXPENSE'
+              ? 'bg-negative/12 font-semibold text-negative shadow-soft'
+              : 'text-muted hover:bg-surface-3 hover:text-body'
+          "
+        >
+          Expense
+        </button>
+        <button
+          type="button"
+          (click)="setType('INCOME')"
+          role="radio"
+          [attr.aria-checked]="form.get('type')?.value === 'INCOME'"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [ngClass]="
+            form.get('type')?.value === 'INCOME'
+              ? 'bg-positive/12 font-semibold text-positive shadow-soft'
+              : 'text-muted hover:bg-surface-3 hover:text-body'
+          "
+        >
+          Income
+        </button>
+        <button
+          type="button"
+          (click)="setType('TRANSFER')"
+          role="radio"
+          [attr.aria-checked]="form.get('type')?.value === 'TRANSFER'"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [ngClass]="
+            form.get('type')?.value === 'TRANSFER'
+              ? 'bg-accent/12 font-semibold text-accent shadow-soft'
+              : 'text-muted hover:bg-surface-3 hover:text-body'
+          "
+        >
+          Transfer
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="rt-amount" class="field-label">Amount</label>
+          <div
+            class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
+                   focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
+          >
+            <span class="pl-3.5 text-sm font-semibold text-muted">$</span>
+            <input
+              id="rt-amount"
+              type="number"
+              formControlName="amount"
+              placeholder="0.00"
+              class="tabular w-full min-w-0 bg-transparent py-2.5 text-sm font-bold text-body outline-none placeholder:text-subtle"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="rt-account" class="field-label">Account</label>
+          <select id="rt-account" formControlName="account" class="field-select">
+            @for (account of accounts(); track account.id) {
+              <option [value]="account.id">{{ account.value }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        @if (form.get('type')?.value === 'TRANSFER') {
+          <div class="animate-fade-in">
+            <label for="rt-destination" class="field-label">Destination account</label>
+            <select id="rt-destination" formControlName="destinationAccount" class="field-select">
+              @for (account of filteredDestinationAccounts(); track account.id) {
+                <option [value]="account.id">{{ account.value }}</option>
+              }
+            </select>
+          </div>
+        } @else {
+          <div class="animate-fade-in">
+            <label for="rt-category" class="field-label">Category</label>
+            <select id="rt-category" formControlName="category" class="field-select">
+              <option value="">Select category</option>
+              @for (category of categories(); track category.id) {
+                <option [value]="category.id">{{ category.value }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        <div>
+          <label for="rt-frequency" class="field-label">Frequency</label>
+          <select id="rt-frequency" formControlName="frequency" class="field-select">
+            @for (f of frequencies; track f) {
+              <option [value]="f">{{ f }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="rt-next-run" class="field-label">Next run date</label>
+          <input id="rt-next-run" type="date" formControlName="nextRunDate" class="field-input" />
+        </div>
+
+        <div>
+          <label for="rt-end-date" class="field-label">End date (optional)</label>
+          <input id="rt-end-date" type="date" formControlName="endDate" class="field-input" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="rt-counterparty" class="field-label">Counterparty</label>
+          <input
+            id="rt-counterparty"
+            type="text"
+            formControlName="counterparty"
+            placeholder="e.g. Landlord, Netflix"
+            class="field-input"
+          />
+        </div>
+
+        <div>
+          <label for="rt-description" class="field-label">Description</label>
+          <input
+            id="rt-description"
+            type="text"
+            formControlName="description"
+            placeholder="Template details"
+            class="field-input"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div modal-footer class="flex w-full justify-end gap-3">
+    <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+    <button
+      type="button"
+      class="btn-primary min-w-[7rem]"
+      (click)="submit()"
+      [disabled]="form.invalid"
+      [title]="form.invalid ? 'Complete all required fields first' : null"
+    >
+      {{ isEdit() ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</ui-modal>

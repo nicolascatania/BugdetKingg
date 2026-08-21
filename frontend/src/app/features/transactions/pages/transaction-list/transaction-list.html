@@ -22,6 +22,22 @@
         }
       </button>
 
+      <button type="button" class="btn-secondary" (click)="exportCsv()">
+        <i class="fa-solid fa-file-export text-xs"></i>
+        Export CSV
+      </button>
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="openImportModal()"
+        [disabled]="!userHasAccounts"
+        [title]="userHasAccounts ? 'Import transactions from a CSV file' : 'Create an account first'"
+      >
+        <i class="fa-solid fa-file-import text-xs"></i>
+        Import CSV
+      </button>
+
       <button
         type="button"
         class="btn-primary"
@@ -304,4 +320,8 @@
 
 @if (isTransactionModalOpen()) {
   <app-edit-transaction [transaction]="null" [accounts]="accounts()" (closed)="onTransactionModalClosed($event)" />
+}
+
+@if (isImportModalOpen()) {
+  <app-import-transactions (closed)="onImportModalClosed($event)" />
 }

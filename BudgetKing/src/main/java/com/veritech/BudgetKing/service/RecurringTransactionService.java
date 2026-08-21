@@ -201,6 +201,12 @@ public class RecurringTransactionService
      * <p>Templates are processed independently: a failing one is logged and skipped so it
      * cannot block the rest of the batch.</p>
      *
+     * <p>TODO: nothing calls this automatically yet. There is no {@code @Scheduled} job wired
+     * up, so due templates only fire when {@code POST /recurring-transaction/run-due} is hit
+     * by hand or by an external cron. To automate it: add {@code @EnableScheduling} on the
+     * Spring Boot application class and a {@code @Scheduled(cron = "...")} method (e.g. in a
+     * new {@code RecurringTransactionScheduler}) that calls {@link #runDue()} once a day.</p>
+     *
      * @return how many transactions were generated
      */
     public int runDue() {
