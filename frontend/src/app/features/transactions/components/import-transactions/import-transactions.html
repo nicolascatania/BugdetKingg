@@ -43,13 +43,15 @@
         </div>
 
         <div class="custom-scroll max-h-64 overflow-y-auto rounded-xl border border-line">
-          <table class="w-full min-w-[760px] text-left text-xs">
+          <table class="w-full min-w-[920px] text-left text-xs">
             <thead class="bg-surface-2 text-[10px] font-bold uppercase tracking-wider text-muted">
               <tr>
                 <th class="px-3 py-2">Line</th>
                 <th class="px-3 py-2">Date</th>
                 <th class="px-3 py-2">Description</th>
                 <th class="px-3 py-2 text-right">Amount</th>
+                <th class="px-3 py-2">Type</th>
+                <th class="px-3 py-2">Destination</th>
                 <th class="px-3 py-2">Status</th>
                 <th class="px-3 py-2">Reason</th>
               </tr>
@@ -61,6 +63,20 @@
                   <td class="px-3 py-2">{{ row.date }}</td>
                   <td class="max-w-[160px] truncate px-3 py-2">{{ row.description }}</td>
                   <td class="tabular px-3 py-2 text-right">{{ row.amount ?? '—' }}</td>
+                  <td class="px-3 py-2">
+                    <span
+                      [ngClass]="{
+                        'chip-positive': row.type === 'INCOME',
+                        'chip-negative': row.type === 'EXPENSE',
+                        'chip-neutral': row.type === 'TRANSFER'
+                      }"
+                    >
+                      {{ row.type }}
+                    </span>
+                  </td>
+                  <td class="max-w-[140px] truncate px-3 py-2 text-muted">
+                    {{ row.type === 'TRANSFER' ? accountName(row.destinationAccount) : '—' }}
+                  </td>
                   <td class="px-3 py-2">
                     @if (!row.valid) {
                       <span class="chip-negative">Error</span>
