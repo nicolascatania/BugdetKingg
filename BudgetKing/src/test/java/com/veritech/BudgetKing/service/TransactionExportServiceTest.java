@@ -71,13 +71,14 @@ class TransactionExportServiceTest {
         byte[] result = exportService.exportToCsv(filter);
         String csv = new String(result, StandardCharsets.UTF_8);
 
-        assertTrue(csv.startsWith("date,description,amount,type,category,counterparty"));
+        assertTrue(csv.startsWith("date,description,amount,type,category,counterparty,account"));
         assertTrue(csv.contains("2026-01-15T10:30"));
         assertTrue(csv.contains("Supermarket"));
         assertTrue(csv.contains("42.9"));
         assertTrue(csv.contains("EXPENSE"));
         assertTrue(csv.contains("Groceries"));
         assertTrue(csv.contains("Local Store"));
+        assertTrue(csv.contains("Main"));
     }
 
     @Test
@@ -102,7 +103,7 @@ class TransactionExportServiceTest {
         byte[] result = exportService.exportToCsv(filter);
         String csv = new String(result, StandardCharsets.UTF_8);
 
-        assertEquals("date,description,amount,type,category,counterparty\r\n", csv);
+        assertEquals("date,description,amount,type,category,counterparty,account\r\n", csv);
     }
 
     @Test

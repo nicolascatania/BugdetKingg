@@ -5,8 +5,10 @@ import com.veritech.BudgetKing.dto.ImportRowDTO;
 import com.veritech.BudgetKing.dto.TransactionDTO;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.exception.TransactionImportRuntimeException;
+import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Category;
+import com.veritech.BudgetKing.repository.AccountRepository;
 import com.veritech.BudgetKing.repository.CategoryRepository;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
@@ -38,12 +40,14 @@ import java.util.UUID;
  * <p>1. {@link #preview(MultipartFile)} parses and validates the file without touching the
  * database, returning an {@link ImportPreviewDTO} the client can render for review.</p>
  *
- * <p>2. {@link #commit(MultipartFile, UUID)} re-parses and re-validates the same file (the
- * client re-sends it together with the account chosen for the import) and persists every row
- * that is valid and not a duplicate, reusing {@link TransactionService#create} so balances are
- * updated exactly the same way a manually created transaction would.</p>
+ * <p>2. {@link #commit(MultipartFile)} re-parses and re-validates the same file and persists
+ * every row that is valid and not a duplicate, reusing {@link TransactionService#create} so
+ * balances are updated exactly the same way a manually created transaction would. Each row
+ * carries its own target account (matched by name), so a single file can spread transactions
+ * across every account the user has.</p>
  *
- * <p>The CSV columns are, in order: {@code date,description,amount,type,category,counterparty}
+ * <p>The CSV columns are, in order:
+ * {@code date,description,amount,type,category,counterparty,account}
  * (see {@link ImportRowDTO} for the exact per-column semantics). Only {@code INCOME} and
  * {@code EXPENSE} rows can be imported; {@code TRANSFER} needs a destination account the file
  * cannot carry.</p>
@@ -53,11 +57,11 @@ import java.util.UUID;
 public class TransactionImportService {
 
     private static final List<String> EXPECTED_HEADERS =
-            List.of("date", "description", "amount", "type", "category", "counterparty");
+            List.of("date", "description", "amount", "type", "category", "counterparty", "account");
 
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
-    private final AccountService accountService;
+    private final AccountRepository accountRepository;
     private final TransactionService transactionService;
     private final SecurityUtils securityUtils;
 
@@ -69,39 +73,34 @@ public class TransactionImportService {
      */
     public ImportPreviewDTO preview(MultipartFile file) {
         AppUser user = securityUtils.getCurrentUser();
-        List<ImportRowDTO> rows = parseRows(file, user, null);
+        List<ImportRowDTO> rows = parseRows(file, user);
         return buildSummary(rows);
     }
 
     /**
      * Re-parses and re-validates the uploaded CSV, then persists every row that is valid and
-     * not a duplicate as a real transaction in the given account.
+     * not a duplicate as a real transaction in the account resolved for that row.
      *
-     * @param file      uploaded CSV file, expected to be the same one previously previewed
-     * @param accountId account the imported transactions will be created in; must belong to
-     *                  the current user
+     * @param file uploaded CSV file, expected to be the same one previously previewed
      * @return summary of the parsed rows, mirroring what would have been returned by
      * {@link #preview(MultipartFile)} for the same file
      */
     @Transactional
-    public ImportPreviewDTO commit(MultipartFile file, UUID accountId) {
+    public ImportPreviewDTO commit(MultipartFile file) {
         AppUser user = securityUtils.getCurrentUser();
 
-        // Validates the account exists and belongs to the current user before doing any work.
-        accountService.getEntityById(accountId);
-
-        List<ImportRowDTO> rows = parseRows(file, user, accountId);
+        List<ImportRowDTO> rows = parseRows(file, user);
 
         for (ImportRowDTO row : rows) {
             if (row.valid() && !row.duplicate()) {
-                persistRow(row, user, accountId);
+                persistRow(row, user);
             }
         }
 
         return buildSummary(rows);
     }
 
-    private void persistRow(ImportRowDTO row, AppUser user, UUID accountId) {
+    private void persistRow(ImportRowDTO row, AppUser user) {
         Category category = categoryRepository.getByNameAndUser(row.category(), user)
                 .orElseThrow(() -> new TransactionImportRuntimeException(
                         "Category not found: " + row.category()));
@@ -115,7 +114,7 @@ public class TransactionImportService {
                 row.description(),
                 category.getId(),
                 category.getName(),
-                accountId,
+                row.account(),
                 null,
                 null
         );
@@ -132,7 +131,7 @@ public class TransactionImportService {
      * whole import: the offending row is simply flagged invalid so the rest of the file can
      * still be reviewed/imported.</p>
      */
-    private List<ImportRowDTO> parseRows(MultipartFile file, AppUser user, UUID account) {
+    private List<ImportRowDTO> parseRows(MultipartFile file, AppUser user) {
         if (file == null || file.isEmpty()) {
             throw new TransactionImportRuntimeException("CSV file is empty");
         }
@@ -153,7 +152,7 @@ public class TransactionImportService {
             validateHeader(parser.getHeaderNames());
 
             for (CSVRecord record : parser) {
-                rows.add(parseRowSafely(record, user, account));
+                rows.add(parseRowSafely(record, user));
             }
         } catch (IOException | IllegalStateException e) {
             throw new TransactionImportRuntimeException("Could not read CSV file: " + e.getMessage());
@@ -182,9 +181,9 @@ public class TransactionImportService {
      * row with fewer columns than the header) turns into an invalid row instead of aborting the
      * whole import.
      */
-    private ImportRowDTO parseRowSafely(CSVRecord record, AppUser user, UUID account) {
+    private ImportRowDTO parseRowSafely(CSVRecord record, AppUser user) {
         try {
-            return parseRow(record, user, account);
+            return parseRow(record, user);
         } catch (Exception e) {
             int lineNumber = (int) record.getRecordNumber() + 1;
             return new ImportRowDTO(
@@ -195,7 +194,7 @@ public class TransactionImportService {
                     safeGet(record, "type"),
                     safeGet(record, "category"),
                     safeGet(record, "counterparty"),
-                    account,
+                    null,
                     false,
                     "Malformed row: " + e.getMessage(),
                     false
@@ -211,7 +210,7 @@ public class TransactionImportService {
         }
     }
 
-    private ImportRowDTO parseRow(CSVRecord record, AppUser user, UUID account) {
+    private ImportRowDTO parseRow(CSVRecord record, AppUser user) {
         int lineNumber = (int) record.getRecordNumber() + 1;
 
         String rawDate = record.get("date");
@@ -220,6 +219,7 @@ public class TransactionImportService {
         String rawType = record.get("type");
         String rawCategory = record.get("category");
         String rawCounterparty = record.get("counterparty");
+        String rawAccount = record.get("account");
 
         List<String> errors = new ArrayList<>();
 
@@ -266,6 +266,19 @@ public class TransactionImportService {
         }
 
         String counterparty = StringUtils.isBlankOrNUll(rawCounterparty) ? "Unknown" : rawCounterparty.trim();
+
+        UUID account = null;
+        if (StringUtils.isBlankOrNUll(rawAccount)) {
+            errors.add("Account is mandatory");
+        } else {
+            Account resolvedAccount = accountRepository.findByNameAndUser(rawAccount.trim(), user).orElse(null);
+            if (resolvedAccount == null) {
+                errors.add("Account not found: " + rawAccount);
+            } else {
+                account = resolvedAccount.getId();
+            }
+        }
+
         boolean valid = errors.isEmpty();
 
         boolean duplicate = false;

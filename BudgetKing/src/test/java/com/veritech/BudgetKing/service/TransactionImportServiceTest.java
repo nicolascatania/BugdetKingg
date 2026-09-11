@@ -7,6 +7,7 @@ import com.veritech.BudgetKing.exception.TransactionImportRuntimeException;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Category;
+import com.veritech.BudgetKing.repository.AccountRepository;
 import com.veritech.BudgetKing.repository.CategoryRepository;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
@@ -38,7 +39,7 @@ class TransactionImportServiceTest {
     private CategoryRepository categoryRepository;
 
     @Mock
-    private AccountService accountService;
+    private AccountRepository accountRepository;
 
     @Mock
     private TransactionService transactionService;
@@ -54,13 +55,13 @@ class TransactionImportServiceTest {
     private Account mockAccount;
     private UUID accountId;
 
-    private static final String HEADER = "date,description,amount,type,category,counterparty\n";
+    private static final String HEADER = "date,description,amount,type,category,counterparty,account\n";
 
     @BeforeEach
     void setUpDefaults() {
         mockUser = new AppUser();
         accountId = UUID.randomUUID();
-        mockAccount = Account.builder().id(accountId).build();
+        mockAccount = Account.builder().id(accountId).name("Cash").build();
 
         mockCategory = Category.builder()
                 .id(UUID.randomUUID())
@@ -76,14 +77,19 @@ class TransactionImportServiceTest {
                 content.getBytes(StandardCharsets.UTF_8));
     }
 
+    private void mockValidAccount() {
+        when(accountRepository.findByNameAndUser("Cash", mockUser)).thenReturn(Optional.of(mockAccount));
+    }
+
     @Test
     @DisplayName("Should mark a well-formed row as valid")
     void shouldPreviewValidRow() {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
         when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
                 .thenReturn(false);
+        mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema\n";
+        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
@@ -97,14 +103,16 @@ class TransactionImportServiceTest {
         assertNull(row.errorMessage());
         assertEquals(new BigDecimal("25.50"), row.amount());
         assertEquals("EXPENSE", row.type());
+        assertEquals(accountId, row.account());
     }
 
     @Test
     @DisplayName("Should flag a row referencing a category that does not exist for the user")
     void shouldFlagMissingCategory() {
         when(categoryRepository.getByNameAndUser("Unknown Category", mockUser)).thenReturn(Optional.empty());
+        mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Unknown Category,Cinema\n";
+        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Unknown Category,Cinema,Cash\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
@@ -115,11 +123,41 @@ class TransactionImportServiceTest {
     }
 
     @Test
+    @DisplayName("Should flag a row referencing an account that does not exist for the user")
+    void shouldFlagMissingAccount() {
+        when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        when(accountRepository.findByNameAndUser("Ghost Account", mockUser)).thenReturn(Optional.empty());
+
+        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,Ghost Account\n";
+
+        ImportPreviewDTO preview = importService.preview(csvFile(csv));
+
+        assertEquals(0, preview.validRows());
+        assertEquals(1, preview.errorRows());
+        assertNull(preview.rows().get(0).account());
+        assertTrue(preview.rows().get(0).errorMessage().contains("Account not found"));
+    }
+
+    @Test
+    @DisplayName("Should flag a row with a blank account")
+    void shouldFlagBlankAccount() {
+        when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+
+        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,\n";
+
+        ImportPreviewDTO preview = importService.preview(csvFile(csv));
+
+        assertEquals(1, preview.errorRows());
+        assertTrue(preview.rows().get(0).errorMessage().contains("Account is mandatory"));
+    }
+
+    @Test
     @DisplayName("Should flag a row with a malformed amount")
     void shouldFlagMalformedAmount() {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,not-a-number,EXPENSE,Entertainment,Cinema\n";
+        String csv = HEADER + "2026-01-15,Movie night,not-a-number,EXPENSE,Entertainment,Cinema,Cash\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
@@ -134,8 +172,9 @@ class TransactionImportServiceTest {
     @DisplayName("Should flag a row with a non-positive amount")
     void shouldFlagNonPositiveAmount() {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,0,EXPENSE,Entertainment,Cinema\n";
+        String csv = HEADER + "2026-01-15,Movie night,0,EXPENSE,Entertainment,Cinema,Cash\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
@@ -147,8 +186,9 @@ class TransactionImportServiceTest {
     @DisplayName("Should flag a row with an invalid date")
     void shouldFlagInvalidDate() {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        mockValidAccount();
 
-        String csv = HEADER + "not-a-date,Movie night,25.50,EXPENSE,Entertainment,Cinema\n";
+        String csv = HEADER + "not-a-date,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
@@ -160,8 +200,9 @@ class TransactionImportServiceTest {
     @DisplayName("Should reject TRANSFER rows since they cannot be imported")
     void shouldRejectTransferType() {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,25.50,TRANSFER,Entertainment,Cinema\n";
+        String csv = HEADER + "2026-01-15,Movie night,25.50,TRANSFER,Entertainment,Cinema,Cash\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
@@ -175,8 +216,9 @@ class TransactionImportServiceTest {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
         when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
                 .thenReturn(false);
+        mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,\n";
+        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,,Cash\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
@@ -189,8 +231,9 @@ class TransactionImportServiceTest {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
         when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
                 .thenReturn(true);
+        mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema\n";
+        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
@@ -230,11 +273,12 @@ class TransactionImportServiceTest {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
         when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
                 .thenReturn(false);
+        mockValidAccount();
 
         // Second row has fewer columns than the header - commons-csv throws on record.get()
         // for the missing column, which the row parser turns into an invalid row.
         String csv = HEADER
-                + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema\n"
+                + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash\n"
                 + "2026-01-16,Incomplete row\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
@@ -247,19 +291,19 @@ class TransactionImportServiceTest {
     @Test
     @DisplayName("Should only persist valid, non-duplicate rows on commit")
     void shouldCommitOnlyValidNonDuplicateRows() {
-        when(accountService.getEntityById(accountId)).thenReturn(mockAccount);
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
         when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
                 .thenReturn(false, true); // first row not duplicate, third row duplicate
+        mockValidAccount();
 
         String csv = HEADER
-                + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema\n"
-                + "2026-01-16,Bad amount,oops,EXPENSE,Entertainment,Cinema\n"
-                + "2026-01-17,Old rent,500,EXPENSE,Entertainment,Landlord\n";
+                + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash\n"
+                + "2026-01-16,Bad amount,oops,EXPENSE,Entertainment,Cinema,Cash\n"
+                + "2026-01-17,Old rent,500,EXPENSE,Entertainment,Landlord,Cash\n";
 
         when(transactionService.create(any(TransactionDTO.class))).thenReturn(null);
 
-        ImportPreviewDTO result = importService.commit(csvFile(csv), accountId);
+        ImportPreviewDTO result = importService.commit(csvFile(csv));
 
         assertEquals(3, result.totalRows());
         assertEquals(1, result.validRows());
@@ -272,15 +316,38 @@ class TransactionImportServiceTest {
     @Test
     @DisplayName("Should not persist anything when every row is invalid")
     void shouldNotPersistWhenAllRowsInvalid() {
-        when(accountService.getEntityById(accountId)).thenReturn(mockAccount);
         when(categoryRepository.getByNameAndUser("Ghost", mockUser)).thenReturn(Optional.empty());
+        mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Ghost,Cinema\n";
+        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Ghost,Cinema,Cash\n";
 
-        ImportPreviewDTO result = importService.commit(csvFile(csv), accountId);
+        ImportPreviewDTO result = importService.commit(csvFile(csv));
 
         assertEquals(1, result.errorRows());
         verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    @DisplayName("Should spread transactions across different accounts within the same file")
+    void shouldResolveAccountPerRow() {
+        Account savings = Account.builder().id(UUID.randomUUID()).name("Savings").build();
+
+        when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
+                .thenReturn(false);
+        mockValidAccount();
+        when(accountRepository.findByNameAndUser("Savings", mockUser)).thenReturn(Optional.of(savings));
+        when(transactionService.create(any(TransactionDTO.class))).thenReturn(null);
+
+        String csv = HEADER
+                + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash\n"
+                + "2026-01-16,Interest,10,INCOME,Entertainment,Bank,Savings\n";
+
+        ImportPreviewDTO result = importService.commit(csvFile(csv));
+
+        assertEquals(accountId, result.rows().get(0).account());
+        assertEquals(savings.getId(), result.rows().get(1).account());
+        verify(transactionService, times(2)).create(any(TransactionDTO.class));
     }
 
     @Test
@@ -289,10 +356,11 @@ class TransactionImportServiceTest {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
         when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
                 .thenReturn(false);
+        mockValidAccount();
 
         String csv = HEADER
-                + "2026-01-15,First,10,EXPENSE,Entertainment,A\n"
-                + "2026-01-16,Second,20,EXPENSE,Entertainment,B\n";
+                + "2026-01-15,First,10,EXPENSE,Entertainment,A,Cash\n"
+                + "2026-01-16,Second,20,EXPENSE,Entertainment,B,Cash\n";
 
         List<ImportRowDTO> rows = importService.preview(csvFile(csv)).rows();
 

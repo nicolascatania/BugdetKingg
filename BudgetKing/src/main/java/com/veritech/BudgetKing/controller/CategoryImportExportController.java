@@ -1,9 +1,8 @@
 package com.veritech.BudgetKing.controller;
 
-import com.veritech.BudgetKing.dto.ImportPreviewDTO;
-import com.veritech.BudgetKing.filter.TransactionFilter;
-import com.veritech.BudgetKing.service.TransactionExportService;
-import com.veritech.BudgetKing.service.TransactionImportService;
+import com.veritech.BudgetKing.dto.CategoryImportPreviewDTO;
+import com.veritech.BudgetKing.service.CategoryExportService;
+import com.veritech.BudgetKing.service.CategoryImportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,47 +11,46 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * CSV bulk import/export endpoints for transactions.
+ * CSV bulk import/export endpoints for categories.
  *
  * <p>Import is a two-step flow: the client first uploads the file to {@code /import/preview} to
  * see which rows are valid, duplicated or broken, and only then confirms the import by calling
- * {@code /import/commit} with the same file. Each row carries its own target account (matched
- * by name), so a single file can spread transactions across every account the user has.</p>
+ * {@code /import/commit} with the same file.</p>
  */
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping("/category")
 @RequiredArgsConstructor
-public class TransactionImportExportController {
+public class CategoryImportExportController {
 
-    private final TransactionImportService importService;
-    private final TransactionExportService exportService;
+    private final CategoryImportService importService;
+    private final CategoryExportService exportService;
 
     /**
      * Parses and validates an uploaded CSV file without persisting anything.
      */
     @PostMapping(value = "/import/preview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ImportPreviewDTO> previewImport(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<CategoryImportPreviewDTO> previewImport(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(importService.preview(file));
     }
 
     /**
      * Re-validates the uploaded CSV file and persists every valid, non-duplicate row as a
-     * transaction in the account resolved for that row.
+     * category.
      */
     @PostMapping(value = "/import/commit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ImportPreviewDTO> commitImport(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<CategoryImportPreviewDTO> commitImport(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(importService.commit(file));
     }
 
     /**
-     * Downloads the current user's transactions as a CSV file, optionally filtered.
+     * Downloads the current user's categories as a CSV file.
      */
     @GetMapping("/export")
-    public ResponseEntity<byte[]> exportTransactions(TransactionFilter filter) {
-        byte[] csv = exportService.exportToCsv(filter);
+    public ResponseEntity<byte[]> exportCategories() {
+        byte[] csv = exportService.exportToCsv();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"transactions.csv\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"categories.csv\"")
                 .contentType(MediaType.parseMediaType("text/csv"))
                 .body(csv);
     }

@@ -24,7 +24,8 @@ import java.util.List;
  * Exports the current user's transactions to CSV.
  *
  * <p>The output uses the exact same column layout expected by
- * {@link TransactionImportService} ({@code date,description,amount,type,category,counterparty}),
+ * {@link TransactionImportService}
+ * ({@code date,description,amount,type,category,counterparty,account}),
  * so a file exported here can be re-imported unchanged.</p>
  */
 @Service
@@ -32,7 +33,7 @@ import java.util.List;
 public class TransactionExportService {
 
     private static final String[] HEADERS =
-            {"date", "description", "amount", "type", "category", "counterparty"};
+            {"date", "description", "amount", "type", "category", "counterparty", "account"};
 
     private final TransactionRepository transactionRepository;
     private final SecurityUtils securityUtils;
@@ -66,7 +67,8 @@ public class TransactionExportService {
                         t.getAmount(),
                         t.getType().name(),
                         t.getCategory() != null ? t.getCategory().getName() : "",
-                        t.getCounterparty() != null ? t.getCounterparty() : ""
+                        t.getCounterparty() != null ? t.getCounterparty() : "",
+                        t.getAccount() != null ? t.getAccount().getName() : ""
                 );
             }
             printer.flush();

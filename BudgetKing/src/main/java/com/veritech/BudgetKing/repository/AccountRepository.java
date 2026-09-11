@@ -25,6 +25,8 @@ public interface AccountRepository extends JpaRepository<Account, UUID>, JpaSpec
 
     Optional<Account> findByIdAndUser(UUID uuid, AppUser user);
 
+    Optional<Account> findByNameAndUser(String name, AppUser user);
+
     Page<Account> findAllByUser(AppUser user, Pageable pageRequest);
 
     List<AccountDTO> findAllByUser(AppUser user);
