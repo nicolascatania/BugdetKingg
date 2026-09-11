@@ -7,6 +7,7 @@ export interface ImportRowDTO {
   category: string;
   counterparty: string;
   account: string | null;
+  destinationAccount: string | null;
   valid: boolean;
   errorMessage: string | null;
   duplicate: boolean;

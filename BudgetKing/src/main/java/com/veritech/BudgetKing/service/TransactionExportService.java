@@ -25,15 +25,17 @@ import java.util.List;
  *
  * <p>The output uses the exact same column layout expected by
  * {@link TransactionImportService}
- * ({@code date,description,amount,type,category,counterparty,account}),
+ * ({@code date,description,amount,type,category,counterparty,account,destination_account}),
  * so a file exported here can be re-imported unchanged.</p>
  */
 @Service
 @RequiredArgsConstructor
 public class TransactionExportService {
 
-    private static final String[] HEADERS =
-            {"date", "description", "amount", "type", "category", "counterparty", "account"};
+    private static final String[] HEADERS = {
+            "date", "description", "amount", "type", "category", "counterparty",
+            "account", "destination_account"
+    };
 
     private final TransactionRepository transactionRepository;
     private final SecurityUtils securityUtils;
@@ -68,7 +70,8 @@ public class TransactionExportService {
                         t.getType().name(),
                         t.getCategory() != null ? t.getCategory().getName() : "",
                         t.getCounterparty() != null ? t.getCounterparty() : "",
-                        t.getAccount() != null ? t.getAccount().getName() : ""
+                        t.getAccount() != null ? t.getAccount().getName() : "",
+                        t.getDestinationAccount() != null ? t.getDestinationAccount().getName() : ""
                 );
             }
             printer.flush();

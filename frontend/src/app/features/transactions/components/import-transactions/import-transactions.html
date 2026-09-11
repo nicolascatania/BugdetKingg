@@ -4,7 +4,12 @@
       <div class="space-y-5">
         <div class="rounded-xl border border-line bg-surface-2 p-4 text-xs text-muted">
           <p class="font-semibold text-body">Expected columns, in order:</p>
-          <p class="tabular mt-1">date, description, amount, type, category, counterparty, account</p>
+          <p class="tabular mt-1">date, description, amount, type, category, counterparty, account, destination_account</p>
+          <p class="mt-2">
+            <code class="tabular">destination_account</code> is only required for TRANSFER rows
+            (must be an existing account, different from <code class="tabular">account</code>).
+            <code class="tabular">category</code> is optional for TRANSFER.
+          </p>
         </div>
 
         <div>
@@ -38,7 +43,7 @@
         </div>
 
         <div class="custom-scroll max-h-64 overflow-y-auto rounded-xl border border-line">
-          <table class="w-full min-w-[640px] text-left text-xs">
+          <table class="w-full min-w-[760px] text-left text-xs">
             <thead class="bg-surface-2 text-[10px] font-bold uppercase tracking-wider text-muted">
               <tr>
                 <th class="px-3 py-2">Line</th>
@@ -46,6 +51,7 @@
                 <th class="px-3 py-2">Description</th>
                 <th class="px-3 py-2 text-right">Amount</th>
                 <th class="px-3 py-2">Status</th>
+                <th class="px-3 py-2">Reason</th>
               </tr>
             </thead>
             <tbody>
@@ -57,12 +63,15 @@
                   <td class="tabular px-3 py-2 text-right">{{ row.amount ?? '—' }}</td>
                   <td class="px-3 py-2">
                     @if (!row.valid) {
-                      <span class="chip-negative" [title]="row.errorMessage ?? ''">Error</span>
+                      <span class="chip-negative">Error</span>
                     } @else if (row.duplicate) {
                       <span class="chip-neutral">Duplicate</span>
                     } @else {
                       <span class="chip-positive">Valid</span>
                     }
+                  </td>
+                  <td class="max-w-[220px] truncate px-3 py-2 text-muted" [title]="row.errorMessage ?? ''">
+                    {{ row.errorMessage ?? '—' }}
                   </td>
                 </tr>
               }

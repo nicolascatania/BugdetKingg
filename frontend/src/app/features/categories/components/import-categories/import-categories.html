@@ -42,13 +42,14 @@
         </div>
 
         <div class="custom-scroll max-h-64 overflow-y-auto rounded-xl border border-line">
-          <table class="w-full min-w-[480px] text-left text-xs">
+          <table class="w-full min-w-[600px] text-left text-xs">
             <thead class="bg-surface-2 text-[10px] font-bold uppercase tracking-wider text-muted">
               <tr>
                 <th class="px-3 py-2">Line</th>
                 <th class="px-3 py-2">Name</th>
                 <th class="px-3 py-2">Icon</th>
                 <th class="px-3 py-2">Status</th>
+                <th class="px-3 py-2">Reason</th>
               </tr>
             </thead>
             <tbody>
@@ -63,12 +64,15 @@
                   </td>
                   <td class="px-3 py-2">
                     @if (!row.valid) {
-                      <span class="chip-negative" [title]="row.errorMessage ?? ''">Error</span>
+                      <span class="chip-negative">Error</span>
                     } @else if (row.duplicate) {
                       <span class="chip-neutral">Duplicate</span>
                     } @else {
                       <span class="chip-positive">Valid</span>
                     }
+                  </td>
+                  <td class="max-w-[220px] truncate px-3 py-2 text-muted" [title]="row.errorMessage ?? ''">
+                    {{ row.errorMessage ?? '—' }}
                   </td>
                 </tr>
               }

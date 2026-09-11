@@ -103,7 +103,7 @@ class TransactionExportServiceTest {
         byte[] result = exportService.exportToCsv(filter);
         String csv = new String(result, StandardCharsets.UTF_8);
 
-        assertEquals("date,description,amount,type,category,counterparty,account\r\n", csv);
+        assertEquals("date,description,amount,type,category,counterparty,account,destination_account\r\n", csv);
     }
 
     @Test
@@ -126,5 +126,27 @@ class TransactionExportServiceTest {
 
         assertTrue(csv.contains("Move funds"));
         assertTrue(csv.contains("TRANSFER"));
+    }
+
+    @Test
+    @DisplayName("Should export the destination account name for TRANSFER rows")
+    void shouldExportTransferDestinationAccount() {
+        Transaction transfer = Transaction.builder()
+                .date(LocalDateTime.of(2026, 2, 1, 0, 0))
+                .amount(new BigDecimal("100.00"))
+                .type(TransactionType.TRANSFER)
+                .description("Move funds")
+                .counterparty("Self")
+                .account(Account.builder().name("Main").build())
+                .destinationAccount(Account.builder().name("Savings").build())
+                .user(mockUser)
+                .build();
+
+        when(transactionRepository.findByUser(mockUser)).thenReturn(List.of(transfer));
+
+        byte[] result = exportService.exportToCsv(null);
+        String csv = new String(result, StandardCharsets.UTF_8);
+
+        assertTrue(csv.contains("Savings"));
     }
 }

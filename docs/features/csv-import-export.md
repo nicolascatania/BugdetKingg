@@ -12,13 +12,13 @@ transactions, categories and accounts.
 
 ### Transactions CSV format
 
-Header (case-insensitive, exact column order): `date,description,amount,type,category,counterparty,account`.
+Header (case-insensitive, exact column order): `date,description,amount,type,category,counterparty,account,destination_account`.
 Date accepts `yyyy-MM-ddTHH:mm:ss` or bare `yyyy-MM-dd` (normalized to midnight).
 
 ### How transaction import/export works
 
 - Uses `commons-csv` (added to `pom.xml`).
-- Row-level validation: valid date, positive amount, `INCOME`/`EXPENSE` type only (`TRANSFER` rejected), category must exist for the user, account must exist for the user (matched by exact name — no match means the row is invalid, same treatment as an unmatched category). Duplicate detection via `TransactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType`.
+- Row-level validation: valid date, positive amount, `INCOME`/`EXPENSE`/`TRANSFER` type, account must exist for the user (matched by exact name — no match means the row is invalid). `category` is mandatory for `INCOME`/`EXPENSE` and optional for `TRANSFER`, mirroring `TransactionDTO`'s own validation. `destination_account` only applies to `TRANSFER` rows: mandatory, must exist for the user, and must differ from `account` — for `INCOME`/`EXPENSE` rows the column is ignored even if present. Duplicate detection via `TransactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType`.
 - A malformed physical row (e.g. wrong column count) is flagged invalid but doesn't abort the rest of the batch. Whole-file problems (empty file, bad header, no data rows, unreadable stream) throw `TransactionImportRuntimeException` (`409 CONFLICT`).
 - Controller is mounted at `/transaction/...` to match the existing `TransactionController` base path, not `/transactions`.
 

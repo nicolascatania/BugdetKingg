@@ -47,17 +47,20 @@ import java.util.UUID;
  * across every account the user has.</p>
  *
  * <p>The CSV columns are, in order:
- * {@code date,description,amount,type,category,counterparty,account}
- * (see {@link ImportRowDTO} for the exact per-column semantics). Only {@code INCOME} and
- * {@code EXPENSE} rows can be imported; {@code TRANSFER} needs a destination account the file
- * cannot carry.</p>
+ * {@code date,description,amount,type,category,counterparty,account,destination_account}
+ * (see {@link ImportRowDTO} for the exact per-column semantics). {@code TRANSFER} rows require
+ * {@code destination_account} (matched by name, must exist and differ from {@code account});
+ * {@code category} is mandatory for INCOME/EXPENSE and optional for TRANSFER, mirroring
+ * {@link TransactionDTO}'s own validation rules.</p>
  */
 @Service
 @RequiredArgsConstructor
 public class TransactionImportService {
 
-    private static final List<String> EXPECTED_HEADERS =
-            List.of("date", "description", "amount", "type", "category", "counterparty", "account");
+    private static final List<String> EXPECTED_HEADERS = List.of(
+            "date", "description", "amount", "type", "category", "counterparty",
+            "account", "destination_account"
+    );
 
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
@@ -101,9 +104,12 @@ public class TransactionImportService {
     }
 
     private void persistRow(ImportRowDTO row, AppUser user) {
-        Category category = categoryRepository.getByNameAndUser(row.category(), user)
-                .orElseThrow(() -> new TransactionImportRuntimeException(
-                        "Category not found: " + row.category()));
+        Category category = null;
+        if (!StringUtils.isBlankOrNUll(row.category())) {
+            category = categoryRepository.getByNameAndUser(row.category(), user)
+                    .orElseThrow(() -> new TransactionImportRuntimeException(
+                            "Category not found: " + row.category()));
+        }
 
         TransactionDTO dto = new TransactionDTO(
                 null,
@@ -112,10 +118,10 @@ public class TransactionImportService {
                 row.type(),
                 row.counterparty(),
                 row.description(),
-                category.getId(),
-                category.getName(),
+                category != null ? category.getId() : null,
+                category != null ? category.getName() : null,
                 row.account(),
-                null,
+                row.destinationAccount(),
                 null
         );
 
@@ -195,6 +201,7 @@ public class TransactionImportService {
                     safeGet(record, "category"),
                     safeGet(record, "counterparty"),
                     null,
+                    null,
                     false,
                     "Malformed row: " + e.getMessage(),
                     false
@@ -220,6 +227,7 @@ public class TransactionImportService {
         String rawCategory = record.get("category");
         String rawCounterparty = record.get("counterparty");
         String rawAccount = record.get("account");
+        String rawDestinationAccount = record.get("destination_account");
 
         List<String> errors = new ArrayList<>();
 
@@ -247,35 +255,56 @@ public class TransactionImportService {
         TransactionType type = null;
         try {
             type = TransactionType.fromString(rawType);
-            if (type == TransactionType.TRANSFER) {
-                errors.add("TRANSFER transactions cannot be imported");
-                type = null;
-            }
         } catch (IllegalArgumentException e) {
             errors.add("Invalid transaction type: " + rawType);
         }
+        boolean isTransfer = type == TransactionType.TRANSFER;
 
+        // Category is mandatory for INCOME/EXPENSE, optional for TRANSFER - mirrors
+        // TransactionDTO.isCategoryRequired().
         Category category = null;
-        if (StringUtils.isBlankOrNUll(rawCategory)) {
-            errors.add("Category is mandatory");
-        } else {
-            category = categoryRepository.getByNameAndUser(rawCategory.trim(), user).orElse(null);
-            if (category == null) {
-                errors.add("Category not found: " + rawCategory);
+        if (!isTransfer) {
+            if (StringUtils.isBlankOrNUll(rawCategory)) {
+                errors.add("Category is mandatory");
+            } else {
+                category = categoryRepository.getByNameAndUser(rawCategory.trim(), user).orElse(null);
+                if (category == null) {
+                    errors.add("Category not found: " + rawCategory);
+                }
             }
         }
 
         String counterparty = StringUtils.isBlankOrNUll(rawCounterparty) ? "Unknown" : rawCounterparty.trim();
 
         UUID account = null;
+        Account resolvedAccount = null;
         if (StringUtils.isBlankOrNUll(rawAccount)) {
             errors.add("Account is mandatory");
         } else {
-            Account resolvedAccount = accountRepository.findByNameAndUser(rawAccount.trim(), user).orElse(null);
+            resolvedAccount = accountRepository.findByNameAndUser(rawAccount.trim(), user).orElse(null);
             if (resolvedAccount == null) {
                 errors.add("Account not found: " + rawAccount);
             } else {
                 account = resolvedAccount.getId();
+            }
+        }
+
+        // destination_account is only relevant for TRANSFER rows - mirrors
+        // TransactionDTO.isDestinationAccountValid() and TransactionService.validateTransaction().
+        UUID destinationAccount = null;
+        if (isTransfer) {
+            if (StringUtils.isBlankOrNUll(rawDestinationAccount)) {
+                errors.add("Destination account is mandatory for TRANSFER transactions");
+            } else {
+                Account resolvedDestination =
+                        accountRepository.findByNameAndUser(rawDestinationAccount.trim(), user).orElse(null);
+                if (resolvedDestination == null) {
+                    errors.add("Destination account not found: " + rawDestinationAccount);
+                } else if (resolvedAccount != null && resolvedDestination.getId().equals(resolvedAccount.getId())) {
+                    errors.add("Source and destination accounts must be different");
+                } else {
+                    destinationAccount = resolvedDestination.getId();
+                }
             }
         }
 
@@ -299,6 +328,7 @@ public class TransactionImportService {
                 rawCategory,
                 counterparty,
                 account,
+                destinationAccount,
                 valid,
                 valid ? null : String.join("; ", errors),
                 duplicate
