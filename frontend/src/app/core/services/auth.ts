@@ -8,6 +8,7 @@ import {
 } from '../../features/login/interfaces/login.interface';
 import { AuthResponse } from '../interfaces/AuthResponse.interface';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../../environments/environment';
 
 export enum Role {
   ADMIN = 'ROLE_ADMIN',
@@ -16,7 +17,7 @@ export enum Role {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'jwt_token';
   public loggedIn$ = new BehaviorSubject<boolean>(this.isLoggedIn());
 
