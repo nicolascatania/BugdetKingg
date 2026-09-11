@@ -6,10 +6,22 @@
       <p class="mt-1 text-sm text-muted">How your spending gets grouped.</p>
     </div>
 
-    <button type="button" (click)="openCategoryModal(null)" class="btn-primary">
-      <i class="fa-solid fa-plus text-xs"></i>
-      New category
-    </button>
+    <div class="flex items-center gap-3">
+      <button type="button" class="btn-secondary" (click)="exportCsv()">
+        <i class="fa-solid fa-file-export text-xs"></i>
+        Export CSV
+      </button>
+
+      <button type="button" class="btn-secondary" (click)="openImportModal()">
+        <i class="fa-solid fa-file-import text-xs"></i>
+        Import CSV
+      </button>
+
+      <button type="button" (click)="openCategoryModal(null)" class="btn-primary">
+        <i class="fa-solid fa-plus text-xs"></i>
+        New category
+      </button>
+    </div>
   </div>
 
   <!-- List -->
@@ -84,4 +96,8 @@
 
 @if (isModalCategoryOpen()) {
   <app-edit-category [category]="selectedCategory()" (submitEvent)="onCategorySaved()"></app-edit-category>
+}
+
+@if (isImportModalOpen()) {
+  <app-import-categories (closed)="onImportModalClosed($event)" />
 }

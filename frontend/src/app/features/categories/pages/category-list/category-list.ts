@@ -18,11 +18,13 @@ import {
   PaginationState,
 } from '../../../../core/utils/pagination.util';
 import { RevealDirective } from '../../../../shared/directives/reveal.directive';
+import { ImportCategories } from '../../components/import-categories/import-categories';
+import { CategoryImportExportService } from '../../services/category-import-export-service';
 
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [CommonModule, EditCategory, PaginationComponent, RevealDirective],
+  imports: [CommonModule, EditCategory, PaginationComponent, RevealDirective, ImportCategories],
   templateUrl: './category-list.html',
   styleUrl: './category-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,8 +32,10 @@ import { RevealDirective } from '../../../../shared/directives/reveal.directive'
 export class CategoryList implements OnInit {
   private categoryService = inject(CategoryService);
   private notificationService = inject(NotificationService);
+  private importExportService = inject(CategoryImportExportService);
 
   isModalCategoryOpen = signal(false);
+  isImportModalOpen = signal(false);
   selectedCategory = signal<CategoryDTO | null>(null);
   categories = signal<CategoryDTO[]>([]);
   loading = signal(true);
@@ -96,5 +100,28 @@ export class CategoryList implements OnInit {
   onCategorySaved() {
     this.isModalCategoryOpen.set(false);
     this.reloadCategories();
+  }
+
+  openImportModal(): void {
+    this.isImportModalOpen.set(true);
+  }
+
+  onImportModalClosed(imported: boolean): void {
+    this.isImportModalOpen.set(false);
+    if (imported) this.reloadCategories();
+  }
+
+  exportCsv(): void {
+    this.importExportService.exportCategories().subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = 'categories.csv';
+        anchor.click();
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => this.notificationService.error(err?.error?.message ?? 'Error exporting categories'),
+    });
   }
 }

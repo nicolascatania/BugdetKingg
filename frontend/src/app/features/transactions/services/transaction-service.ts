@@ -38,6 +38,14 @@ export class TransactionService extends BaseService<TransactionDTO> {
     return this.refreshable.wrapWithRefresh(super.delete(id));
   }
 
+  /**
+   * Notifies a refresh after a bulk CSV import commit, which bypasses create() so it
+   * would otherwise never trigger balance updates on screens listening to refresh$.
+   */
+  notifyImported(): void {
+    this.refreshable.triggerRefresh();
+  }
+
   getTransactionsByUser(): Observable<TransactionDTO[]> {
     return this.http.get<TransactionDTO[]>(`${this.baseUrl}/by-user`);
   }

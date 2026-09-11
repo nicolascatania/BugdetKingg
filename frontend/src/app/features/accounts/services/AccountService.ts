@@ -59,4 +59,12 @@ export class AccountService extends BaseService<AccountDTO> {
   userHasAccounts(): boolean {
     return this._accounts().length > 0;
   }
+
+  /**
+   * Forces a reload of the account list. Needed after a bulk CSV import, which is
+   * committed through a separate endpoint and never goes through create().
+   */
+  refreshAccounts(): void {
+    this.loadAccounts();
+  }
 }

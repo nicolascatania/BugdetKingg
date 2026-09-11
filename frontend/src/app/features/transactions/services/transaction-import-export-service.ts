@@ -19,10 +19,9 @@ export class TransactionImportExportService {
     return this.http.post<ImportPreviewDTO>(`${this.baseUrl}/import/preview`, formData);
   }
 
-  commitImport(file: File, accountId: string): Observable<ImportPreviewDTO> {
+  commitImport(file: File): Observable<ImportPreviewDTO> {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('accountId', accountId);
     return this.http.post<ImportPreviewDTO>(`${this.baseUrl}/import/commit`, formData);
   }
 

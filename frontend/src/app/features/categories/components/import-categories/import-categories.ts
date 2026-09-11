@@ -1,24 +1,22 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
-import { TransactionImportExportService } from '../../services/transaction-import-export-service';
-import { TransactionService } from '../../services/transaction-service';
-import { ImportPreviewDTO } from '../../interfaces/ImportPreviewDTO.interface';
+import { CategoryImportExportService } from '../../services/category-import-export-service';
+import { CategoryImportPreviewDTO } from '../../interfaces/CategoryImportPreviewDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
 
 type Step = 'select' | 'preview' | 'done';
 
 @Component({
-  selector: 'app-import-transactions',
+  selector: 'app-import-categories',
   standalone: true,
   imports: [UiModalComponent, CommonModule],
-  templateUrl: './import-transactions.html',
-  styleUrl: './import-transactions.css',
+  templateUrl: './import-categories.html',
+  styleUrl: './import-categories.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ImportTransactions {
-  private importExportService = inject(TransactionImportExportService);
-  private transactionService = inject(TransactionService);
+export class ImportCategories {
+  private importExportService = inject(CategoryImportExportService);
   private ns = inject(NotificationService);
 
   closed = output<boolean>();
@@ -26,7 +24,7 @@ export class ImportTransactions {
   step = signal<Step>('select');
   loading = signal(false);
   selectedFile = signal<File | null>(null);
-  preview = signal<ImportPreviewDTO | null>(null);
+  preview = signal<CategoryImportPreviewDTO | null>(null);
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -62,11 +60,10 @@ export class ImportTransactions {
         this.preview.set(result);
         this.step.set('done');
         this.loading.set(false);
-        this.ns.success(`${result.validRows} transactions imported`);
-        this.transactionService.notifyImported();
+        this.ns.success(`${result.validRows} categories imported`);
       },
       error: (err) => {
-        this.ns.error(err?.error?.message ?? 'Error importing transactions');
+        this.ns.error(err?.error?.message ?? 'Error importing categories');
         this.loading.set(false);
       },
     });

@@ -41,6 +41,14 @@ export class RefreshableCrudService {
   }
 
   /**
+   * Manually notifies a refresh for operations that bypass create/update/delete
+   * (e.g. a bulk CSV import committed through a separate endpoint).
+   */
+  triggerRefresh(): void {
+    this.notifyRefresh();
+  }
+
+  /**
    * Returns the read-only change signal.
    */
   getRefreshSignal(): Signal<number> {
