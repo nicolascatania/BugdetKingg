@@ -1,8 +1,8 @@
-# CSV Import / Export (Transactions & Categories)
+# CSV Import / Export (Transactions, Categories & Accounts)
 
 Bulk-import records from a CSV file with a validation preview step, and export records to CSV.
 The same two-step pattern (preview → commit, one bad row never aborts the rest) is used for
-both transactions and categories.
+transactions, categories and accounts.
 
 ## Transactions
 
@@ -47,7 +47,28 @@ Header (case-insensitive, exact column order): `name,icon`.
 
 `controller/CategoryImportExportController`, `service/CategoryImportService`, `service/CategoryExportService`, `service/CategoryIconCatalog`, `dto/CategoryImportPreviewDTO`, `dto/CategoryImportRowDTO`, `exception/CategoryImportRuntimeException`.
 
+## Accounts
+
+- `POST /account/import/preview` (multipart CSV) — parses and validates every row, never persists anything. Returns `AccountImportPreviewDTO` with per-row results (`AccountImportRowDTO`).
+- `POST /account/import/commit` (multipart CSV) — re-parses/re-validates, then persists only the valid, non-duplicate rows via `AccountService.create()`. Every imported account starts with a balance of zero; the file cannot carry an opening balance.
+- `GET /account/export` — downloads the user's accounts as CSV, same column layout as import (balance is never exported either).
+
+### Accounts CSV format
+
+Header (case-insensitive, exact column order): `name,description,icon`.
+
+### How account import/export works
+
+- `name` and `description` are mandatory; either blank invalidates the row.
+- **Golden rule for `icon`**: same as categories — an unrecognised or blank icon never invalidates the row, it falls back to `AccountIconCatalog.DEFAULT_ICON` (`fa-building-columns`, the bank icon). The set of valid icons (`AccountIconCatalog.VALID_ICONS`) mirrors the `FINANCIAL_ICONS` array in `frontend/src/app/features/icons/interfaces/iconsenum.interace.ts` (a different, smaller set than the one categories validate against) — keep both lists in sync by hand when icons change.
+- Duplicate detection: an account with the same name already existing for the user marks the row `duplicate` (skipped on commit, not an error), reusing `AccountRepository.findByNameAndUser` (also used to resolve the `account` column on transaction import).
+- Whole-file problems throw `AccountImportRuntimeException` (`409 CONFLICT`), same as the other two flows.
+
+### Account import/export files
+
+`controller/AccountImportExportController`, `service/AccountImportService`, `service/AccountExportService`, `service/AccountIconCatalog`, `dto/AccountImportPreviewDTO`, `dto/AccountImportRowDTO`, `exception/AccountImportRuntimeException`.
+
 ## Not done
 
-No frontend UI for category import/export yet (transactions already have `ImportTransactions`
-component). No UI anywhere lets the export be filtered by account.
+No frontend UI for category or account import/export yet (transactions already have
+`ImportTransactions` component). No UI anywhere lets the export be filtered by account.

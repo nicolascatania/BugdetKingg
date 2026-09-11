@@ -106,4 +106,14 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(AccountImportRuntimeException.class)
+    public ResponseEntity<?> handleAccountImportException(AccountImportRuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "CONFLICT",
+                        "message", ex.getMessage()
+                ));
+    }
 }
