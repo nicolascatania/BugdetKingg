@@ -29,6 +29,9 @@ export class BudgetList implements OnInit {
   isModalOpen = signal(false);
   selectedBudget = signal<BudgetDTO | null>(null);
 
+  /** Id of the budget currently being deleted, if any — drives that row's spinner. */
+  readonly deletingId = signal<BudgetProgressDTO['budgetId'] | null>(null);
+
   isTutorialOpen = signal(false);
   readonly tutorialSections: TutorialSection[] = [
     {
@@ -103,9 +106,19 @@ export class BudgetList implements OnInit {
   }
 
   deleteBudget(p: BudgetProgressDTO): void {
+    if (this.deletingId()) return;
+
+    this.deletingId.set(p.budgetId);
+
     this.budgetService.delete(p.budgetId).subscribe({
-      next: () => this.loadProgress(),
-      error: (err) => this.ns.error(err?.error?.message ?? 'Error deleting budget'),
+      next: () => {
+        this.deletingId.set(null);
+        this.loadProgress();
+      },
+      error: (err) => {
+        this.deletingId.set(null);
+        this.ns.error(err?.error?.message ?? 'Error deleting budget');
+      },
     });
   }
 

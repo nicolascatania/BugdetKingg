@@ -41,6 +41,12 @@ export class CategoryList implements OnInit {
   loading = signal(true);
   paginationState: PaginationState = createPaginationState(20);
 
+  /** Disables the export button and shows progress while the CSV request is in flight. */
+  readonly exporting = signal(false);
+
+  /** Id of the category currently being deleted, if any — drives that row's spinner. */
+  readonly deletingId = signal<string | null>(null);
+
   private loadTrigger = signal(0);
 
   constructor() {
@@ -87,9 +93,17 @@ export class CategoryList implements OnInit {
   }
 
   deleteCategory(category: CategoryDTO) {
+    if (this.deletingId()) return;
+
+    this.deletingId.set(category.id);
+
     this.categoryService.delete(category.id).subscribe({
-      next: () => this.reloadCategories(),
+      next: () => {
+        this.deletingId.set(null);
+        this.reloadCategories();
+      },
       error: (err: HttpErrorResponse) => {
+        this.deletingId.set(null);
         this.notificationService.error(
           err?.error?.message ?? 'Error deleting category',
         );
@@ -112,8 +126,13 @@ export class CategoryList implements OnInit {
   }
 
   exportCsv(): void {
+    if (this.exporting()) return;
+
+    this.exporting.set(true);
+
     this.importExportService.exportCategories().subscribe({
       next: (blob) => {
+        this.exporting.set(false);
         const url = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
@@ -121,7 +140,10 @@ export class CategoryList implements OnInit {
         anchor.click();
         URL.revokeObjectURL(url);
       },
-      error: (err) => this.notificationService.error(err?.error?.message ?? 'Error exporting categories'),
+      error: (err) => {
+        this.exporting.set(false);
+        this.notificationService.error(err?.error?.message ?? 'Error exporting categories');
+      },
     });
   }
 }

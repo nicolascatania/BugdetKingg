@@ -7,9 +7,14 @@
     </div>
 
     <div class="flex items-center gap-3">
-      <button type="button" class="btn-secondary" (click)="exportCsv()">
-        <i class="fa-solid fa-file-export text-xs"></i>
-        Export CSV
+      <button type="button" class="btn-secondary" (click)="exportCsv()" [disabled]="exporting()">
+        @if (exporting()) {
+          <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+          <span>Exporting…</span>
+        } @else {
+          <i class="fa-solid fa-file-export text-xs"></i>
+          <span>Export CSV</span>
+        }
       </button>
 
       <button type="button" class="btn-secondary" (click)="openImportModal()">
@@ -66,10 +71,16 @@
             <button
               type="button"
               (click)="deleteCategory(category)"
+              [disabled]="deletingId() === category.id"
               class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:bg-negative/10 hover:text-negative"
             >
-              <i class="fa-solid fa-trash text-[10px]"></i>
-              Delete
+              @if (deletingId() === category.id) {
+                <i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>
+                <span>Deleting…</span>
+              } @else {
+                <i class="fa-solid fa-trash text-[10px]"></i>
+                <span>Delete</span>
+              }
             </button>
           </div>
         </div>

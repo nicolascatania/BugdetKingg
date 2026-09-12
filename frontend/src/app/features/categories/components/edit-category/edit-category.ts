@@ -42,6 +42,9 @@ export class EditCategory {
 
   searchQuery = signal('');
 
+  /** Disables the form and shows progress while the request is in flight. */
+  readonly saving = signal(false);
+
   filteredIcons = computed(() => {
     const query = this.searchQuery().toLowerCase();
     return CATEGORY_ICONS.filter((icon) =>
@@ -71,14 +74,18 @@ export class EditCategory {
   }
 
   submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.saving()) return;
+
+    this.saving.set(true);
 
     this.categoryService.save(this.form.value).subscribe({
       next: () => {
+        this.saving.set(false);
         this.submitEvent.emit(true);
         this.ns.success('Category saved successfully');
       },
       error: (err) => {
+        this.saving.set(false);
         this.ns.error(err?.error?.message ?? 'Error saving category');
         this.submitEvent.emit(false);
       },

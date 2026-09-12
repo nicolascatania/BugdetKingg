@@ -31,6 +31,9 @@ export class EditSavingsGoal {
 
   readonly isEdit = computed(() => !!this.goal());
 
+  /** Disables the form and shows progress while the request is in flight. */
+  readonly saving = signal(false);
+
   form: FormGroup;
 
   constructor() {
@@ -66,7 +69,7 @@ export class EditSavingsGoal {
   }
 
   submit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.saving()) return;
 
     const raw = this.form.getRawValue();
     const payload: SavingsGoalDTO = {
@@ -86,12 +89,16 @@ export class EditSavingsGoal {
       ? this.savingsGoalService.update(payload)
       : this.savingsGoalService.create(payload);
 
+    this.saving.set(true);
+
     request$.subscribe({
       next: () => {
+        this.saving.set(false);
         this.ns.success('Savings goal saved successfully');
         this.submitEvent.emit(true);
       },
       error: (err) => {
+        this.saving.set(false);
         this.ns.error(err?.error?.message ?? 'Error saving savings goal');
         this.submitEvent.emit(false);
       },

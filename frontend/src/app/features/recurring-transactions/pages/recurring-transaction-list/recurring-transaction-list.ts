@@ -54,6 +54,12 @@ export class RecurringTransactionList implements OnInit {
   isModalOpen = signal(false);
   selectedTemplate = signal<RecurringTransactionDTO | null>(null);
 
+  /** Id of the template currently being deleted, if any — drives that row's spinner. */
+  readonly deletingId = signal<string | null>(null);
+
+  /** Id of the template currently being run, if any — drives that row's spinner. */
+  readonly runningId = signal<string | null>(null);
+
   isTutorialOpen = signal(false);
   readonly tutorialSections: TutorialSection[] = [
     {
@@ -173,12 +179,20 @@ export class RecurringTransactionList implements OnInit {
   }
 
   deleteTemplate(template: RecurringTransactionDTO): void {
+    if (this.deletingId()) return;
+
+    this.deletingId.set(template.id);
+
     this.recurringService.delete(template.id).subscribe({
       next: () => {
+        this.deletingId.set(null);
         this.search();
         this.loadUpcoming();
       },
-      error: (err) => this.ns.error(err?.error?.message ?? 'Error deleting template'),
+      error: (err) => {
+        this.deletingId.set(null);
+        this.ns.error(err?.error?.message ?? 'Error deleting template');
+      },
     });
   }
 
@@ -202,13 +216,21 @@ export class RecurringTransactionList implements OnInit {
   }
 
   runNow(template: RecurringTransactionDTO): void {
+    if (this.runningId()) return;
+
+    this.runningId.set(template.id);
+
     this.recurringService.runNow(template.id).subscribe({
       next: () => {
+        this.runningId.set(null);
         this.ns.success('Transaction generated');
         this.search();
         this.loadUpcoming();
       },
-      error: (err) => this.ns.error(err?.error?.message ?? 'Error running template'),
+      error: (err) => {
+        this.runningId.set(null);
+        this.ns.error(err?.error?.message ?? 'Error running template');
+      },
     });
   }
 

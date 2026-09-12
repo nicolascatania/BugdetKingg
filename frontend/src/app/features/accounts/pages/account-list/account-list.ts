@@ -36,17 +36,29 @@ export class AccountList {
   accounts = computed(() => this.accountService.accounts());
   loading = computed(() => this.accounts().length === 0);
 
+  /** Disables the export button and shows progress while the CSV request is in flight. */
+  readonly exporting = signal(false);
+
+  /** Id of the account currently being deleted, if any — drives that row's spinner. */
+  readonly deletingId = signal<string | null>(null);
+
   openAccountModal(account: AccountDTO | null) {
     this.selectedAccount.set(account);
     this.isModalOpen.set(true);
   }
 
   deleteAccount(account: AccountDTO) {
+    if (this.deletingId()) return;
+
+    this.deletingId.set(account.id);
+
     this.accountService.delete(account.id).subscribe({
       next: () => {
+        this.deletingId.set(null);
         this.ns.success('Account deleted successfully');
       },
       error: (err) => {
+        this.deletingId.set(null);
         this.ns.error(err.error.message);
       },
     });
@@ -66,8 +78,13 @@ export class AccountList {
   }
 
   exportCsv(): void {
+    if (this.exporting()) return;
+
+    this.exporting.set(true);
+
     this.importExportService.exportAccounts().subscribe({
       next: (blob) => {
+        this.exporting.set(false);
         const url = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
@@ -75,7 +92,10 @@ export class AccountList {
         anchor.click();
         URL.revokeObjectURL(url);
       },
-      error: (err) => this.ns.error(err?.error?.message ?? 'Error exporting accounts'),
+      error: (err) => {
+        this.exporting.set(false);
+        this.ns.error(err?.error?.message ?? 'Error exporting accounts');
+      },
     });
   }
 }

@@ -101,7 +101,12 @@
     @if (step() === 'select') {
       <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
       <button type="button" class="btn-primary min-w-[7rem]" [disabled]="!selectedFile() || loading()" (click)="runPreview()">
-        Preview
+        @if (loading()) {
+          <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+          <span>Reading…</span>
+        } @else {
+          <span>Preview</span>
+        }
       </button>
     }
 
@@ -113,7 +118,12 @@
         [disabled]="loading() || preview()!.validRows === 0"
         (click)="commit()"
       >
-        Import {{ preview()!.validRows }} rows
+        @if (loading()) {
+          <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+          <span>Importing…</span>
+        } @else {
+          <span>Import {{ preview()!.validRows }} rows</span>
+        }
       </button>
     }
 

@@ -30,9 +30,14 @@
         </div>
       </div>
 
-      <button type="submit" class="btn-primary w-full lg:w-44">
-        <i class="fa-solid fa-filter text-xs"></i>
-        Apply range
+      <button type="submit" class="btn-primary w-full lg:w-44" [disabled]="loading()">
+        @if (loading()) {
+          <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+          <span>Applying…</span>
+        } @else {
+          <i class="fa-solid fa-filter text-xs"></i>
+          <span>Apply range</span>
+        }
       </button>
     </form>
   </section>

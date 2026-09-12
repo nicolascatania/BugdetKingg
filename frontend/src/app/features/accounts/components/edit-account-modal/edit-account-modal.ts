@@ -5,6 +5,7 @@ import {
   Input,
   Output,
   OnInit,
+  signal,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -40,6 +41,9 @@ export class EditAccountModal implements OnInit {
 
   form: FormGroup;
 
+  /** Disables the form and shows progress while the request is in flight. */
+  readonly saving = signal(false);
+
   protected iconOptions = FINANCIAL_ICONS;
 
   constructor(
@@ -73,7 +77,7 @@ export class EditAccountModal implements OnInit {
    * The ID is passed through untouched.
    */
   submit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.saving()) return;
 
     const payload: AccountDTO = {
       id: this.account?.id ?? null!,
@@ -84,9 +88,14 @@ export class EditAccountModal implements OnInit {
       ? this.accountService.update(payload)
       : this.accountService.create(payload);
 
+    this.saving.set(true);
+
     request$.subscribe({
       next: () => this.close(true),
-      error: () => alert('Something went wrong. Please try again.'),
+      error: () => {
+        this.saving.set(false);
+        alert('Something went wrong. Please try again.');
+      },
     });
   }
 

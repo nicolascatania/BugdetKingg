@@ -35,6 +35,9 @@ export class EditBudget {
 
   readonly isEdit = computed(() => !!this.budget());
 
+  /** Disables the form and shows progress while the request is in flight. */
+  readonly saving = signal(false);
+
   constructor() {
     this.form = this.fb.group({
       id: [''],
@@ -72,17 +75,21 @@ export class EditBudget {
   }
 
   submit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.saving()) return;
 
     const payload: BudgetDTO = this.form.getRawValue();
     const request$ = this.budget() ? this.budgetService.update(payload) : this.budgetService.create(payload);
 
+    this.saving.set(true);
+
     request$.subscribe({
       next: () => {
+        this.saving.set(false);
         this.ns.success('Budget saved successfully');
         this.submitEvent.emit(true);
       },
       error: (err) => {
+        this.saving.set(false);
         this.ns.error(err?.error?.message ?? 'Error saving budget');
         this.submitEvent.emit(false);
       },

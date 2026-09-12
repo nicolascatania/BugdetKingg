@@ -22,9 +22,14 @@
         }
       </button>
 
-      <button type="button" class="btn-secondary" (click)="exportCsv()">
-        <i class="fa-solid fa-file-export text-xs"></i>
-        Export CSV
+      <button type="button" class="btn-secondary" (click)="exportCsv()" [disabled]="exporting()">
+        @if (exporting()) {
+          <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+          <span>Exporting…</span>
+        } @else {
+          <i class="fa-solid fa-file-export text-xs"></i>
+          <span>Export CSV</span>
+        }
       </button>
 
       <button
@@ -152,9 +157,14 @@
           <i class="fa-solid fa-eraser text-xs"></i>
           Clear
         </button>
-        <button type="submit" class="btn-primary sm:w-40">
-          <i class="fa-solid fa-filter text-xs"></i>
-          Apply filters
+        <button type="submit" class="btn-primary sm:w-40" [disabled]="loading()">
+          @if (loading()) {
+            <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+            <span>Applying…</span>
+          } @else {
+            <i class="fa-solid fa-filter text-xs"></i>
+            <span>Apply filters</span>
+          }
         </button>
       </div>
     </form>

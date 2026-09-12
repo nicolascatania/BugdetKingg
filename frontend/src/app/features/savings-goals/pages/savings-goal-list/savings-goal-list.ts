@@ -31,6 +31,9 @@ export class SavingsGoalList implements OnInit {
   isModalOpen = signal(false);
   selectedGoal = signal<SavingsGoalDTO | null>(null);
 
+  /** Id of the goal currently being deleted, if any — drives that row's spinner. */
+  readonly deletingId = signal<string | null>(null);
+
   isTutorialOpen = signal(false);
   readonly tutorialSections: TutorialSection[] = [
     {
@@ -107,12 +110,20 @@ export class SavingsGoalList implements OnInit {
   }
 
   deleteGoal(goal: SavingsGoalDTO): void {
+    if (this.deletingId()) return;
+
+    this.deletingId.set(goal.id);
+
     this.savingsGoalService.delete(goal.id).subscribe({
       next: () => {
+        this.deletingId.set(null);
         this.loadGoals();
         this.loadSummary();
       },
-      error: (err) => this.ns.error(err?.error?.message ?? 'Error deleting savings goal'),
+      error: (err) => {
+        this.deletingId.set(null);
+        this.ns.error(err?.error?.message ?? 'Error deleting savings goal');
+      },
     });
   }
 }

@@ -52,8 +52,13 @@
 
   <div modal-footer class="flex w-full justify-end gap-3">
     <button type="button" class="btn-secondary" (click)="close(false)">Cancel</button>
-    <button type="button" class="btn-primary min-w-[6rem]" (click)="submit()" [disabled]="form.invalid">
-      Save
+    <button type="button" class="btn-primary min-w-[6rem]" (click)="submit()" [disabled]="form.invalid || saving()">
+      @if (saving()) {
+        <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+        <span>Saving…</span>
+      } @else {
+        <span>Save</span>
+      }
     </button>
   </div>
 </ui-modal>

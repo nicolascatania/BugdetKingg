@@ -54,6 +54,9 @@ export class EditTransaction implements OnInit {
 
   originAccountSignal = signal<string>('');
 
+  /** Disables the form and shows progress while the request is in flight. */
+  readonly saving = signal(false);
+
   filteredDestinationAccounts = computed(() => {
     const selectedAccountId = this.originAccountSignal();
     return this.accounts()?.filter((acc) => acc.id !== selectedAccountId) ?? [];
@@ -124,6 +127,8 @@ export class EditTransaction implements OnInit {
   }
 
   submit(): void {
+    if (this.saving()) return;
+
     if (this.form.invalid) {
       this.ns.error('Please fill in all required fields correctly.');
       return;
@@ -146,9 +151,14 @@ export class EditTransaction implements OnInit {
       ? this.transactionService.update(payload)
       : this.transactionService.create(payload);
 
+    this.saving.set(true);
+
     request$.subscribe({
       next: () => this.close(true),
-      error: () => this.ns.error('Something went wrong. Please try again.'),
+      error: () => {
+        this.saving.set(false);
+        this.ns.error('Something went wrong. Please try again.');
+      },
     });
   }
 

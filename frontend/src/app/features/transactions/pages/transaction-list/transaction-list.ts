@@ -59,6 +59,9 @@ export class TransactionList {
   loading = signal(false);
   isImportModalOpen = signal(false);
 
+  /** Disables the export button and shows progress while the CSV request is in flight. */
+  readonly exporting = signal(false);
+
   TRANSACTION_TYPE = TransactionType;
   transactionTypes = Object.values(TransactionType);
 
@@ -206,8 +209,13 @@ export class TransactionList {
   }
 
   exportCsv(): void {
+    if (this.exporting()) return;
+
+    this.exporting.set(true);
+
     this.importExportService.exportTransactions(this.form.value).subscribe({
       next: (blob) => {
+        this.exporting.set(false);
         const url = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
@@ -215,7 +223,10 @@ export class TransactionList {
         anchor.click();
         URL.revokeObjectURL(url);
       },
-      error: (err) => this.ns.error(err?.error?.message ?? 'Error exporting transactions'),
+      error: (err) => {
+        this.exporting.set(false);
+        this.ns.error(err?.error?.message ?? 'Error exporting transactions');
+      },
     });
   }
 }

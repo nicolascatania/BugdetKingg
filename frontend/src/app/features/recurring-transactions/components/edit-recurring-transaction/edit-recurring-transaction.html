@@ -160,10 +160,15 @@
       type="button"
       class="btn-primary min-w-[7rem]"
       (click)="submit()"
-      [disabled]="form.invalid"
+      [disabled]="form.invalid || saving()"
       [title]="form.invalid ? 'Complete all required fields first' : null"
     >
-      {{ isEdit() ? 'Update' : 'Create' }}
+      @if (saving()) {
+        <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+        <span>Saving…</span>
+      } @else {
+        <span>{{ isEdit() ? 'Update' : 'Create' }}</span>
+      }
     </button>
   </div>
 </ui-modal>

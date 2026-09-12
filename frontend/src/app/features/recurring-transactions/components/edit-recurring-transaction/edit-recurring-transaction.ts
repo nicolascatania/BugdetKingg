@@ -46,6 +46,9 @@ export class EditRecurringTransaction {
 
   readonly isEdit = computed(() => !!this.template());
 
+  /** Disables the form and shows progress while the request is in flight. */
+  readonly saving = signal(false);
+
   filteredDestinationAccounts = computed(() =>
     this.accounts().filter((acc) => acc.id !== this.form.get('account')?.value),
   );
@@ -146,6 +149,8 @@ export class EditRecurringTransaction {
   }
 
   submit(): void {
+    if (this.saving()) return;
+
     if (this.form.invalid) {
       this.ns.error('Please fill in all required fields correctly.');
       return;
@@ -156,12 +161,16 @@ export class EditRecurringTransaction {
       ? this.recurringService.update(payload)
       : this.recurringService.create(payload);
 
+    this.saving.set(true);
+
     request$.subscribe({
       next: () => {
+        this.saving.set(false);
         this.ns.success('Recurring transaction saved successfully');
         this.submitEvent.emit(true);
       },
       error: (err) => {
+        this.saving.set(false);
         this.ns.error(err?.error?.message ?? 'Error saving recurring transaction');
         this.submitEvent.emit(false);
       },
