@@ -16,6 +16,15 @@ export enum Role {
   USER = 'ROLE_USER',
 }
 
+/**
+ * Minimal shape of the `google.accounts.id` API used on sign-out. Google
+ * Identity Services attaches itself to `window.google`; no `@types` package
+ * ships it.
+ */
+declare const google: {
+  accounts: { id: { disableAutoSelect(): void } };
+};
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
@@ -64,11 +73,31 @@ export class AuthService {
       );
   }
 
+  /**
+   * Ends the session with a full page load rather than a router navigation.
+   *
+   * Session data does not live in this service alone: other root-provided
+   * services keep the signed-in user's data in signals (account lists, for one),
+   * and a singleton created under user A still holds A's data when user B signs
+   * in. Recreating the injector is the only thing that reliably clears all of
+   * it. Navigating to `document.baseURI` honours the app's `<base href>`, and
+   * the empty route redirects to /login.
+   */
   logout() {
     localStorage.removeItem(this.tokenKey);
+    // Clear in-memory state too: the reload is not instant and the view can
+    // still repaint with the previous user's profile before it lands.
     this.loggedIn$.next(false);
     this.currentUserSignal.set(null);
     this.currentUserRequested = false;
+
+    // Without this Google keeps silently offering the account that just signed
+    // out the next time the sign-in button is rendered.
+    if (typeof google !== 'undefined') {
+      google.accounts.id.disableAutoSelect();
+    }
+
+    window.location.href = document.baseURI;
   }
 
   /**

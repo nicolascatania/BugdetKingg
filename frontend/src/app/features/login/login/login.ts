@@ -5,6 +5,8 @@ import {
   ElementRef,
   NgZone,
   ViewChild,
+  effect,
+  inject,
   signal,
 } from '@angular/core';
 import { AuthService } from '../../../core/services/auth';
@@ -17,6 +19,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../core/services/NotificationService';
+import { Theme, ThemeService } from '../../../core/services/theme.service';
 import { environment } from '../../../../environments/environment';
 
 /**
@@ -54,6 +57,11 @@ export class Login implements AfterViewInit {
 
   @ViewChild('googleButton') googleButton?: ElementRef<HTMLDivElement>;
 
+  private readonly themeService = inject(ThemeService);
+
+  /** Set once Google Identity Services is initialized and its button can be drawn. */
+  private readonly googleInitialized = signal(false);
+
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -64,6 +72,16 @@ export class Login implements AfterViewInit {
     this.loginForm = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
       password: ['', [Validators.required]],
+    });
+
+    // Google paints the button into its own DOM and cannot inherit our CSS
+    // tokens, so the matching light/dark variant has to be re-requested from it
+    // every time the theme flips.
+    effect(() => {
+      const theme = this.themeService.theme();
+      if (this.googleInitialized()) {
+        this.renderGoogleButton(theme);
+      }
     });
   }
 
@@ -100,9 +118,20 @@ export class Login implements AfterViewInit {
       callback: (response) => this.ngZone.run(() => this.onGoogleCredential(response.credential)),
     });
 
-    google.accounts.id.renderButton(this.googleButton!.nativeElement, {
+    // The theme effect in the constructor draws the button from here on.
+    this.googleInitialized.set(true);
+  }
+
+  /** (Re)draws Google's button in the variant that matches the active theme. */
+  private renderGoogleButton(theme: Theme): void {
+    const host = this.googleButton!.nativeElement;
+    // renderButton appends rather than replaces; drop the previous variant so
+    // switching themes does not stack two buttons.
+    host.replaceChildren();
+
+    google.accounts.id.renderButton(host, {
       type: 'standard',
-      theme: 'outline',
+      theme: theme === 'dark' ? 'filled_black' : 'outline',
       size: 'large',
       shape: 'pill',
       width: 320,

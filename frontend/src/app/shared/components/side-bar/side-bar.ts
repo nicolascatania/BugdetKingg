@@ -6,7 +6,7 @@ import {
   input,
   output,
 } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgClass } from '@angular/common';
 import { AuthService } from '../../../core/services/auth';
@@ -42,7 +42,6 @@ export class SideBar {
   readonly closeMobileEvent = output<void>();
 
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
 
   /** The signed-in user's profile, shown as a pill below the brand. */
   readonly currentUser = this.authService.currentUser;
@@ -78,8 +77,8 @@ export class SideBar {
   }
 
   logout(): void {
+    // AuthService reloads the app to drop every service's session state.
     this.authService.logout();
-    this.router.navigate(['/login']);
   }
 
   get isAdmin(): boolean {
