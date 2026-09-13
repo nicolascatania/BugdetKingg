@@ -23,10 +23,40 @@
 
   <!-- Card -->
   <div class="auth-card card-sheen rounded-3xl border border-line bg-surface/80 p-6 shadow-lifted backdrop-blur-2xl sm:p-8">
-    <!-- Google Identity Services renders its button into this div once the script has loaded
-         (see Login.ngAfterViewInit). It is the only sign-in path while enableLocalAuth is off. -->
-    <div class="flex justify-center">
-      <div #googleButton></div>
+    <p class="eyebrow text-center">Secure sign-in</p>
+
+    <!-- Google Identity Services renders its button into the inner div once the script has
+         loaded (see Login.ngAfterViewInit). It is the only sign-in path while enableLocalAuth
+         is off. That div must stay a full-width block: Google needs an explicit pixel width
+         and the component measures the element to get it, so it cannot shrink to its content. -->
+    <div class="relative mt-4">
+      <div
+        #googleButton
+        class="w-full overflow-hidden"
+        [ngClass]="submitting() ? 'invisible' : ''"
+      ></div>
+
+      <!-- Google's button lives in a cross-origin iframe and cannot show progress, so the
+           pending state is drawn over it. Without this the card looks frozen while the
+           request is in flight. -->
+      @if (submitting()) {
+        <div
+          class="absolute inset-0 flex items-center justify-center gap-2.5
+                 rounded-full border border-line bg-surface-2"
+          role="status"
+        >
+          <i class="fa-solid fa-circle-notch fa-spin text-xs text-brand"></i>
+          <span class="text-sm font-medium text-body">Signing you in…</span>
+        </div>
+      }
+    </div>
+
+    <div class="mt-5 flex items-start gap-2.5 rounded-2xl bg-surface-2 p-3.5">
+      <i class="fa-solid fa-shield-halved mt-0.5 text-xs text-brand"></i>
+      <p class="text-[11px] leading-relaxed text-subtle">
+        We only read your name, email and photo to identify your account.
+        BudgetKing never sees your Google password.
+      </p>
     </div>
 
     @if (enableLocalAuth) {

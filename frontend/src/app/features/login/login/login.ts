@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   NgZone,
+  OnDestroy,
   ViewChild,
   effect,
   inject,
@@ -43,7 +44,7 @@ declare const google: {
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Login implements AfterViewInit {
+export class Login implements AfterViewInit, OnDestroy {
   loginForm: FormGroup;
 
   /** Feature flag: email/password sign-in is disabled server-side for now (Google-only). */
@@ -61,6 +62,11 @@ export class Login implements AfterViewInit {
 
   /** Set once Google Identity Services is initialized and its button can be drawn. */
   private readonly googleInitialized = signal(false);
+
+  /** Last width handed to Google, so a resize that leaves it unchanged does not redraw. */
+  private lastRenderedWidth = 0;
+
+  private resizeObserver?: ResizeObserver;
 
   constructor(
     private authService: AuthService,
@@ -120,11 +126,28 @@ export class Login implements AfterViewInit {
 
     // The theme effect in the constructor draws the button from here on.
     this.googleInitialized.set(true);
+    this.observeAvailableWidth();
   }
 
-  /** (Re)draws Google's button in the variant that matches the active theme. */
+  /**
+   * Google only accepts a fixed pixel width, so the button has to be redrawn
+   * whenever the card resizes — rotating a phone, or resizing the window —
+   * otherwise it keeps a width the card can no longer fit and overflows it.
+   */
+  private observeAvailableWidth(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.measureButtonWidth() !== this.lastRenderedWidth) {
+        this.ngZone.run(() => this.renderGoogleButton(this.themeService.theme()));
+      }
+    });
+    this.resizeObserver.observe(this.googleButton!.nativeElement);
+  }
+
+  /** (Re)draws Google's button at the current width, in the active theme's variant. */
   private renderGoogleButton(theme: Theme): void {
     const host = this.googleButton!.nativeElement;
+    const width = this.measureButtonWidth();
+
     // renderButton appends rather than replaces; drop the previous variant so
     // switching themes does not stack two buttons.
     host.replaceChildren();
@@ -134,8 +157,26 @@ export class Login implements AfterViewInit {
       theme: theme === 'dark' ? 'filled_black' : 'outline',
       size: 'large',
       shape: 'pill',
-      width: 320,
+      logo_alignment: 'center',
+      width,
     });
+
+    this.lastRenderedWidth = width;
+  }
+
+  /**
+   * Width available inside the card. Google clamps the button to 400px and
+   * refuses to go under 200px, so the measurement is clamped to that range;
+   * `overflow-hidden` on the host contains the remainder on a screen too
+   * narrow even for the minimum.
+   */
+  private measureButtonWidth(): number {
+    const available = this.googleButton?.nativeElement.clientWidth ?? 0;
+    return Math.round(Math.min(400, Math.max(200, available || 320)));
+  }
+
+  ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
   }
 
   private onGoogleCredential(idToken: string): void {
