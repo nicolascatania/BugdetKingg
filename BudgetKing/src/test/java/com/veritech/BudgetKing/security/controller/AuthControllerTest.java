@@ -76,7 +76,7 @@ class AuthControllerTest {
     @DisplayName("Should create a new user and return a token on first Google sign-in")
     void createsUserOnFirstGoogleSignIn() {
         GoogleTokenInfoDTO tokenInfo = new GoogleTokenInfoDTO(
-                "client-id", "google-sub-1", "new@gmail.com", "true", "Ada", "Lovelace"
+                "client-id", "google-sub-1", "new@gmail.com", "true", "Ada", "Lovelace", "https://example.com/ada.jpg"
         );
         when(googleAuthService.verify("id-token")).thenReturn(tokenInfo);
         when(appUserRepository.findByProviderId("google-sub-1")).thenReturn(Optional.empty());
@@ -105,7 +105,7 @@ class AuthControllerTest {
     @DisplayName("Should reuse the existing user when the Google subject already matches")
     void reusesExistingGoogleUser() {
         GoogleTokenInfoDTO tokenInfo = new GoogleTokenInfoDTO(
-                "client-id", "google-sub-1", "returning@gmail.com", "true", "Ada", "Lovelace"
+                "client-id", "google-sub-1", "returning@gmail.com", "true", "Ada", "Lovelace", null
         );
         AppUser existing = AppUser.builder()
                 .email("returning@gmail.com")
@@ -127,7 +127,7 @@ class AuthControllerTest {
     @DisplayName("Should link a Google sign-in to a pre-existing local account with the same email")
     void linksGoogleToExistingLocalAccountByEmail() {
         GoogleTokenInfoDTO tokenInfo = new GoogleTokenInfoDTO(
-                "client-id", "google-sub-2", "legacy@gmail.com", "true", "Ada", "Lovelace"
+                "client-id", "google-sub-2", "legacy@gmail.com", "true", "Ada", "Lovelace", null
         );
         AppUser legacyLocalUser = AppUser.builder()
                 .email("legacy@gmail.com")

@@ -37,7 +37,7 @@ class GoogleAuthServiceTest {
     @DisplayName("Should return the token's claims when audience matches and email is verified")
     void shouldVerifyValidToken() {
         GoogleTokenInfoDTO tokenInfo = new GoogleTokenInfoDTO(
-                CLIENT_ID, "sub-123", "user@gmail.com", "true", "Ada", "Lovelace"
+                CLIENT_ID, "sub-123", "user@gmail.com", "true", "Ada", "Lovelace", "https://example.com/ada.jpg"
         );
         when(googleTokenInfoClient.getTokenInfo("valid-token")).thenReturn(tokenInfo);
 
@@ -51,7 +51,7 @@ class GoogleAuthServiceTest {
     @DisplayName("Should reject a token issued for a different OAuth client")
     void shouldRejectWrongAudience() {
         GoogleTokenInfoDTO tokenInfo = new GoogleTokenInfoDTO(
-                "someone-elses-client-id", "sub-123", "user@gmail.com", "true", "Ada", "Lovelace"
+                "someone-elses-client-id", "sub-123", "user@gmail.com", "true", "Ada", "Lovelace", null
         );
         when(googleTokenInfoClient.getTokenInfo("valid-token")).thenReturn(tokenInfo);
 
@@ -62,7 +62,7 @@ class GoogleAuthServiceTest {
     @DisplayName("Should reject a token whose email Google has not verified")
     void shouldRejectUnverifiedEmail() {
         GoogleTokenInfoDTO tokenInfo = new GoogleTokenInfoDTO(
-                CLIENT_ID, "sub-123", "user@gmail.com", "false", "Ada", "Lovelace"
+                CLIENT_ID, "sub-123", "user@gmail.com", "false", "Ada", "Lovelace", null
         );
         when(googleTokenInfoClient.getTokenInfo("valid-token")).thenReturn(tokenInfo);
 
