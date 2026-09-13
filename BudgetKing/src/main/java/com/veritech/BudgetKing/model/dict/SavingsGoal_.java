@@ -10,6 +10,8 @@ public class SavingsGoal_ {
     public static final String icon = "icon";
     public static final String targetAmount = "targetAmount";
     public static final String targetDate = "targetDate";
+    public static final String currentAmount = "currentAmount";
+    public static final String status = "status";
     public static final String linkedAccount = "linkedAccount";
     public static final String user = "user";
     public static final String achieved = "achieved";

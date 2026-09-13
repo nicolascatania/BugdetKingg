@@ -1,5 +1,6 @@
 package com.veritech.BudgetKing.filter;
 
+import com.veritech.BudgetKing.enumerator.SavingsGoalStatus;
 import com.veritech.BudgetKing.filter.generic.GenericSpecifications;
 import com.veritech.BudgetKing.filter.generic.PageableFilter;
 import com.veritech.BudgetKing.filter.generic.SpecificationFilter;
@@ -22,6 +23,7 @@ public class SavingsGoalFilter extends PageableFilter implements SpecificationFi
 
     private String name;
     private Boolean achieved;
+    private SavingsGoalStatus status;
     private BigDecimal targetAmountMin;
     private BigDecimal targetAmountMax;
 
@@ -48,6 +50,9 @@ public class SavingsGoalFilter extends PageableFilter implements SpecificationFi
         }
         if (achieved != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get(SavingsGoal_.achieved), achieved));
+        }
+        if (status != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get(SavingsGoal_.status), status));
         }
         if (targetAmountMin != null || targetAmountMax != null) {
             spec = spec.and(GenericSpecifications.between(

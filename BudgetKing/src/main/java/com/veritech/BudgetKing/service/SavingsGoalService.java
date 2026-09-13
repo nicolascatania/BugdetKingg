@@ -1,9 +1,13 @@
 package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.OptionDTO;
+import com.veritech.BudgetKing.dto.SavingsGoalCloseDTO;
+import com.veritech.BudgetKing.dto.SavingsGoalContributionDTO;
 import com.veritech.BudgetKing.dto.SavingsGoalDTO;
 import com.veritech.BudgetKing.dto.SavingsGoalRelatedEntities;
 import com.veritech.BudgetKing.dto.SavingsGoalSummaryDTO;
+import com.veritech.BudgetKing.enumerator.SavingsGoalStatus;
+import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.exception.SavingsGoalRuntimeException;
 import com.veritech.BudgetKing.filter.SavingsGoalFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
@@ -11,7 +15,9 @@ import com.veritech.BudgetKing.mapper.SavingsGoalMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.SavingsGoal;
+import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.SavingsGoalRepository;
+import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -33,12 +40,16 @@ import java.util.UUID;
 /**
  * Business logic for {@link SavingsGoal}.
  *
- * <p>Progress is never persisted: every read recomputes {@code currentAmount}
- * (and everything derived from it) from the balance of the goal's linked
- * account, so figures shown to the user always reflect its current state.
- * Only the {@code achieved} flag is cached on the entity, and it is
- * refreshed here on every create/update so it can be relied upon for
- * reporting (e.g. {@link #getSummary()}) without recomputing balances.</p>
+ * <p>A goal holds real money: {@link SavingsGoal#getCurrentAmount()} is the running
+ * total of the {@code SAVINGS_DEPOSIT} / {@code SAVINGS_WITHDRAWAL} transactions
+ * made against it. This service owns the goal-level rules (ownership, status,
+ * enough funds) and delegates the actual balance maths to
+ * {@link TransactionService#applyBalanceChanges} so there is a single definition
+ * of how each transaction type moves money.</p>
+ *
+ * <p>Nothing happens automatically when {@code targetDate} passes: the goal is
+ * reported as {@code OVERDUE} (or {@code ACHIEVED}) and the user decides whether
+ * to extend it, keep contributing or {@link #close close} it.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -51,13 +62,12 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
     private final SavingsGoalMapper savingsGoalMapper;
     private final SecurityUtils securityUtils;
     private final AccountService accountService;
+    private final TransactionService transactionService;
+    private final TransactionRepository transactionRepository;
 
     @Override
     public SavingsGoalDTO getById(UUID uuid) {
-        AppUser user = securityUtils.getCurrentUser();
-        SavingsGoal found = savingsGoalRepository.findByIdAndUser(uuid, user)
-                .orElseThrow(() -> new EntityNotFoundException("Savings goal not found"));
-
+        SavingsGoal found = getEntityById(uuid);
         return enrich(savingsGoalMapper.toDto(found), found);
     }
 
@@ -65,7 +75,8 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
     @Transactional
     public SavingsGoalDTO create(SavingsGoalDTO dto) {
         AppUser user = securityUtils.getCurrentUser();
-        validateBusinessRules(dto);
+        validateTargetAmount(dto);
+        validateTargetDate(dto.targetDate());
 
         Account linkedAccount = resolveLinkedAccount(dto.linkedAccountId());
         SavingsGoalRelatedEntities relatedEntities = new SavingsGoalRelatedEntities(user, linkedAccount);
@@ -77,14 +88,21 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
         return enrich(savingsGoalMapper.toDto(saved), saved);
     }
 
+    /**
+     * Edits the descriptive side of a goal. The target date is only re-validated
+     * when it actually changes, so an overdue goal can still be renamed without
+     * being forced to pick a new date first.
+     */
     @Override
     @Transactional
     public SavingsGoalDTO update(UUID uuid, SavingsGoalDTO dto) {
-        AppUser user = securityUtils.getCurrentUser();
-        SavingsGoal found = savingsGoalRepository.findByIdAndUser(uuid, user)
-                .orElseThrow(() -> new EntityNotFoundException("Savings goal not found"));
+        SavingsGoal found = getEntityById(uuid);
+        assertActive(found);
 
-        validateBusinessRules(dto);
+        validateTargetAmount(dto);
+        if (!found.getTargetDate().equals(dto.targetDate())) {
+            validateTargetDate(dto.targetDate());
+        }
 
         found.setName(dto.name());
         found.setIcon(dto.icon());
@@ -97,13 +115,20 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
         return enrich(savingsGoalMapper.toDto(saved), saved);
     }
 
+    /**
+     * Removes a goal that holds no money. Its past contributions stay in the
+     * account history, merely detached from the goal.
+     */
     @Override
     @Transactional
     public void deleteById(UUID uuid) {
-        AppUser user = securityUtils.getCurrentUser();
-        SavingsGoal found = savingsGoalRepository.findByIdAndUser(uuid, user)
-                .orElseThrow(() -> new EntityNotFoundException("Savings goal not found"));
+        SavingsGoal found = getEntityById(uuid);
 
+        if (found.getCurrentAmount().signum() > 0) {
+            throw new SavingsGoalRuntimeException("Withdraw or close the goal before deleting it: it still holds money");
+        }
+
+        transactionRepository.unlinkSavingsGoal(found);
         savingsGoalRepository.delete(found);
     }
 
@@ -132,16 +157,85 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
     }
 
     /**
-     * Aggregated snapshot across every goal owned by the current user.
-     * {@code achievedGoals} relies on the cached {@link SavingsGoal#isAchieved()}
-     * flag rather than recomputing it, per the class-level contract.
+     * Moves money from one of the user's accounts into the goal.
+     *
+     * @throws SavingsGoalRuntimeException when the goal is closed, the amount is not
+     *                                     positive or the account cannot cover it
+     */
+    @Transactional
+    public SavingsGoalDTO deposit(UUID goalId, SavingsGoalContributionDTO dto) {
+        SavingsGoal goal = getEntityById(goalId);
+        Account account = accountService.getEntityById(dto.accountId());
+
+        assertActive(goal);
+        validateContributionAmount(dto.amount());
+        if (account.getBalance().compareTo(dto.amount()) < 0) {
+            throw new SavingsGoalRuntimeException("Insufficient funds in account " + account.getName());
+        }
+
+        return contribute(goal, account, TransactionType.SAVINGS_DEPOSIT, dto.amount(), dto.date(), dto.note());
+    }
+
+    /**
+     * Moves money from the goal back into one of the user's accounts.
+     *
+     * @throws SavingsGoalRuntimeException when the goal is closed, the amount is not
+     *                                     positive or the goal does not hold that much
+     */
+    @Transactional
+    public SavingsGoalDTO withdraw(UUID goalId, SavingsGoalContributionDTO dto) {
+        SavingsGoal goal = getEntityById(goalId);
+        Account account = accountService.getEntityById(dto.accountId());
+
+        assertActive(goal);
+        validateContributionAmount(dto.amount());
+        if (goal.getCurrentAmount().compareTo(dto.amount()) < 0) {
+            throw new SavingsGoalRuntimeException("The goal does not hold enough money for this withdrawal");
+        }
+
+        return contribute(goal, account, TransactionType.SAVINGS_WITHDRAWAL, dto.amount(), dto.date(), dto.note());
+    }
+
+    /**
+     * Ends the goal: everything it still holds is returned to the chosen account
+     * and the goal becomes read-only. An empty goal needs no destination account.
+     *
+     * @throws SavingsGoalRuntimeException when the goal is already closed or it
+     *                                     holds money and no account was given
+     */
+    @Transactional
+    public SavingsGoalDTO close(UUID goalId, SavingsGoalCloseDTO dto) {
+        SavingsGoal goal = getEntityById(goalId);
+        assertActive(goal);
+
+        BigDecimal remaining = goal.getCurrentAmount();
+        if (remaining.signum() > 0) {
+            if (dto == null || dto.accountId() == null) {
+                throw new SavingsGoalRuntimeException("Choose an account to receive the saved money before closing the goal");
+            }
+            Account account = accountService.getEntityById(dto.accountId());
+            contribute(goal, account, TransactionType.SAVINGS_WITHDRAWAL, remaining, null,
+                    "Closed savings goal · " + goal.getName());
+        }
+
+        goal.setStatus(SavingsGoalStatus.CLOSED);
+        SavingsGoal saved = savingsGoalRepository.save(goal);
+        return enrich(savingsGoalMapper.toDto(saved), saved);
+    }
+
+    /**
+     * Aggregated snapshot across every open goal owned by the current user. Closed
+     * goals no longer hold money, so they are left out of every figure.
      */
     public SavingsGoalSummaryDTO getSummary() {
         AppUser user = securityUtils.getCurrentUser();
-        List<SavingsGoal> goals = savingsGoalRepository.findByUser(user);
+        List<SavingsGoal> goals = savingsGoalRepository.findByUser(user)
+                .stream()
+                .filter(SavingsGoal::isActive)
+                .toList();
 
         BigDecimal totalSaved = goals.stream()
-                .map(this::getCurrentAmount)
+                .map(SavingsGoal::getCurrentAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalTarget = goals.stream()
@@ -157,35 +251,90 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
         return new SavingsGoalSummaryDTO(totalSaved, totalTarget, progressPercentage, goals.size(), achievedGoals);
     }
 
+    /** User-scoped lookup: never resolves a goal by id alone. */
     public SavingsGoal getEntityById(UUID uuid) {
         AppUser user = securityUtils.getCurrentUser();
         return savingsGoalRepository.findByIdAndUser(uuid, user)
                 .orElseThrow(() -> new EntityNotFoundException("Savings goal not found"));
     }
 
-    /** Resolves and validates ownership of the optional linked account. */
+    /**
+     * Shared tail of deposit, withdraw and close: applies the balance maths through
+     * {@link TransactionService}, records the movement as a transaction and returns
+     * the refreshed goal. Callers have already validated the goal-level rules.
+     */
+    private SavingsGoalDTO contribute(
+            SavingsGoal goal,
+            Account account,
+            TransactionType type,
+            BigDecimal amount,
+            LocalDateTime date,
+            String note
+    ) {
+        transactionService.applyBalanceChanges(type, amount, account, null, goal);
+
+        Transaction movement = Transaction.builder()
+                .date(date != null ? date : LocalDateTime.now())
+                .amount(amount)
+                .type(type)
+                .description(note != null && !note.isBlank() ? note.trim() : "Savings · " + goal.getName())
+                .counterparty(goal.getName())
+                .account(account)
+                .savingsGoal(goal)
+                .user(goal.getUser())
+                .build();
+        transactionRepository.save(movement);
+
+        SavingsGoal saved = savingsGoalRepository.save(goal);
+        return enrich(savingsGoalMapper.toDto(saved), saved);
+    }
+
+    /** Resolves and validates ownership of the optional default source account. */
     private Account resolveLinkedAccount(UUID linkedAccountId) {
         return linkedAccountId != null ? accountService.getEntityById(linkedAccountId) : null;
     }
 
-    /** Rejects target amounts that are not positive or target dates already in the past. */
-    private void validateBusinessRules(SavingsGoalDTO dto) {
+    private void assertActive(SavingsGoal goal) {
+        if (!goal.isActive()) {
+            throw new SavingsGoalRuntimeException("Savings goal is closed");
+        }
+    }
+
+    private void validateTargetAmount(SavingsGoalDTO dto) {
         if (dto.targetAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new SavingsGoalRuntimeException("Target amount must be greater than zero");
         }
-        if (dto.targetDate().isBefore(LocalDate.now())) {
+    }
+
+    private void validateTargetDate(LocalDate targetDate) {
+        if (targetDate.isBefore(LocalDate.now())) {
             throw new SavingsGoalRuntimeException("Target date must be a future date");
         }
     }
 
-    /** Recomputes and caches whether the linked balance already covers the target. */
-    private void refreshAchieved(SavingsGoal goal) {
-        goal.setAchieved(getCurrentAmount(goal).compareTo(goal.getTargetAmount()) >= 0);
+    private void validateContributionAmount(BigDecimal amount) {
+        if (amount == null || amount.signum() <= 0) {
+            throw new SavingsGoalRuntimeException("Amount must be greater than zero");
+        }
     }
 
-    private BigDecimal getCurrentAmount(SavingsGoal goal) {
-        Account linkedAccount = goal.getLinkedAccount();
-        return linkedAccount != null ? linkedAccount.getBalance() : BigDecimal.ZERO;
+    /** Recomputes and caches whether the saved amount already covers the target. */
+    private void refreshAchieved(SavingsGoal goal) {
+        goal.setAchieved(goal.getCurrentAmount().compareTo(goal.getTargetAmount()) >= 0);
+    }
+
+    /** Display state: closed beats achieved, achieved beats overdue. */
+    private String deriveState(SavingsGoal goal) {
+        if (!goal.isActive()) {
+            return SavingsGoalDTO.STATE_CLOSED;
+        }
+        if (goal.isAchieved()) {
+            return SavingsGoalDTO.STATE_ACHIEVED;
+        }
+        if (goal.getTargetDate().isBefore(LocalDate.now())) {
+            return SavingsGoalDTO.STATE_OVERDUE;
+        }
+        return SavingsGoalDTO.STATE_ACTIVE;
     }
 
     /**
@@ -194,7 +343,7 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
      * are left untouched.
      */
     private SavingsGoalDTO enrich(SavingsGoalDTO dto, SavingsGoal entity) {
-        BigDecimal currentAmount = getCurrentAmount(entity);
+        BigDecimal currentAmount = entity.getCurrentAmount();
         BigDecimal targetAmount = entity.getTargetAmount();
 
         BigDecimal progressPercentage = targetAmount.compareTo(BigDecimal.ZERO) > 0
@@ -220,6 +369,8 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
                 dto.targetDate(),
                 dto.linkedAccountId(),
                 dto.linkedAccountName(),
+                entity.getStatus(),
+                deriveState(entity),
                 entity.isAchieved(),
                 currentAmount,
                 progressPercentage,

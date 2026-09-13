@@ -77,6 +77,8 @@ export class EditSavingsGoal {
       linkedAccountId: raw.linkedAccountId || null,
       // Derived fields the backend recomputes and ignores on write — Jackson still
       // requires them present because SavingsGoalDTO is a record with primitive components.
+      status: this.goal()?.status ?? 'ACTIVE',
+      state: this.goal()?.state ?? 'ACTIVE',
       achieved: this.goal()?.achieved ?? false,
       currentAmount: this.goal()?.currentAmount ?? 0,
       progressPercentage: this.goal()?.progressPercentage ?? 0,

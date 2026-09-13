@@ -32,24 +32,17 @@
               <td class="px-5 py-3.5 font-semibold">{{ tx.accountName }}</td>
               <td class="px-5 py-3.5">
                 <span
-                  [ngClass]="{
-                    'chip-positive': tx.type === TRANSACTION_TYPES.INCOME,
-                    'chip-negative': tx.type === TRANSACTION_TYPES.EXPENSE,
-                    'chip-neutral': tx.type === TRANSACTION_TYPES.TRANSFER
-                  }"
+                  [ngClass]="typeChip(tx.type)"
                 >
-                  {{ tx.type }}
+                  {{ typeLabel(tx.type) }}
                 </span>
               </td>
               <td class="px-5 py-3.5 text-muted">{{ tx.category }}</td>
               <td
                 class="tabular whitespace-nowrap px-5 py-3.5 text-right font-bold"
-                [ngClass]="{
-                  'text-positive': tx.type === TRANSACTION_TYPES.INCOME,
-                  'text-negative': tx.type === TRANSACTION_TYPES.EXPENSE
-                }"
+                [ngClass]="amountClass(tx.type)"
               >
-                {{ tx.type === TRANSACTION_TYPES.EXPENSE ? '-' : '' }}{{
+                {{ amountSign(tx.type) }}{{
                   tx.amount | currency: 'ARS' : 'symbol' : '1.2-2'
                 }}
               </td>
@@ -99,24 +92,17 @@
             <div class="shrink-0 text-right">
               <p
                 class="tabular text-sm font-bold"
-                [ngClass]="{
-                  'text-positive': tx.type === TRANSACTION_TYPES.INCOME,
-                  'text-negative': tx.type === TRANSACTION_TYPES.EXPENSE
-                }"
+                [ngClass]="amountClass(tx.type)"
               >
-                {{ tx.type === TRANSACTION_TYPES.EXPENSE ? '-' : '' }}{{
+                {{ amountSign(tx.type) }}{{
                   tx.amount | currency: 'ARS' : 'symbol' : '1.0-0'
                 }}
               </p>
               <span
                 class="mt-1 inline-block"
-                [ngClass]="{
-                  'chip-positive': tx.type === TRANSACTION_TYPES.INCOME,
-                  'chip-negative': tx.type === TRANSACTION_TYPES.EXPENSE,
-                  'chip-neutral': tx.type === TRANSACTION_TYPES.TRANSFER
-                }"
-              >
-                {{ tx.type }}
+                [ngClass]="typeChip(tx.type)"
+                >
+                  {{ typeLabel(tx.type) }}
               </span>
             </div>
           </div>

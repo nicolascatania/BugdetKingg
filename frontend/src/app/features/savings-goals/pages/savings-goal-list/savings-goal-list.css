@@ -8,6 +8,13 @@
 .goal-card:nth-child(5) { animation-delay: 200ms; }
 .goal-card:nth-child(6) { animation-delay: 240ms; }
 
+/* Closed goals are history: keep them readable but visibly out of play.
+   Opacity would be overridden by the entrance animation's fill, so desaturate instead. */
+.goal-card-closed {
+  filter: saturate(0.35);
+  border-style: dashed;
+}
+
 @keyframes card-enter {
   from {
     opacity: 0;

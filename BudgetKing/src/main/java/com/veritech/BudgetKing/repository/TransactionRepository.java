@@ -5,12 +5,14 @@ import com.veritech.BudgetKing.dto.MonthlyIncomeExpenseDTO;
 import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.SavingsGoal;
 import com.veritech.BudgetKing.model.Transaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -174,4 +176,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
             TransactionType type
     );
 
+
+    /**
+     * Detaches every contribution from {@code goal} so the goal row can be deleted
+     * while the movements stay in the account history. Returns the rows touched.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE Transaction t SET t.savingsGoal = null WHERE t.savingsGoal = :goal")
+    int unlinkSavingsGoal(@Param("goal") SavingsGoal goal);
 }

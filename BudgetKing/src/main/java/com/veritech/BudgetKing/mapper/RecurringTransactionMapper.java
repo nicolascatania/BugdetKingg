@@ -86,7 +86,9 @@ public class RecurringTransactionMapper
                 template.getCategory() != null ? template.getCategory().getName() : null,
                 template.getAccount().getId(),
                 template.getDestinationAccount() != null ? template.getDestinationAccount().getId() : null,
-                template.getAccount().getName()
+                template.getAccount().getName(),
+                null,
+                null
         );
     }
 

@@ -9,5 +9,6 @@ public class Transaction_ {
     public static final String category = "category";
     public static final String account = "account";
     public static final String destinationAccount = "destinationAccount";
+    public static final String savingsGoal = "savingsGoal";
     public static final String user = "user";
 }
