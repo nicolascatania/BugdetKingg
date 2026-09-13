@@ -407,6 +407,6 @@ class TransactionServiceTest {
         assertThrows(EntityNotFoundException.class,
                 () -> transactionService.deleteById(transactionId),
                 () -> "Should not find another user's transaction");
-        verify(transactionRepository, never()).delete(any());
+        verify(transactionRepository, never()).delete(any(Transaction.class));
     }
 }
