@@ -9,6 +9,7 @@ import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -209,5 +210,203 @@ class TransactionServiceTest {
 
     private TransactionDTO createDto(String type, String amount) {
         return new TransactionDTO(UUID.randomUUID(), LocalDateTime.now().toString(), new BigDecimal(amount), type, "Counterparty", "Desc", UUID.randomUUID(), "Cat", UUID.randomUUID(), null, null);
+    }
+
+    // ── update() ─────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("Should revert old amount and apply new amount on EXPENSE update")
+    void shouldUpdateExpenseAndAdjustBalance() {
+        Account account = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("100.00")).build();
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("30.00"))
+                .type(TransactionType.EXPENSE)
+                .account(account)
+                .user(mockUser)
+                .build();
+        TransactionDTO updateDto = new TransactionDTO(
+                transactionId, LocalDateTime.now().toString(), new BigDecimal("50.00"), "EXPENSE",
+                "Counterparty", "Updated desc", null, null, account.getId(), null, null
+        );
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+        when(transactionMapper.toDto(existing)).thenReturn(updateDto);
+
+        transactionService.update(transactionId, updateDto);
+
+        // 100 + 30 (revert) - 50 (apply) = 80
+        assertEquals(new BigDecimal("80.00"), account.getBalance(), () -> "Balance should reflect only the amount delta");
+        assertEquals(new BigDecimal("50.00"), existing.getAmount(), () -> "Stored amount should be updated");
+        assertEquals("Updated desc", existing.getDescription(), () -> "Description should be updated");
+    }
+
+    @Test
+    @DisplayName("Should revert old amount and apply new amount on TRANSFER update")
+    void shouldUpdateTransferAndAdjustBothBalances() {
+        Account source = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("100.00")).build();
+        Account destination = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("50.00")).build();
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("200.00"))
+                .type(TransactionType.TRANSFER)
+                .account(source)
+                .destinationAccount(destination)
+                .user(mockUser)
+                .build();
+        TransactionDTO updateDto = new TransactionDTO(
+                transactionId, LocalDateTime.now().toString(), new BigDecimal("300.00"), "TRANSFER",
+                "Counterparty", "Bigger transfer", null, null, source.getId(), destination.getId(), null
+        );
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+        when(transactionMapper.toDto(existing)).thenReturn(updateDto);
+
+        transactionService.update(transactionId, updateDto);
+
+        // source: 100 + 200 (revert) - 300 (apply) = 0
+        assertEquals(new BigDecimal("0.00"), source.getBalance(), () -> "Source balance should reflect the new amount");
+        // destination: 50 - 200 (revert) + 300 (apply) = 150
+        assertEquals(new BigDecimal("150.00"), destination.getBalance(), () -> "Destination balance should reflect the new amount");
+    }
+
+    @Test
+    @DisplayName("Should reject update that changes the account")
+    void shouldRejectAccountChangeOnUpdate() {
+        Account originalAccount = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("100.00")).build();
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("30.00"))
+                .type(TransactionType.EXPENSE)
+                .account(originalAccount)
+                .user(mockUser)
+                .build();
+        TransactionDTO updateDto = new TransactionDTO(
+                transactionId, LocalDateTime.now().toString(), new BigDecimal("30.00"), "EXPENSE",
+                "Counterparty", "Desc", null, null, UUID.randomUUID(), null, null
+        );
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> transactionService.update(transactionId, updateDto),
+                () -> "Should reject account changes");
+        assertEquals(new BigDecimal("100.00"), originalAccount.getBalance(), () -> "Balance must stay untouched");
+    }
+
+    @Test
+    @DisplayName("Should reject update that changes the type")
+    void shouldRejectTypeChangeOnUpdate() {
+        Account account = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("100.00")).build();
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("30.00"))
+                .type(TransactionType.INCOME)
+                .account(account)
+                .user(mockUser)
+                .build();
+        TransactionDTO updateDto = new TransactionDTO(
+                transactionId, LocalDateTime.now().toString(), new BigDecimal("30.00"), "TRANSFER",
+                "Counterparty", "Desc", null, null, account.getId(), UUID.randomUUID(), null
+        );
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> transactionService.update(transactionId, updateDto),
+                () -> "Should reject type changes");
+    }
+
+    @Test
+    @DisplayName("Should reject update that changes the destination account")
+    void shouldRejectDestinationAccountChangeOnUpdate() {
+        Account source = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("100.00")).build();
+        Account originalDestination = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("50.00")).build();
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("30.00"))
+                .type(TransactionType.TRANSFER)
+                .account(source)
+                .destinationAccount(originalDestination)
+                .user(mockUser)
+                .build();
+        TransactionDTO updateDto = new TransactionDTO(
+                transactionId, LocalDateTime.now().toString(), new BigDecimal("30.00"), "TRANSFER",
+                "Counterparty", "Desc", null, null, source.getId(), UUID.randomUUID(), null
+        );
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> transactionService.update(transactionId, updateDto),
+                () -> "Should reject destination account changes");
+    }
+
+    @Test
+    @DisplayName("Should throw not found when updating another user's transaction")
+    void shouldThrowNotFoundWhenUpdatingAnotherUsersTransaction() {
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> transactionService.update(transactionId, mockDto),
+                () -> "Should not find another user's transaction");
+    }
+
+    // ── deleteById() ─────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("Should delete EXPENSE transaction and revert account balance")
+    void shouldDeleteExpenseAndRevertBalance() {
+        Account account = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("20.00")).build();
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("80.00"))
+                .type(TransactionType.EXPENSE)
+                .account(account)
+                .user(mockUser)
+                .build();
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+
+        transactionService.deleteById(transactionId);
+
+        assertEquals(new BigDecimal("100.00"), account.getBalance(), () -> "Balance should be restored");
+        verify(transactionRepository).delete(existing);
+    }
+
+    @Test
+    @DisplayName("Should delete TRANSFER transaction and revert both balances")
+    void shouldDeleteTransferAndRevertBothBalances() {
+        Account source = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("50.00")).build();
+        Account destination = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("100.00")).build();
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("50.00"))
+                .type(TransactionType.TRANSFER)
+                .account(source)
+                .destinationAccount(destination)
+                .user(mockUser)
+                .build();
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+
+        transactionService.deleteById(transactionId);
+
+        assertEquals(new BigDecimal("100.00"), source.getBalance(), () -> "Source balance should be restored");
+        assertEquals(new BigDecimal("50.00"), destination.getBalance(), () -> "Destination balance should be restored");
+        verify(transactionRepository).delete(existing);
+    }
+
+    @Test
+    @DisplayName("Should throw not found when deleting another user's transaction")
+    void shouldThrowNotFoundWhenDeletingAnotherUsersTransaction() {
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> transactionService.deleteById(transactionId),
+                () -> "Should not find another user's transaction");
+        verify(transactionRepository, never()).delete(any());
     }
 }

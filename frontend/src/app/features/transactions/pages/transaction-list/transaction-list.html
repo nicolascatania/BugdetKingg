@@ -185,6 +185,7 @@
             <th class="px-5 py-3.5 text-right font-bold">Amount</th>
             <th class="px-5 py-3.5 font-bold">Description</th>
             <th class="px-5 py-3.5 text-right font-bold">Counterparty</th>
+            <th class="px-5 py-3.5 text-right font-bold">Actions</th>
           </tr>
         </thead>
 
@@ -192,7 +193,7 @@
           @if (loading()) {
             @for (i of [1, 2, 3, 4, 5, 6]; track i) {
               <tr class="border-t border-line">
-                @for (col of [1, 2, 3, 4, 5, 6, 7]; track col) {
+                @for (col of [1, 2, 3, 4, 5, 6, 7, 8]; track col) {
                   <td class="px-5 py-4"><div class="skeleton h-4 w-full"></div></td>
                 }
               </tr>
@@ -229,10 +230,32 @@
                   {{ transaction.description || '—' }}
                 </td>
                 <td class="px-5 py-3.5 text-right text-muted">{{ transaction.counterparty || '—' }}</td>
+                <td class="px-5 py-3.5">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <button
+                      type="button"
+                      class="btn-ghost !min-h-0 h-9 px-2.5 text-xs hover:text-brand"
+                      title="Edit"
+                      aria-label="Edit transaction"
+                      (click)="openEditModal(transaction)"
+                    >
+                      <i class="fa-solid fa-pen text-[10px]"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-ghost !min-h-0 h-9 px-2.5 text-xs hover:bg-negative/10 hover:text-negative"
+                      title="Delete"
+                      aria-label="Delete transaction"
+                      (click)="confirmDelete(transaction)"
+                    >
+                      <i class="fa-solid fa-trash text-[10px]"></i>
+                    </button>
+                  </div>
+                </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="7" class="px-5 py-16 text-center">
+                <td colspan="8" class="px-5 py-16 text-center">
                   <i class="fa-solid fa-receipt mb-3 block text-2xl text-subtle"></i>
                   <p class="text-sm text-muted">No transactions match these filters.</p>
                 </td>
@@ -309,6 +332,25 @@
               {{ transaction.counterparty }}
             </p>
           }
+
+          <div class="mt-3 flex items-center justify-end gap-2 border-t border-line pt-3">
+            <button
+              type="button"
+              class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:text-brand"
+              (click)="openEditModal(transaction)"
+            >
+              <i class="fa-solid fa-pen text-[10px]"></i>
+              Edit
+            </button>
+            <button
+              type="button"
+              class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:bg-negative/10 hover:text-negative"
+              (click)="confirmDelete(transaction)"
+            >
+              <i class="fa-solid fa-trash text-[10px]"></i>
+              Delete
+            </button>
+          </div>
         </article>
       } @empty {
         <div class="card p-10 text-center">
@@ -329,9 +371,38 @@
 </div>
 
 @if (isTransactionModalOpen()) {
-  <app-edit-transaction [transaction]="null" [accounts]="accounts()" (closed)="onTransactionModalClosed($event)" />
+  <app-edit-transaction [transaction]="editingTransaction()" [accounts]="accounts()" (closed)="onTransactionModalClosed($event)" />
 }
 
 @if (isImportModalOpen()) {
   <app-import-transactions (closed)="onImportModalClosed($event)" />
+}
+
+@if (transactionToDelete(); as tx) {
+  <ui-modal [open]="true" title="Delete transaction" maxWidth="max-w-md" (closed)="cancelDelete()">
+    <div modal-body>
+      <p class="text-sm text-muted">
+        Delete the {{ tx.type | lowercase }} of
+        <span class="font-semibold text-body">{{ tx.amount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+        for "{{ tx.description }}"? The account balance will be adjusted back. This cannot be undone.
+      </p>
+    </div>
+
+    <div modal-footer class="flex w-full justify-end gap-3">
+      <button type="button" class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button
+        type="button"
+        class="btn-danger min-w-[7rem]"
+        (click)="deleteTransaction()"
+        [disabled]="deleting()"
+      >
+        @if (deleting()) {
+          <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+          <span>Deleting…</span>
+        } @else {
+          <span>Delete</span>
+        }
+      </button>
+    </div>
+  </ui-modal>
 }

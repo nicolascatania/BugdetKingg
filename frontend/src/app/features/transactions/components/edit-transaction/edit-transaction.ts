@@ -105,9 +105,15 @@ export class EditTransaction implements OnInit {
         counterparty: this.transaction.counterparty,
         destinationAccount: this.transaction.destinationAccount ?? '',
         account: this.transaction.account,
-        date: this.transaction.date,
+        date: this.formatDateForInput(this.transaction.date),
       });
       this.originAccountSignal.set(this.transaction.account);
+
+      // Account, type and destination account cannot be changed once a transaction
+      // exists — users who logged the wrong one delete it and create a new one.
+      this.form.get('account')?.disable();
+      this.form.get('type')?.disable();
+      this.form.get('destinationAccount')?.disable();
     }
 
     this.handleTypeChanges();
@@ -115,6 +121,7 @@ export class EditTransaction implements OnInit {
   }
 
   setType(type: 'EXPENSE' | 'INCOME' | 'TRANSFER'): void {
+    if (this.transaction) return;
     this.form.get('type')?.setValue(type);
   }
 
@@ -233,5 +240,13 @@ export class EditTransaction implements OnInit {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
     return new Date(now.getTime() - offset).toISOString().slice(0, 16);
+  }
+
+  /** Converts the backend's display format ("dd/MM/yyyy HH:mm") into the
+   *  "yyyy-MM-ddTHH:mm" shape a `datetime-local` input requires. */
+  private formatDateForInput(displayDate: string): string {
+    const [datePart, timePart] = displayDate.split(' ');
+    const [day, month, year] = datePart.split('/');
+    return `${year}-${month}-${day}T${timePart}`;
   }
 }

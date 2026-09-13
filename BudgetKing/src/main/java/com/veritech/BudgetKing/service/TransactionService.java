@@ -88,13 +88,33 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
     @Override
     @Transactional
     public TransactionDTO update(UUID id, TransactionDTO dto) {
-        // shall not be used
-        return null;
+        Transaction existing = getTransaction(id);
+
+        assertImmutableFieldsUnchanged(existing, dto);
+        validateTransaction(dto, existing.getAccount(), existing.getDestinationAccount());
+
+        revertBalanceChanges(existing.getAmount(), existing.getType(), existing.getAccount(), existing.getDestinationAccount());
+        applyBalanceChanges(dto, existing.getAccount(), existing.getDestinationAccount());
+
+        Category category = dto.category() != null ? categoryService.getEntityById(dto.category()) : null;
+
+        existing.setDate(LocalDateTime.parse(dto.date()));
+        existing.setAmount(dto.amount());
+        existing.setDescription(dto.description());
+        existing.setCounterparty(dto.counterparty());
+        existing.setCategory(category);
+
+        return mapper.toDto(existing);
     }
 
     @Override
+    @Transactional
     public void deleteById(UUID id) {
-        //shall not be used
+        Transaction existing = getTransaction(id);
+
+        revertBalanceChanges(existing.getAmount(), existing.getType(), existing.getAccount(), existing.getDestinationAccount());
+
+        transactionRepository.delete(existing);
     }
 
     @Override
@@ -210,6 +230,44 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
                 source.setBalance(source.getBalance().subtract(dto.amount()));
                 destination.setBalance(destination.getBalance().add(dto.amount()));
             }
+        }
+    }
+
+    /**
+     * Undoes the balance effect a stored transaction previously applied, so it can be
+     * safely reapplied with new values (update) or left undone permanently (delete).
+     */
+    void revertBalanceChanges(
+            BigDecimal amount,
+            TransactionType type,
+            Account source,
+            Account destination
+    ) {
+        switch (type) {
+            case EXPENSE -> source.setBalance(source.getBalance().add(amount));
+
+            case INCOME -> source.setBalance(source.getBalance().subtract(amount));
+
+            case TRANSFER -> {
+                source.setBalance(source.getBalance().add(amount));
+                destination.setBalance(destination.getBalance().subtract(amount));
+            }
+        }
+    }
+
+    /**
+     * account, destinationAccount and type are immutable on update - users who logged the
+     * wrong one are expected to delete the transaction and create a new one instead.
+     */
+    void assertImmutableFieldsUnchanged(Transaction existing, TransactionDTO dto) {
+        UUID existingDestinationId = existing.getDestinationAccount() != null
+                ? existing.getDestinationAccount().getId()
+                : null;
+
+        if (!existing.getAccount().getId().equals(dto.account())
+                || !existing.getType().name().equals(dto.type())
+                || !Objects.equals(existingDestinationId, dto.destinationAccount())) {
+            throw new IllegalArgumentException("account, destinationAccount and type cannot be changed on update");
         }
     }
 

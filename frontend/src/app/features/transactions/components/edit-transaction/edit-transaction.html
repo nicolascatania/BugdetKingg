@@ -11,13 +11,15 @@
         class="grid grid-cols-3 gap-1.5 rounded-2xl border border-line bg-surface-2 p-1.5"
         role="radiogroup"
         aria-label="Transaction type"
+        [title]="transaction ? 'Type cannot be changed once created — delete and recreate instead' : null"
       >
         <button
           type="button"
           (click)="setType('EXPENSE')"
           role="radio"
           [attr.aria-checked]="form.get('type')?.value === 'EXPENSE'"
-          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [disabled]="!!transaction"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth disabled:cursor-not-allowed disabled:opacity-50"
           [ngClass]="
             form.get('type')?.value === 'EXPENSE'
               ? 'bg-negative/12 font-semibold text-negative shadow-soft'
@@ -32,7 +34,8 @@
           (click)="setType('INCOME')"
           role="radio"
           [attr.aria-checked]="form.get('type')?.value === 'INCOME'"
-          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [disabled]="!!transaction"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth disabled:cursor-not-allowed disabled:opacity-50"
           [ngClass]="
             form.get('type')?.value === 'INCOME'
               ? 'bg-positive/12 font-semibold text-positive shadow-soft'
@@ -47,7 +50,8 @@
           (click)="setType('TRANSFER')"
           role="radio"
           [attr.aria-checked]="form.get('type')?.value === 'TRANSFER'"
-          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth"
+          [disabled]="!!transaction"
+          class="rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ease-smooth disabled:cursor-not-allowed disabled:opacity-50"
           [ngClass]="
             form.get('type')?.value === 'TRANSFER'
               ? 'bg-accent/12 font-semibold text-accent shadow-soft'
@@ -92,7 +96,12 @@
 
         <div>
           <label for="tx-origin" class="field-label">Origin account</label>
-          <select id="tx-origin" formControlName="account" class="field-select">
+          <select
+            id="tx-origin"
+            formControlName="account"
+            class="field-select"
+            [title]="transaction ? 'Account cannot be changed once created — delete and recreate instead' : null"
+          >
             @for (account of accounts(); track account.id) {
               <option [value]="account.id">{{ getAccountLabel(account) }}</option>
             }
@@ -104,7 +113,12 @@
         @if (form.get('type')?.value === 'TRANSFER') {
           <div class="animate-fade-in">
             <label for="tx-destination" class="field-label">Destination account</label>
-            <select id="tx-destination" formControlName="destinationAccount" class="field-select">
+            <select
+              id="tx-destination"
+              formControlName="destinationAccount"
+              class="field-select"
+              [title]="transaction ? 'Destination account cannot be changed once created — delete and recreate instead' : null"
+            >
               @for (account of filteredDestinationAccounts(); track account.id) {
                 <option [value]="account.id">{{ getAccountLabel(account) }}</option>
               }

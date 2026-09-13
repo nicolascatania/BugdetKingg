@@ -16,6 +16,7 @@ import { forkJoin } from 'rxjs';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { TransactionType } from '../../../../shared/models/TransactionType.enum';
 import { EditTransaction } from '../../components/edit-transaction/edit-transaction';
+import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { PaginationComponent } from '../../../../shared/components/PaginationComponent/PaginationComponent';
 import {
@@ -39,6 +40,7 @@ import { TransactionImportExportService } from '../../services/transaction-impor
     CommonModule,
     ReactiveFormsModule,
     EditTransaction,
+    UiModalComponent,
     PaginationComponent,
     MonthQuickPicker,
     RevealDirective,
@@ -73,6 +75,11 @@ export class TransactionList {
   transactions = signal<TransactionDTO[]>([]);
 
   isTransactionModalOpen = signal(false);
+  editingTransaction = signal<TransactionDTO | null>(null);
+  transactionToDelete = signal<TransactionDTO | null>(null);
+
+  /** Disables the delete confirm button and shows progress while the request is in flight. */
+  readonly deleting = signal(false);
 
   /**
    * Whether the filter panel is expanded. Collapsed by default on small
@@ -183,11 +190,46 @@ export class TransactionList {
 
   onTransactionModalClosed($event: boolean) {
     this.isTransactionModalOpen.set(false);
+    this.editingTransaction.set(null);
     this.onSearch();
   }
 
   openNewTransactionModal(): void {
+    this.editingTransaction.set(null);
     this.isTransactionModalOpen.set(true);
+  }
+
+  openEditModal(transaction: TransactionDTO): void {
+    this.editingTransaction.set(transaction);
+    this.isTransactionModalOpen.set(true);
+  }
+
+  confirmDelete(transaction: TransactionDTO): void {
+    this.transactionToDelete.set(transaction);
+  }
+
+  cancelDelete(): void {
+    this.transactionToDelete.set(null);
+  }
+
+  deleteTransaction(): void {
+    const transaction = this.transactionToDelete();
+    if (!transaction || this.deleting()) return;
+
+    this.deleting.set(true);
+
+    this.transactionService.delete(transaction.id).subscribe({
+      next: () => {
+        this.deleting.set(false);
+        this.transactionToDelete.set(null);
+        this.ns.success('Transaction deleted.');
+        this.onSearch();
+      },
+      error: (err) => {
+        this.deleting.set(false);
+        this.ns.error(err?.error?.message ?? 'Error deleting transaction');
+      },
+    });
   }
 
   get userHasAccounts(): boolean {

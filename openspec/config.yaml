@@ -1,0 +1,65 @@
+schema: spec-driven
+
+context: |
+  Tech stack: Spring Boot 4.0.1 (Java 21, Maven) backend + Angular 19 (TS, standalone) frontend
+  Architecture: layered backend (controller/service/repository/model/dto/mapper), JWT auth + roles
+  Testing: JUnit5 + Mockito + H2 (unit/integration), Testcontainers MySQL; frontend tests avoided per policy
+  Style: no linter/formatter configured either side; English-only code and comments (project rule)
+
+strict_tdd: false
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected modules/packages (backend controller/service/repository/dto, frontend feature folder)
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group tasks by phase (backend, frontend, testing)
+    - Use hierarchical numbering (1.1, 1.2, etc.)
+    - Keep tasks small enough to complete in one session
+  apply:
+    - Follow existing code patterns and conventions
+    - All code and comments in English (project rule)
+    tdd: false
+    test_command: "./mvnw test"
+  verify:
+    test_command: "./mvnw clean test"
+    build_command: "./mvnw clean package -DskipTests"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
+
+testing:
+  strict_tdd_mode: disabled
+  detected: 2026-09-12
+  test_runner:
+    command: "./mvnw clean test"
+    framework: JUnit 5 + Mockito (backend); Karma/Jasmine present on frontend but unused by policy
+  test_layers:
+    unit:
+      available: true
+      tool: JUnit 5 + Mockito
+    integration:
+      available: true
+      tool: H2 (lightweight) + Testcontainers (real MySQL)
+    e2e:
+      available: false
+      tool: null
+  coverage:
+    available: false
+    command: null
+  quality_tools:
+    linter:
+      available: false
+      command: null
+    type_checker:
+      available: false
+      command: null
+    formatter:
+      available: false
+      command: null
