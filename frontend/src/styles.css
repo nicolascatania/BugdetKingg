@@ -269,9 +269,13 @@
     @apply text-[11px] font-bold uppercase tracking-[0.14em] text-muted;
   }
 
-  /* ---- Skeletons --------------------------------------------------------- */
+  /* ---- Skeletons ---------------------------------------------------------
+     `.skeleton` is a single placeholder bar. `.skeleton-card` is the empty
+     card shell the lists and dashboards render while their data is in flight,
+     so a loading view keeps the exact silhouette of the loaded one and nothing
+     jumps when the real content arrives. */
   .skeleton {
-    @apply relative overflow-hidden rounded-lg bg-surface-2;
+    @apply relative overflow-hidden rounded-lg bg-surface-3;
   }
 
   .skeleton::after {
@@ -279,13 +283,49 @@
     position: absolute;
     inset: 0;
     transform: translate3d(-100%, 0, 0);
+    /* Two stops of the line token rather than one: on the near-white light
+       surfaces a single 0.55 stop was almost invisible, which is why the
+       shimmer read as a dead grey block. */
     background: linear-gradient(
       90deg,
       transparent,
-      rgb(var(--color-line-strong) / 0.55),
+      rgb(var(--color-line-strong) / 0.35),
+      rgb(var(--color-line-strong) / 0.85),
+      rgb(var(--color-line-strong) / 0.35),
       transparent
     );
     animation: shimmer 1.6s infinite;
+  }
+
+  /* The dark theme's surfaces are already low-contrast, so the sweep leans on
+     the brand tint instead of the line token to stay perceptible. */
+  .dark .skeleton::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--color-brand) / 0.06),
+      rgb(var(--color-brand) / 0.16),
+      rgb(var(--color-brand) / 0.06),
+      transparent
+    );
+  }
+
+  .skeleton-card {
+    @apply card relative overflow-hidden p-5;
+  }
+
+  /* Rounded text lines of decreasing emphasis, so a placeholder paragraph
+     reads as text rather than as a stack of identical bars. */
+  .skeleton-line {
+    @apply skeleton h-3.5 rounded-md;
+  }
+
+  .skeleton-title {
+    @apply skeleton h-5 w-1/3 rounded-md;
+  }
+
+  .skeleton-avatar {
+    @apply skeleton h-10 w-10 shrink-0 rounded-xl;
   }
 }
 
@@ -416,6 +456,27 @@
   .reveal {
     opacity: 1;
     transform: none;
+  }
+
+  /* Loading indicators are exempt. The blanket reset above is meant to kill
+     decorative travel, but a spinner or a shimmering placeholder is the only
+     signal that the app is still working — freezing it reads as a hung UI.
+     They stay in place (no translation of the element itself) and only loop,
+     which is what WCAG 2.3.3 asks of essential motion. */
+  /* Font Awesome ships its own reduced-motion override with !important, so the
+     delay it forces is reset here too. This block must stay after the CDN
+     stylesheet in the cascade — Angular injects the app bundle last, so it is. */
+  .fa-spin,
+  .fa-spin-pulse,
+  .skeleton::after {
+    animation-delay: 0s !important;
+    animation-duration: var(--loading-motion-duration, 1.6s) !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .fa-spin,
+  .fa-spin-pulse {
+    --loading-motion-duration: 2s;
   }
 }
 
