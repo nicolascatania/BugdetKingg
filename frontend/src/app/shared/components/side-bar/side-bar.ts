@@ -44,6 +44,13 @@ export class SideBar {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  /** The signed-in user's profile, shown as a pill below the brand. */
+  readonly currentUser = this.authService.currentUser;
+
+  constructor() {
+    this.authService.ensureCurrentUserLoaded();
+  }
+
   /** Navigation model — keeps the template free of repeated markup. */
   private readonly allItems: readonly NavItem[] = [
     { label: 'Home', route: '/home', icon: 'fa-house', exact: true },
@@ -77,5 +84,12 @@ export class SideBar {
 
   get isAdmin(): boolean {
     return this.authService.isAdmin();
+  }
+
+  /** Initials shown when the user has no Google profile photo. */
+  userInitials(): string {
+    const user = this.currentUser();
+    if (!user) return '';
+    return `${user.name.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
   }
 }

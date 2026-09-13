@@ -37,6 +37,38 @@
     </a>
   </div>
 
+  <!-- User pill -->
+  @if (currentUser(); as user) {
+    <div
+      class="flex items-center gap-3 border-b border-line px-4 py-3"
+      [ngClass]="{ 'md:justify-center': !expanded() }"
+      [matTooltip]="expanded() ? '' : (user.name + ' ' + user.lastName)"
+      matTooltipPosition="right"
+    >
+      @if (user.picture) {
+        <img
+          [src]="user.picture"
+          [alt]="user.name + ' ' + user.lastName"
+          class="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-line"
+          referrerpolicy="no-referrer"
+        />
+      } @else {
+        <span
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-2 text-xs font-semibold text-muted ring-1 ring-line"
+          aria-hidden="true"
+        >
+          {{ userInitials() }}
+        </span>
+      }
+
+      @if (expanded()) {
+        <span class="min-w-0 flex-1 animate-fade-in truncate text-sm font-medium text-body">
+          {{ user.name }} {{ user.lastName }}
+        </span>
+      }
+    </div>
+  }
+
   <!-- Primary navigation -->
   <nav class="nav-rail custom-scroll flex-1 space-y-1 overflow-y-auto px-3 py-5" aria-label="Main navigation">
     @for (item of navItems(); track item.route) {

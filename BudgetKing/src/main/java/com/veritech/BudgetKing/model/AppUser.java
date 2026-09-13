@@ -55,6 +55,9 @@ public class AppUser {
     @Column(nullable = false)
     private String lastName;
 
+    /** Google profile photo URL. Null for a {@code LOCAL} user. */
+    private String picture;
+
     @Column(nullable = false)
     @Builder.Default
     private boolean enabled = true;
