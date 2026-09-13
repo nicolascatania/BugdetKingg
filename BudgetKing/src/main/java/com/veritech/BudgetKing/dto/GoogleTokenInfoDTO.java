@@ -15,7 +15,8 @@ public record GoogleTokenInfoDTO(
         @JsonProperty("email") String email,
         @JsonProperty("email_verified") String emailVerified,
         @JsonProperty("given_name") String givenName,
-        @JsonProperty("family_name") String familyName
+        @JsonProperty("family_name") String familyName,
+        @JsonProperty("picture") String picture
 ) {
     public boolean isEmailVerified() {
         return "true".equalsIgnoreCase(emailVerified);

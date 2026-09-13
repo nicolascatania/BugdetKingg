@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
@@ -7,6 +7,7 @@ import {
   RegisterRequest,
 } from '../../features/login/interfaces/login.interface';
 import { AuthResponse } from '../interfaces/AuthResponse.interface';
+import { UserProfile } from '../interfaces/UserProfile.interface';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
 
@@ -20,6 +21,11 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'jwt_token';
   public loggedIn$ = new BehaviorSubject<boolean>(this.isLoggedIn());
+
+  private readonly currentUserSignal = signal<UserProfile | null>(null);
+  /** The signed-in user's own profile (name, picture) — null until {@link ensureCurrentUserLoaded} resolves. */
+  readonly currentUser = this.currentUserSignal.asReadonly();
+  private currentUserRequested = false;
 
   constructor(private http: HttpClient) {}
 
@@ -61,6 +67,27 @@ export class AuthService {
   logout() {
     localStorage.removeItem(this.tokenKey);
     this.loggedIn$.next(false);
+    this.currentUserSignal.set(null);
+    this.currentUserRequested = false;
+  }
+
+  /**
+   * Fetches the signed-in user's profile once and caches it in {@link currentUser}.
+   * Safe to call from every component that needs it (e.g. on mount) — a repeat
+   * call before the first response resolves, or after it already has, is a no-op.
+   */
+  ensureCurrentUserLoaded(): void {
+    if (this.currentUserRequested || !this.isLoggedIn()) {
+      return;
+    }
+    this.currentUserRequested = true;
+
+    this.http.get<UserProfile>(`${environment.apiUrl}/me`).subscribe({
+      next: (profile) => this.currentUserSignal.set(profile),
+      error: () => {
+        this.currentUserRequested = false;
+      },
+    });
   }
 
   getToken(): string | null {

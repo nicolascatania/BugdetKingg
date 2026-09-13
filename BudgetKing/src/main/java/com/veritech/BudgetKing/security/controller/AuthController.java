@@ -26,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -138,11 +139,23 @@ public class AuthController {
         }
     }
 
-    /** First Google sign-in for an email that already had a (legacy) local account. */
+    /**
+     * Existing user signing in with Google — first time (legacy local account)
+     * or a returning Google user. The photo is refreshed on every login since
+     * it can change on Google's side; identity fields are only set once.
+     */
     private AppUser linkGoogleAccount(AppUser user, GoogleTokenInfoDTO tokenInfo) {
-        if (user.getProviderId() == null) {
+        boolean firstLink = user.getProviderId() == null;
+        boolean pictureChanged = !Objects.equals(user.getPicture(), tokenInfo.picture());
+
+        if (firstLink) {
             user.setProviderId(tokenInfo.subject());
             user.setAuthProvider(AuthProvider.GOOGLE);
+        }
+        if (pictureChanged) {
+            user.setPicture(tokenInfo.picture());
+        }
+        if (firstLink || pictureChanged) {
             appUserRepository.save(user);
         }
         return user;
@@ -158,6 +171,7 @@ public class AuthController {
         // Google may omit given/family name on some accounts; never leave the required column null.
         user.setName(blankToFallback(tokenInfo.givenName(), "Google"));
         user.setLastName(blankToFallback(tokenInfo.familyName(), "User"));
+        user.setPicture(tokenInfo.picture());
 
         Role userRole = roleRepository.findByName(Roles.ROLE_USER.name())
                 .orElseThrow(() -> new RuntimeException("Role USER not found"));
