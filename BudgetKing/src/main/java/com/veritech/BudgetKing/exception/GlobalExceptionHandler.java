@@ -146,4 +146,24 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(InvalidGoogleTokenException.class)
+    public ResponseEntity<?> handleInvalidGoogleToken(InvalidGoogleTokenException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                        "error", "UNAUTHORIZED",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(LocalAuthDisabledException.class)
+    public ResponseEntity<?> handleLocalAuthDisabled(LocalAuthDisabledException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(Map.of(
+                        "error", "FORBIDDEN",
+                        "message", ex.getMessage()
+                ));
+    }
 }

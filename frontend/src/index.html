@@ -17,6 +17,10 @@
     rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Google Identity Services: renders the "Sign in with Google" button and issues the ID
+       token the backend verifies at POST /auth/google. Loaded globally since it is the only
+       sign-in path (LoginComponent waits for window.google before rendering the button). -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <!-- Decodes the redirect that 404.html builds for deep links on GitHub
        Pages, restoring the real path before Angular's router boots.

@@ -15,4 +15,5 @@ import java.util.UUID;
 public interface AppUserRepository extends JpaRepository<AppUser, UUID>, JpaSpecificationExecutor<AppUser> {
     Optional<AppUser> findByEmail(String email);
     boolean existsByEmail(String email);
+    Optional<AppUser> findByProviderId(String providerId);
 }
