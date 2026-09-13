@@ -1,5 +1,6 @@
 package com.veritech.BudgetKing.model;
 
+import com.veritech.BudgetKing.security.enumerator.AuthProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -30,8 +31,23 @@ public class AppUser {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    /**
+     * Null for a {@code GOOGLE} user — there is no password of ours to check.
+     * Kept on the entity (rather than dropped) so the {@code LOCAL} path in
+     * {@link com.veritech.BudgetKing.security.controller.AuthController} keeps
+     * compiling while it is feature-flagged off.
+     */
     private String passwordHash;
+
+    /** How this user signs in. Currently always {@code GOOGLE} — see {@link AuthProvider}. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private AuthProvider authProvider = AuthProvider.GOOGLE;
+
+    /** Google's stable subject id ("sub" claim). Null for a {@code LOCAL} user. */
+    @Column(name = "provider_id", unique = true)
+    private String providerId;
 
     @Column(nullable = false)
     private String name;

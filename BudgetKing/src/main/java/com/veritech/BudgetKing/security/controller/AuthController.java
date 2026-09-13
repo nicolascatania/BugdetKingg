@@ -1,17 +1,24 @@
 package com.veritech.BudgetKing.security.controller;
 
+import com.veritech.BudgetKing.dto.GoogleTokenInfoDTO;
+import com.veritech.BudgetKing.exception.LocalAuthDisabledException;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Role;
 import com.veritech.BudgetKing.repository.AppUserRepository;
 import com.veritech.BudgetKing.repository.RoleRepository;
+import com.veritech.BudgetKing.security.UserDetailsImpl;
 import com.veritech.BudgetKing.security.dto.AuthResponse;
+import com.veritech.BudgetKing.security.dto.GoogleAuthRequest;
 import com.veritech.BudgetKing.security.dto.LoginRequest;
 import com.veritech.BudgetKing.security.dto.RegisterRequest;
+import com.veritech.BudgetKing.security.enumerator.AuthProvider;
 import com.veritech.BudgetKing.security.enumerator.Roles;
+import com.veritech.BudgetKing.security.service.GoogleAuthService;
 import com.veritech.BudgetKing.security.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +27,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,9 +39,24 @@ public class AuthController {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final GoogleAuthService googleAuthService;
 
+    /**
+     * Email/password sign-in is currently switched off in favour of
+     * Google-only auth; {@code /login} and {@code /register} below stay
+     * implemented, gated by this flag, so the fallback can be turned back on
+     * without rebuilding it. See {@code docs/proposals/} for the reasoning.
+     */
+    @Value("${app.auth.local-enabled:false}")
+    private boolean localAuthEnabled;
+
+    /**
+     * Email/password login. Disabled by default — see {@link #localAuthEnabled}.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        requireLocalAuthEnabled();
+
         try {
              Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -56,8 +77,12 @@ public class AuthController {
 
     }
 
+    /**
+     * Email/password sign-up. Disabled by default — see {@link #localAuthEnabled}.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
+        requireLocalAuthEnabled();
 
         if (appUserRepository.existsByEmail(request.email())) {
             return ResponseEntity
@@ -68,6 +93,7 @@ public class AuthController {
         AppUser user = new AppUser();
         user.setEmail(request.email());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
+        user.setAuthProvider(AuthProvider.LOCAL);
         user.setEnabled(true);
         user.setName(request.name());
         user.setLastName(request.lastName());
@@ -79,10 +105,68 @@ public class AuthController {
 
         appUserRepository.save(user);
 
-        var userDetails = new com.veritech.BudgetKing.security.UserDetailsImpl(user);
+        var userDetails = new UserDetailsImpl(user);
 
         String token = jwtUtil.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthResponse(token));
+    }
+
+    /**
+     * Google Sign-In: verifies the ID token the frontend obtained from Google
+     * Identity Services, finds or creates the matching {@link AppUser}, and
+     * issues this app's own JWT — the frontend never sees or stores Google's token.
+     */
+    @PostMapping("/google")
+    public ResponseEntity<?> google(@RequestBody @Valid GoogleAuthRequest request) {
+        GoogleTokenInfoDTO tokenInfo = googleAuthService.verify(request.idToken());
+
+        AppUser user = appUserRepository.findByProviderId(tokenInfo.subject())
+                .or(() -> appUserRepository.findByEmail(tokenInfo.email()))
+                .map(existing -> linkGoogleAccount(existing, tokenInfo))
+                .orElseGet(() -> createGoogleUser(tokenInfo));
+
+        var userDetails = new UserDetailsImpl(user);
+        String token = jwtUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(new AuthResponse(token));
+    }
+
+    private void requireLocalAuthEnabled() {
+        if (!localAuthEnabled) {
+            throw new LocalAuthDisabledException("Email/password sign-in is disabled. Use Google sign-in.");
+        }
+    }
+
+    /** First Google sign-in for an email that already had a (legacy) local account. */
+    private AppUser linkGoogleAccount(AppUser user, GoogleTokenInfoDTO tokenInfo) {
+        if (user.getProviderId() == null) {
+            user.setProviderId(tokenInfo.subject());
+            user.setAuthProvider(AuthProvider.GOOGLE);
+            appUserRepository.save(user);
+        }
+        return user;
+    }
+
+    private AppUser createGoogleUser(GoogleTokenInfoDTO tokenInfo) {
+        AppUser user = new AppUser();
+        user.setEmail(tokenInfo.email());
+        user.setProviderId(tokenInfo.subject());
+        user.setAuthProvider(AuthProvider.GOOGLE);
+        user.setPasswordHash(null);
+        user.setEnabled(true);
+        // Google may omit given/family name on some accounts; never leave the required column null.
+        user.setName(blankToFallback(tokenInfo.givenName(), "Google"));
+        user.setLastName(blankToFallback(tokenInfo.familyName(), "User"));
+
+        Role userRole = roleRepository.findByName(Roles.ROLE_USER.name())
+                .orElseThrow(() -> new RuntimeException("Role USER not found"));
+        user.setRoles(Set.of(userRole));
+
+        return appUserRepository.save(user);
+    }
+
+    private String blankToFallback(String value, String fallback) {
+        return (value == null || value.isBlank()) ? fallback : value;
     }
 }

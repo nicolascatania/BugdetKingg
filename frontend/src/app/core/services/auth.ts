@@ -43,6 +43,21 @@ export class AuthService {
       );
   }
 
+  /**
+   * Exchanges a Google ID token (obtained client-side via Google Identity
+   * Services) for this app's own JWT. The Google token itself is never stored.
+   */
+  loginWithGoogle(idToken: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/google`, { idToken })
+      .pipe(
+        tap((res) => {
+          localStorage.setItem(this.tokenKey, res.token);
+          this.loggedIn$.next(true);
+        }),
+      );
+  }
+
   logout() {
     localStorage.removeItem(this.tokenKey);
     this.loggedIn$.next(false);
