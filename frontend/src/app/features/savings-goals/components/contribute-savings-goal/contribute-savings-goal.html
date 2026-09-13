@@ -1,0 +1,121 @@
+<ui-modal [open]="true" [title]="title()" (closed)="close()">
+  <div modal-body>
+    <!-- Goal context: what the movement is about and where it stands right now. -->
+    <div class="mb-5 flex items-center gap-3 rounded-2xl border border-line bg-surface-2 p-3.5">
+      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+        <i class="fa-solid text-sm" [ngClass]="goal().icon || 'fa-piggy-bank'"></i>
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-sm font-bold">{{ goal().name }}</p>
+        <p class="tabular text-xs text-muted">
+          {{ goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}
+          saved of {{ goal().targetAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}
+        </p>
+      </div>
+    </div>
+
+    @if (isClose()) {
+      <p class="mb-5 text-sm text-muted">
+        @if (needsAccount()) {
+          Everything the goal holds
+          (<span class="tabular font-bold text-body">{{ goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>)
+          goes back to the account you choose. The goal then becomes read-only.
+        } @else {
+          This goal holds no money. Closing it keeps it as history and makes it read-only.
+        }
+      </p>
+    }
+
+    <form [formGroup]="form" class="space-y-5">
+      @if (needsAccount()) {
+        <div>
+          <label for="contrib-account" class="field-label">{{ accountLabel() }}</label>
+          <select id="contrib-account" formControlName="accountId" class="field-select">
+            @for (account of accounts(); track account.id) {
+              <option [value]="account.id">
+                {{ account.name }} · {{ account.balance | currency: 'ARS' : 'symbol' : '1.2-2' }}
+              </option>
+            }
+          </select>
+          @if (isDeposit()) {
+            @if (selectedAccount(); as account) {
+              <p class="field-hint tabular">
+                Available: {{ account.balance | currency: 'ARS' : 'symbol' : '1.2-2' }}
+              </p>
+            }
+          }
+        </div>
+      }
+
+      @if (!isClose()) {
+        <div>
+          <label for="contrib-amount" class="field-label">Amount</label>
+          <div
+            class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
+                   focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
+          >
+            <span class="pl-3.5 text-sm font-semibold text-muted">$</span>
+            <input
+              id="contrib-amount"
+              type="number"
+              formControlName="amount"
+              placeholder="0.00"
+              min="0.01"
+              step="0.01"
+              class="tabular w-full min-w-0 bg-transparent py-2.5 text-sm font-bold text-body outline-none placeholder:text-subtle"
+            />
+            @if (maxAmount() !== null) {
+              <button
+                type="button"
+                class="btn-ghost !min-h-0 h-8 px-2.5 text-xs font-bold text-brand"
+                (click)="useMax()"
+              >
+                Max
+              </button>
+            }
+          </div>
+          @if (isWithdraw()) {
+            <p class="field-hint tabular">
+              Up to {{ goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }} can be withdrawn.
+            </p>
+          }
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label for="contrib-date" class="field-label">Date</label>
+            <input id="contrib-date" type="datetime-local" formControlName="date" class="field-input" />
+          </div>
+          <div>
+            <label for="contrib-note" class="field-label">Note (optional)</label>
+            <input
+              id="contrib-note"
+              type="text"
+              formControlName="note"
+              placeholder="e.g. January share"
+              class="field-input"
+            />
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+
+  <div modal-footer class="flex w-full justify-end gap-3">
+    <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+    <button
+      type="button"
+      [ngClass]="isClose() ? 'btn-danger' : 'btn-primary'"
+      class="min-w-[8rem]"
+      (click)="submit()"
+      [disabled]="form.invalid || saving()"
+    >
+      @if (saving()) {
+        <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+        <span>Working…</span>
+      } @else {
+        <span>{{ submitLabel() }}</span>
+      }
+    </button>
+  </div>
+</ui-modal>

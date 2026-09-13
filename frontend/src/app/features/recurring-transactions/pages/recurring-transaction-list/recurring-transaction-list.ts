@@ -10,7 +10,7 @@ import { EditRecurringTransaction } from '../../components/edit-recurring-transa
 import { AccountService } from '../../../accounts/services/AccountService';
 import { CategoryService } from '../../../categories/service/category-service';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
-import { TransactionType } from '../../../../shared/models/TransactionType.enum';
+import { MANUAL_TRANSACTION_TYPES } from '../../../../shared/models/TransactionType.enum';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { PaginationComponent } from '../../../../shared/components/PaginationComponent/PaginationComponent';
 import { createPaginationState, PaginationState } from '../../../../core/utils/pagination.util';
@@ -47,7 +47,7 @@ export class RecurringTransactionList implements OnInit {
   accounts = signal<OptionDTO[]>([]);
   categories = signal<OptionDTO[]>([]);
   frequencies = Object.values(RecurrenceFrequency);
-  transactionTypes = Object.values(TransactionType);
+  transactionTypes = MANUAL_TRANSACTION_TYPES;
 
   paginationState: PaginationState = createPaginationState(20);
   form: FormGroup;

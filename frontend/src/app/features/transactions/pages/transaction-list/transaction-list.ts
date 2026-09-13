@@ -15,6 +15,12 @@ import { CategoryService } from '../../../categories/service/category-service';
 import { forkJoin } from 'rxjs';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { TransactionType } from '../../../../shared/models/TransactionType.enum';
+import {
+  transactionAmountClass,
+  transactionAmountSign,
+  transactionTypeChip,
+  transactionTypeLabel,
+} from '../../../../shared/utils/transactionType.util';
 import { EditTransaction } from '../../components/edit-transaction/edit-transaction';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
 import { NotificationService } from '../../../../core/services/NotificationService';
@@ -65,7 +71,11 @@ export class TransactionList {
   /** Disables the export button and shows progress while the CSV request is in flight. */
   readonly exporting = signal(false);
 
-  TRANSACTION_TYPE = TransactionType;
+  /** Type presentation rules are shared so every list renders a type the same way. */
+  readonly typeChip = transactionTypeChip;
+  readonly typeLabel = transactionTypeLabel;
+  readonly amountClass = transactionAmountClass;
+  readonly amountSign = transactionAmountSign;
   transactionTypes = Object.values(TransactionType);
 
   paginationState: PaginationState = createPaginationState(20);

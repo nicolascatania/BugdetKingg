@@ -46,6 +46,15 @@ export class TransactionService extends BaseService<TransactionDTO> {
     this.refreshable.triggerRefresh();
   }
 
+  /**
+   * Notifies a refresh after money moved through another feature's endpoint
+   * (savings goal deposits, withdrawals and closes create transactions and change
+   * account balances without going through create()).
+   */
+  notifyBalancesChanged(): void {
+    this.refreshable.triggerRefresh();
+  }
+
   getTransactionsByUser(): Observable<TransactionDTO[]> {
     return this.http.get<TransactionDTO[]>(`${this.baseUrl}/by-user`);
   }

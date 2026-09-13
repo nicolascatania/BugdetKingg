@@ -1,7 +1,9 @@
 package com.veritech.BudgetKing.model;
 
+import com.veritech.BudgetKing.enumerator.SavingsGoalStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
@@ -11,13 +13,16 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 /**
- * A forward-looking savings target owned by a single user.
+ * A forward-looking savings target owned by a single user that holds real money.
  *
- * <p>Progress is never stored: it is derived at read time from the balance of the
- * optional {@link Account} the goal is linked to, so the figures shown to the user
- * always reflect the current state of that account. Only the {@code achieved} flag
- * is persisted, and it is refreshed on every write so reports and filters can rely
- * on it without recomputing balances.</p>
+ * <p>Money enters and leaves through {@link Transaction}s of type
+ * {@code SAVINGS_DEPOSIT} / {@code SAVINGS_WITHDRAWAL}; {@link #currentAmount} is
+ * the running total of those movements and is what every progress figure derives
+ * from. Money inside a goal is no longer part of any account balance, so it is
+ * excluded from the user's regular balance by construction.</p>
+ *
+ * <p>Only {@link #status} and the cached {@link #achieved} flag describe lifecycle;
+ * whether a goal is overdue is derived at read time from {@link #targetDate}.</p>
  */
 @Entity
 @Table(name = "savings_goals")
@@ -50,8 +55,25 @@ public class SavingsGoal extends AuditedEntity {
     private LocalDate targetDate;
 
     /**
-     * Account whose balance funds this goal. Optional: a goal may be tracked
-     * without linking it to a concrete account, in which case progress is zero.
+     * Money currently set aside in this goal. Never negative; it can exceed
+     * {@link #targetAmount} when the user over-saves. The DDL default covers rows
+     * created before this column existed (Hibernate {@code ddl-auto=update}).
+     */
+    @Builder.Default
+    @ColumnDefault("0")
+    @Column(name = "current_amount", nullable = false, precision = 19, scale = 2)
+    private BigDecimal currentAmount = BigDecimal.ZERO;
+
+    /** Persisted lifecycle; see {@link SavingsGoalStatus}. */
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'ACTIVE'")
+    @Column(nullable = false, length = 20)
+    private SavingsGoalStatus status = SavingsGoalStatus.ACTIVE;
+
+    /**
+     * Optional default source account, preselected when the user contributes to
+     * the goal. It has no effect on progress.
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "linked_account_id")
@@ -61,7 +83,12 @@ public class SavingsGoal extends AuditedEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
 
-    /** Cached completion flag, refreshed by the service on every create/update. */
+    /** Cached {@code currentAmount >= targetAmount}, refreshed on every write. */
     @Column(nullable = false)
     private boolean achieved;
+
+    /** Convenience for guards: whether the goal still accepts money and edits. */
+    public boolean isActive() {
+        return status == SavingsGoalStatus.ACTIVE;
+    }
 }

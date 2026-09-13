@@ -185,6 +185,20 @@ class TransactionImportServiceTest {
     }
 
     @Test
+    @DisplayName("Should flag a savings movement row: those only come from the savings goal endpoints")
+    void shouldFlagSavingsType() {
+        when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        mockValidAccount();
+
+        String csv = HEADER + "2026-01-15,Vacation share,25.50,SAVINGS_DEPOSIT,Entertainment,Vacation,Cash,\n";
+
+        ImportPreviewDTO preview = importService.preview(csvFile(csv));
+
+        assertEquals(1, preview.errorRows());
+        assertTrue(preview.rows().get(0).errorMessage().contains("Savings transactions cannot be imported"));
+    }
+
+    @Test
     @DisplayName("Should flag a row with an invalid date")
     void shouldFlagInvalidDate() {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));

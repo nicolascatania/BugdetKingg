@@ -26,6 +26,19 @@
           <!-- break-words only splits as a last resort, so the amount never breaks mid-group when it fits. -->
           <span class="tabular min-w-0 break-words">{{ totalBalance() | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
         </h1>
+
+        <!-- Money parked in savings goals: already out of the balance above, shown so it is not "lost". -->
+        @if (totalSavings() > 0) {
+          <p class="mt-3 flex items-center gap-2 text-sm text-muted">
+            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/12 text-accent">
+              <i class="fa-solid fa-piggy-bank text-xs"></i>
+            </span>
+            <span>
+              <span class="tabular font-bold text-body">{{ totalSavings() | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+              set aside in savings goals
+            </span>
+          </p>
+        }
       </div>
 
       <div class="flex flex-wrap gap-3">

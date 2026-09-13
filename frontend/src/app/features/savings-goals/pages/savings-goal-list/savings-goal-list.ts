@@ -4,6 +4,10 @@ import { SavingsGoalService } from '../../service/savings-goal-service';
 import { SavingsGoalDTO } from '../../interfaces/SavingsGoalDTO.interface';
 import { SavingsGoalSummaryDTO } from '../../interfaces/SavingsGoalSummaryDTO.interface';
 import { EditSavingsGoal } from '../../components/edit-savings-goal/edit-savings-goal';
+import {
+  ContributeSavingsGoal,
+  ContributionMode,
+} from '../../components/contribute-savings-goal/contribute-savings-goal';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { PaginationComponent } from '../../../../shared/components/PaginationComponent/PaginationComponent';
 import { createPaginationState, PaginationState } from '../../../../core/utils/pagination.util';
@@ -13,7 +17,7 @@ import { TutorialModal, TutorialSection } from '../../../../shared/components/tu
 @Component({
   selector: 'app-savings-goal-list',
   standalone: true,
-  imports: [CommonModule, EditSavingsGoal, PaginationComponent, RevealDirective, TutorialModal],
+  imports: [CommonModule, EditSavingsGoal, ContributeSavingsGoal, PaginationComponent, RevealDirective, TutorialModal],
   templateUrl: './savings-goal-list.html',
   styleUrl: './savings-goal-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +35,10 @@ export class SavingsGoalList implements OnInit {
   isModalOpen = signal(false);
   selectedGoal = signal<SavingsGoalDTO | null>(null);
 
+  /** Goal and flow of the money modal; `null` mode means it is closed. */
+  contributionGoal = signal<SavingsGoalDTO | null>(null);
+  contributionMode = signal<ContributionMode | null>(null);
+
   /** Id of the goal currently being deleted, if any — drives that row's spinner. */
   readonly deletingId = signal<string | null>(null);
 
@@ -42,19 +50,19 @@ export class SavingsGoalList implements OnInit {
       body: 'Give the goal a name, an icon, how much you need to reach it, and the date you want to reach it by.',
     },
     {
-      icon: 'fa-link',
-      heading: '2. Link an account (optional)',
-      body: 'Linking an account makes the goal track that account\'s balance automatically as "current amount" — no manual updates needed. Leave it unlinked if you just want to plan a number.',
+      icon: 'fa-piggy-bank',
+      heading: '2. Set money aside',
+      body: 'Use "Add money" to move an amount from one of your accounts into the goal. That money leaves your regular balance and shows up under Savings instead — it is really set aside. "Withdraw" brings some of it back whenever you need it.',
     },
     {
       icon: 'fa-chart-line',
-      heading: '3. Everything else is calculated for you',
-      body: 'Progress %, remaining amount, monthly amount required and days left are all derived from the linked account and the target date — you never edit them directly.',
+      heading: '3. Progress is calculated for you',
+      body: 'Progress %, remaining amount, monthly amount required and days left all derive from what the goal holds and its target date. The optional linked account is just the default source when you add money.',
     },
     {
       icon: 'fa-flag-checkered',
-      heading: '4. Achieved goals',
-      body: 'Once the linked account balance reaches the target, the goal is marked "Achieved" automatically.',
+      heading: '4. When the date arrives',
+      body: 'Nothing moves on its own. A goal shows "Achieved" once it holds the target, or "Overdue" if the date passed first. Either way you decide: extend the date, keep adding, or "Close" it to send everything back to an account.',
     },
   ];
 
@@ -106,6 +114,34 @@ export class SavingsGoalList implements OnInit {
     if (saved) {
       this.loadGoals();
       this.loadSummary();
+    }
+  }
+
+  openContribution(goal: SavingsGoalDTO, mode: ContributionMode): void {
+    this.contributionGoal.set(goal);
+    this.contributionMode.set(mode);
+  }
+
+  onContributionClosed(saved: boolean): void {
+    this.contributionGoal.set(null);
+    this.contributionMode.set(null);
+    if (saved) {
+      this.loadGoals();
+      this.loadSummary();
+    }
+  }
+
+  /** Badge primitive per derived state; ACTIVE shows no badge. */
+  stateChip(state: SavingsGoalDTO['state']): string {
+    switch (state) {
+      case 'ACHIEVED':
+        return 'chip-positive';
+      case 'OVERDUE':
+        return 'chip-negative';
+      case 'CLOSED':
+        return 'chip-neutral';
+      default:
+        return '';
     }
   }
 

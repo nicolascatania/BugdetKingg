@@ -37,14 +37,14 @@
       </div>
 
       <div>
-        <label for="goal-linked-account" class="field-label">Linked account (optional)</label>
+        <label for="goal-linked-account" class="field-label">Default source account (optional)</label>
         <select id="goal-linked-account" formControlName="linkedAccountId" class="field-select">
           <option value="">None</option>
           @for (account of accounts(); track account.id) {
             <option [value]="account.id">{{ account.value }}</option>
           }
         </select>
-        <p class="field-hint">The goal's progress is measured against this account's balance.</p>
+        <p class="field-hint">Preselected when you add money to the goal. Progress only counts what you actually set aside.</p>
       </div>
 
       <div>

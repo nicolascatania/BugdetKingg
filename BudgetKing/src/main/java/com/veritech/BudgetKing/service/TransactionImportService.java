@@ -122,6 +122,8 @@ public class TransactionImportService {
                 category != null ? category.getName() : null,
                 row.account(),
                 row.destinationAccount(),
+                null,
+                null,
                 null
         );
 
@@ -257,6 +259,11 @@ public class TransactionImportService {
             type = TransactionType.fromString(rawType);
         } catch (IllegalArgumentException e) {
             errors.add("Invalid transaction type: " + rawType);
+        }
+        // Savings movements are only produced through the savings-goal endpoints, where the
+        // goal's own balance is kept consistent; a CSV row cannot carry that context.
+        if (type != null && type.isSavings()) {
+            errors.add("Savings transactions cannot be imported: " + rawType);
         }
         boolean isTransfer = type == TransactionType.TRANSFER;
 

@@ -27,7 +27,9 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 entity.getCategory() != null ? entity.getCategory().getName() : null,
                 entity.getAccount().getId(),
                 entity.getDestinationAccount() != null ? entity.getDestinationAccount().getId() : null,
-                entity.getAccount().getName()
+                entity.getAccount().getName(),
+                entity.getSavingsGoal() != null ? entity.getSavingsGoal().getId() : null,
+                entity.getSavingsGoal() != null ? entity.getSavingsGoal().getName() : null
         );
     }
 
@@ -43,11 +45,26 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 r.Category(),
                 r.account(),
                 r.destinationAccount(),
+                r.savingsGoal(),
                 r.user()
         );
     }
 
+    /**
+     * Compact row for the home "last moves" widget. Uncategorised movements show
+     * what they are instead of a blank: the goal name for savings movements,
+     * "Transfer" for account-to-account ones.
+     */
     public LastMovesDTO toLastMovesDTO(Transaction entity) {
+        String categoryLabel;
+        if (entity.getCategory() != null) {
+            categoryLabel = entity.getCategory().getName();
+        } else if (entity.getSavingsGoal() != null) {
+            categoryLabel = entity.getSavingsGoal().getName();
+        } else {
+            categoryLabel = "Transfer";
+        }
+
         return new LastMovesDTO(
                 entity.getId(),
                 entity.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
@@ -55,11 +72,8 @@ public class TransactionMapper implements ICrudMapper<Transaction, TransactionDT
                 entity.getType().name(),
                 entity.getCounterparty(),
                 entity.getDescription(),
-                entity.getCategory() != null ? entity.getCategory().getName() : "Transfer",
+                categoryLabel,
                 entity.getAccount().getName()
-
         );
     }
-
-
 }

@@ -2,7 +2,12 @@ import { ChangeDetectionStrategy, Component, inject, signal, effect } from '@ang
 import { CommonModule } from '@angular/common';
 import { TransactionService } from '../../../transactions/services/transaction-service';
 import { LastMovesDTO } from '../../../transactions/interfaces/LastMovesDTO.interface';
-import { TransactionType } from '../../../../shared/models/TransactionType.enum';
+import {
+  transactionAmountClass,
+  transactionAmountSign,
+  transactionTypeChip,
+  transactionTypeLabel,
+} from '../../../../shared/utils/transactionType.util';
 
 @Component({
   selector: 'last-moves',
@@ -14,8 +19,12 @@ import { TransactionType } from '../../../../shared/models/TransactionType.enum'
 })
 export class LastMoves {
   private transactionService = inject(TransactionService);
-  TRANSACTION_TYPES = TransactionType;
-  
+  /** Type presentation rules are shared so every list renders a type the same way. */
+  readonly typeChip = transactionTypeChip;
+  readonly typeLabel = transactionTypeLabel;
+  readonly amountClass = transactionAmountClass;
+  readonly amountSign = transactionAmountSign;
+
   txs = signal<LastMovesDTO[]>([]);
   loading = signal(true);
 

@@ -2,6 +2,7 @@ package com.veritech.BudgetKing.mapper;
 
 import com.veritech.BudgetKing.dto.SavingsGoalDTO;
 import com.veritech.BudgetKing.dto.SavingsGoalRelatedEntities;
+import com.veritech.BudgetKing.enumerator.SavingsGoalStatus;
 import com.veritech.BudgetKing.interfaces.ICrudMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.SavingsGoal;
@@ -20,8 +21,9 @@ import java.math.BigDecimal;
 public class SavingsGoalMapper implements ICrudMapper<SavingsGoal, SavingsGoalDTO, SavingsGoalRelatedEntities> {
 
     /**
-     * Maps the persisted state only. Derived components are emitted as zeroes and
-     * are expected to be replaced by the service before the DTO leaves the app.
+     * Maps the persisted state only. Derived components ({@code state}, progress
+     * figures) are emitted empty and are expected to be replaced by the service
+     * before the DTO leaves the app.
      */
     @Override
     public SavingsGoalDTO toDto(SavingsGoal entity) {
@@ -35,8 +37,10 @@ public class SavingsGoalMapper implements ICrudMapper<SavingsGoal, SavingsGoalDT
                 entity.getTargetDate(),
                 linkedAccount != null ? linkedAccount.getId() : null,
                 linkedAccount != null ? linkedAccount.getName() : null,
+                entity.getStatus(),
+                null,
                 entity.isAchieved(),
-                BigDecimal.ZERO,
+                entity.getCurrentAmount(),
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
@@ -45,8 +49,8 @@ public class SavingsGoalMapper implements ICrudMapper<SavingsGoal, SavingsGoalDT
     }
 
     /**
-     * Builds a brand-new entity. The derived components of the DTO are ignored,
-     * and {@code achieved} is recomputed by the service right after mapping.
+     * Builds a brand-new, empty, active goal. Money-related and derived components
+     * of the DTO are ignored: a goal is only funded through contributions.
      */
     @Override
     public SavingsGoal toEntity(SavingsGoalDTO dto, SavingsGoalRelatedEntities relatedEntities) {
@@ -58,6 +62,8 @@ public class SavingsGoalMapper implements ICrudMapper<SavingsGoal, SavingsGoalDT
                 .targetDate(dto.targetDate())
                 .linkedAccount(relatedEntities.linkedAccount())
                 .user(relatedEntities.user())
+                .currentAmount(BigDecimal.ZERO)
+                .status(SavingsGoalStatus.ACTIVE)
                 .achieved(false)
                 .build();
     }

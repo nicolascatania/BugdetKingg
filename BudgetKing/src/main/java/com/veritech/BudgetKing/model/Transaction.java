@@ -55,6 +55,15 @@ public class Transaction extends AuditedEntity {
     @JoinColumn(name = "destination_account_id")
     private Account destinationAccount;
 
+    /**
+     * Goal this movement feeds or drains. Only set for
+     * {@link TransactionType#SAVINGS_DEPOSIT} / {@link TransactionType#SAVINGS_WITHDRAWAL};
+     * nulled out (never cascaded) when the goal is deleted so the account history survives.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "savings_goal_id")
+    private SavingsGoal savingsGoal;
+
     @ManyToOne(fetch = FetchType.EAGER) //to make it easier, later will change to lazy
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;

@@ -20,7 +20,7 @@ import {
 } from '@angular/forms';
 import { TransactionDTO } from '../../interfaces/TransactionDTO.interface';
 import { TransactionService } from '../../services/transaction-service';
-import { TransactionType } from '../../../../shared/models/TransactionType.enum';
+import { isSavingsType, MANUAL_TRANSACTION_TYPES, TransactionType } from '../../../../shared/models/TransactionType.enum';
 import { AccountDTO } from '../../../accounts/interfaces/AccountDTO.interfaces';
 import { CategoryService } from '../../../categories/service/category-service';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
@@ -47,7 +47,7 @@ export class EditTransaction implements OnInit {
 
   accounts = input<AccountLike[]>();
   categories: OptionDTO[] = [];
-  transactionTypes = Object.values(TransactionType);
+  transactionTypes = MANUAL_TRANSACTION_TYPES;
   form: FormGroup;
 
   readonly quickAmounts: number[] = [1000, 2000, 5000, 10000, 15000];
@@ -114,6 +114,12 @@ export class EditTransaction implements OnInit {
       this.form.get('account')?.disable();
       this.form.get('type')?.disable();
       this.form.get('destinationAccount')?.disable();
+
+      // Savings movements carry no category (like transfers); the type control is
+      // already frozen, so the rule has to be applied here rather than on change.
+      if (isSavingsType(this.transaction.type)) {
+        this.applyNoCategoryRule();
+      }
     }
 
     this.handleTypeChanges();
@@ -188,10 +194,12 @@ export class EditTransaction implements OnInit {
       const categoryCtrl = this.form.get('category');
       const destinationCtrl = this.form.get('destinationAccount');
 
-      if (type === TransactionType.TRANSFER) {
-        categoryCtrl?.setValue(null);
-        categoryCtrl?.clearValidators();
-        categoryCtrl?.disable({ emitEvent: false });
+      if (isSavingsType(type)) {
+        this.applyNoCategoryRule();
+        destinationCtrl?.clearValidators();
+        destinationCtrl?.reset('');
+      } else if (type === TransactionType.TRANSFER) {
+        this.applyNoCategoryRule();
 
         destinationCtrl?.setValidators(Validators.required);
 
@@ -212,6 +220,15 @@ export class EditTransaction implements OnInit {
       destinationCtrl?.updateValueAndValidity();
       this.cdr.markForCheck();
     });
+  }
+
+  /** Transfers and savings movements are uncategorised: clear, relax and freeze the control. */
+  private applyNoCategoryRule(): void {
+    const categoryCtrl = this.form.get('category');
+    categoryCtrl?.setValue(null);
+    categoryCtrl?.clearValidators();
+    categoryCtrl?.disable({ emitEvent: false });
+    categoryCtrl?.updateValueAndValidity({ emitEvent: false });
   }
 
   private handleAccountChanges(): void {

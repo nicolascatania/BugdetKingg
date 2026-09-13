@@ -1,11 +1,14 @@
 package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.TransactionDTO;
+import com.veritech.BudgetKing.enumerator.SavingsGoalStatus;
 import com.veritech.BudgetKing.enumerator.TransactionType;
+import com.veritech.BudgetKing.exception.SavingsGoalRuntimeException;
 import com.veritech.BudgetKing.mapper.TransactionMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Category;
+import com.veritech.BudgetKing.model.SavingsGoal;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
@@ -17,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -89,7 +93,9 @@ class TransactionServiceTest {
                 mockCategory.getName(),
                 mockAccount.getId(),
                 null,
-                mockAccount.getName()
+                mockAccount.getName(),
+                null,
+                null
         );
     }
 
@@ -110,7 +116,7 @@ class TransactionServiceTest {
     @Test
     @DisplayName("Should throw exception when transfer is missing destination account")
     void shouldThrowExceptionWhenTransferMissingDestination() {
-        TransactionDTO dto = new TransactionDTO(transactionId, null, initialAmount, "TRANSFER", null, null, null, null, mockAccount.getId(), null, null);
+        TransactionDTO dto = new TransactionDTO(transactionId, null, initialAmount, "TRANSFER", null, null, null, null, mockAccount.getId(), null, null, null, null);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> transactionService.validateTransaction(dto, mockAccount, null),
@@ -123,7 +129,7 @@ class TransactionServiceTest {
     @DisplayName("Should throw exception when transfer source and destination are the same")
     void shouldThrowExceptionWhenTransferAccountsAreSame() {
         Account sameAccount = Account.builder().id(UUID.randomUUID()).build();
-        TransactionDTO dto = new TransactionDTO(transactionId, null, initialAmount, "TRANSFER", null, null, null, null, sameAccount.getId(), sameAccount.getId(), null);
+        TransactionDTO dto = new TransactionDTO(transactionId, null, initialAmount, "TRANSFER", null, null, null, null, sameAccount.getId(), sameAccount.getId(), null, null, null);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> transactionService.validateTransaction(dto, sameAccount, sameAccount),
@@ -135,7 +141,7 @@ class TransactionServiceTest {
     @Test
     @DisplayName("Should throw exception for non-positive transaction amounts")
     void shouldThrowExceptionForNegativeAmount() {
-        TransactionDTO dto = new TransactionDTO(transactionId, null, new BigDecimal("-15.00"), "EXPENSE", null, null, null, null, mockAccount.getId(), null, null);
+        TransactionDTO dto = new TransactionDTO(transactionId, null, new BigDecimal("-15.00"), "EXPENSE", null, null, null, null, mockAccount.getId(), null, null, null, null);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> transactionService.validateTransaction(dto, mockAccount, null),
@@ -147,10 +153,10 @@ class TransactionServiceTest {
     @Test
     @DisplayName("Should throw exception for invalid transaction types")
     void shouldThrowExceptionForInvalidType() {
-        TransactionDTO dto = new TransactionDTO(transactionId, null, initialAmount, "INVALID_TYPE", null, null, null, null, mockAccount.getId(), null, null);
+        TransactionDTO dto = new TransactionDTO(transactionId, null, initialAmount, "INVALID_TYPE", null, null, null, null, mockAccount.getId(), null, null, null, null);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> transactionService.applyBalanceChanges(dto, mockAccount, null),
+                () -> transactionService.validateTransaction(dto, mockAccount, null),
                 () -> "Should reject invalid types");
 
         assertEquals("Transaction type not valid: INVALID_TYPE", ex.getMessage());
@@ -160,9 +166,7 @@ class TransactionServiceTest {
     @DisplayName("Should decrease balance on expense")
     void shouldDecreaseBalanceOnExpense() {
         Account source = Account.builder().balance(new BigDecimal("100.00")).build();
-        TransactionDTO dto = createDto("EXPENSE", "30.00");
-
-        transactionService.applyBalanceChanges(dto, source, null);
+        transactionService.applyBalanceChanges(TransactionType.EXPENSE, new BigDecimal("30.00"), source, null, null);
 
         assertEquals(new BigDecimal("70.00"), source.getBalance(), () -> "Balance should decrease");
     }
@@ -171,9 +175,7 @@ class TransactionServiceTest {
     @DisplayName("Should increase balance on income")
     void shouldIncreaseBalanceOnIncome() {
         Account source = Account.builder().balance(new BigDecimal("100.00")).build();
-        TransactionDTO dto = createDto("INCOME", "50.00");
-
-        transactionService.applyBalanceChanges(dto, source, null);
+        transactionService.applyBalanceChanges(TransactionType.INCOME, new BigDecimal("50.00"), source, null, null);
 
         assertEquals(new BigDecimal("150.00"), source.getBalance(), () -> "Balance should increase");
     }
@@ -183,9 +185,7 @@ class TransactionServiceTest {
     void shouldUpdateBothBalancesOnTransfer() {
         Account source = Account.builder().balance(new BigDecimal("100.00")).build();
         Account destination = Account.builder().balance(new BigDecimal("50.00")).build();
-        TransactionDTO dto = createDto("TRANSFER", "40.00");
-
-        transactionService.applyBalanceChanges(dto, source, destination);
+        transactionService.applyBalanceChanges(TransactionType.TRANSFER, new BigDecimal("40.00"), source, destination, null);
 
         assertEquals(new BigDecimal("60.00"), source.getBalance(), () -> "Source balance mismatch");
         assertEquals(new BigDecimal("90.00"), destination.getBalance(), () -> "Destination balance mismatch");
@@ -208,10 +208,6 @@ class TransactionServiceTest {
         verify(transactionRepository).save(any());
     }
 
-    private TransactionDTO createDto(String type, String amount) {
-        return new TransactionDTO(UUID.randomUUID(), LocalDateTime.now().toString(), new BigDecimal(amount), type, "Counterparty", "Desc", UUID.randomUUID(), "Cat", UUID.randomUUID(), null, null);
-    }
-
     // ── update() ─────────────────────────────────────────────────────────
 
     @Test
@@ -227,7 +223,7 @@ class TransactionServiceTest {
                 .build();
         TransactionDTO updateDto = new TransactionDTO(
                 transactionId, LocalDateTime.now().toString(), new BigDecimal("50.00"), "EXPENSE",
-                "Counterparty", "Updated desc", null, null, account.getId(), null, null
+                "Counterparty", "Updated desc", null, null, account.getId(), null, null, null, null
         );
         when(securityUtils.getCurrentUser()).thenReturn(mockUser);
         when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
@@ -256,7 +252,7 @@ class TransactionServiceTest {
                 .build();
         TransactionDTO updateDto = new TransactionDTO(
                 transactionId, LocalDateTime.now().toString(), new BigDecimal("300.00"), "TRANSFER",
-                "Counterparty", "Bigger transfer", null, null, source.getId(), destination.getId(), null
+                "Counterparty", "Bigger transfer", null, null, source.getId(), destination.getId(), null, null, null
         );
         when(securityUtils.getCurrentUser()).thenReturn(mockUser);
         when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
@@ -283,7 +279,7 @@ class TransactionServiceTest {
                 .build();
         TransactionDTO updateDto = new TransactionDTO(
                 transactionId, LocalDateTime.now().toString(), new BigDecimal("30.00"), "EXPENSE",
-                "Counterparty", "Desc", null, null, UUID.randomUUID(), null, null
+                "Counterparty", "Desc", null, null, UUID.randomUUID(), null, null, null, null
         );
         when(securityUtils.getCurrentUser()).thenReturn(mockUser);
         when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
@@ -307,7 +303,7 @@ class TransactionServiceTest {
                 .build();
         TransactionDTO updateDto = new TransactionDTO(
                 transactionId, LocalDateTime.now().toString(), new BigDecimal("30.00"), "TRANSFER",
-                "Counterparty", "Desc", null, null, account.getId(), UUID.randomUUID(), null
+                "Counterparty", "Desc", null, null, account.getId(), UUID.randomUUID(), null, null, null
         );
         when(securityUtils.getCurrentUser()).thenReturn(mockUser);
         when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
@@ -332,7 +328,7 @@ class TransactionServiceTest {
                 .build();
         TransactionDTO updateDto = new TransactionDTO(
                 transactionId, LocalDateTime.now().toString(), new BigDecimal("30.00"), "TRANSFER",
-                "Counterparty", "Desc", null, null, source.getId(), UUID.randomUUID(), null
+                "Counterparty", "Desc", null, null, source.getId(), UUID.randomUUID(), null, null, null
         );
         when(securityUtils.getCurrentUser()).thenReturn(mockUser);
         when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
@@ -408,5 +404,222 @@ class TransactionServiceTest {
                 () -> transactionService.deleteById(transactionId),
                 () -> "Should not find another user's transaction");
         verify(transactionRepository, never()).delete(any(Transaction.class));
+    }
+    // ── savings movements ────────────────────────────────────────────────
+
+    private SavingsGoal activeGoal(String currentAmount, String target) {
+        return SavingsGoal.builder()
+                .id(UUID.randomUUID())
+                .name("Vacation")
+                .icon("fa fa-plane")
+                .targetAmount(new BigDecimal(target))
+                .targetDate(LocalDate.now().plusMonths(3))
+                .currentAmount(new BigDecimal(currentAmount))
+                .status(SavingsGoalStatus.ACTIVE)
+                .user(mockUser)
+                .build();
+    }
+
+    @Test
+    @DisplayName("Should move money from the account into the goal on SAVINGS_DEPOSIT")
+    void shouldApplySavingsDeposit() {
+        Account source = Account.builder().balance(new BigDecimal("300.00")).build();
+        SavingsGoal goal = activeGoal("0.00", "100.00");
+
+        transactionService.applyBalanceChanges(TransactionType.SAVINGS_DEPOSIT, new BigDecimal("50.00"), source, null, goal);
+
+        assertEquals(new BigDecimal("250.00"), source.getBalance(), () -> "Account should drop by the deposit");
+        assertEquals(new BigDecimal("50.00"), goal.getCurrentAmount(), () -> "Goal should grow by the deposit");
+        assertFalse(goal.isAchieved(), () -> "Half way is not achieved");
+    }
+
+    @Test
+    @DisplayName("Should flag the goal achieved when a deposit reaches or exceeds the target")
+    void shouldFlagAchievedOnOverSaving() {
+        Account source = Account.builder().balance(new BigDecimal("300.00")).build();
+        SavingsGoal goal = activeGoal("90.00", "100.00");
+
+        transactionService.applyBalanceChanges(TransactionType.SAVINGS_DEPOSIT, new BigDecimal("20.00"), source, null, goal);
+
+        assertEquals(new BigDecimal("110.00"), goal.getCurrentAmount(), () -> "Over-saving is allowed");
+        assertTrue(goal.isAchieved(), () -> "Target covered means achieved");
+    }
+
+    @Test
+    @DisplayName("Should move money from the goal into the account on SAVINGS_WITHDRAWAL")
+    void shouldApplySavingsWithdrawal() {
+        Account destination = Account.builder().balance(new BigDecimal("10.00")).build();
+        SavingsGoal goal = activeGoal("50.00", "100.00");
+
+        transactionService.applyBalanceChanges(TransactionType.SAVINGS_WITHDRAWAL, new BigDecimal("20.00"), destination, null, goal);
+
+        assertEquals(new BigDecimal("30.00"), destination.getBalance(), () -> "Account should grow by the withdrawal");
+        assertEquals(new BigDecimal("30.00"), goal.getCurrentAmount(), () -> "Goal should drop by the withdrawal");
+    }
+
+    @Test
+    @DisplayName("Should revert a SAVINGS_DEPOSIT by giving the money back to the account")
+    void shouldRevertSavingsDeposit() {
+        Account source = Account.builder().balance(new BigDecimal("250.00")).build();
+        SavingsGoal goal = activeGoal("50.00", "100.00");
+
+        transactionService.revertBalanceChanges(TransactionType.SAVINGS_DEPOSIT, new BigDecimal("50.00"), source, null, goal);
+
+        assertEquals(new BigDecimal("300.00"), source.getBalance(), () -> "Account should regain the deposit");
+        assertEquals(new BigDecimal("0.00"), goal.getCurrentAmount(), () -> "Goal should be empty again");
+    }
+
+    @Test
+    @DisplayName("Should revert a SAVINGS_WITHDRAWAL by putting the money back into the goal")
+    void shouldRevertSavingsWithdrawal() {
+        Account destination = Account.builder().balance(new BigDecimal("30.00")).build();
+        SavingsGoal goal = activeGoal("30.00", "100.00");
+
+        transactionService.revertBalanceChanges(TransactionType.SAVINGS_WITHDRAWAL, new BigDecimal("20.00"), destination, null, goal);
+
+        assertEquals(new BigDecimal("10.00"), destination.getBalance(), () -> "Account should give the withdrawal back");
+        assertEquals(new BigDecimal("50.00"), goal.getCurrentAmount(), () -> "Goal should regain the withdrawal");
+    }
+
+    @Test
+    @DisplayName("Should refuse a movement that would leave the goal negative")
+    void shouldRejectNegativeGoalBalance() {
+        Account account = Account.builder().balance(new BigDecimal("0.00")).build();
+        SavingsGoal goal = activeGoal("20.00", "100.00");
+
+        assertThrows(SavingsGoalRuntimeException.class,
+                () -> transactionService.applyBalanceChanges(TransactionType.SAVINGS_WITHDRAWAL, new BigDecimal("50.00"), account, null, goal),
+                () -> "A goal can never hold a negative amount");
+        assertEquals(new BigDecimal("20.00"), goal.getCurrentAmount(), () -> "Goal must stay untouched");
+    }
+
+    @Test
+    @DisplayName("Should refuse any movement on a closed goal")
+    void shouldRejectMovementOnClosedGoal() {
+        Account account = Account.builder().balance(new BigDecimal("100.00")).build();
+        SavingsGoal goal = activeGoal("0.00", "100.00");
+        goal.setStatus(SavingsGoalStatus.CLOSED);
+
+        assertThrows(SavingsGoalRuntimeException.class,
+                () -> transactionService.applyBalanceChanges(TransactionType.SAVINGS_DEPOSIT, new BigDecimal("10.00"), account, null, goal),
+                () -> "Closed goals are frozen");
+    }
+
+    @Test
+    @DisplayName("Should reject creating a savings movement through the generic endpoint")
+    void shouldRejectGenericCreateOfSavingsType() {
+        Account source = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("100.00")).build();
+        TransactionDTO dto = new TransactionDTO(
+                null, LocalDateTime.now().toString(), new BigDecimal("10.00"), "SAVINGS_DEPOSIT",
+                "Vacation", "Savings", null, null, source.getId(), null, null, UUID.randomUUID(), null
+        );
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(accountService.getEntityById(source.getId())).thenReturn(source);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> transactionService.create(dto),
+                () -> "Savings movements only come from the savings goal endpoints");
+        assertEquals(new BigDecimal("100.00"), source.getBalance(), () -> "Balance must stay untouched");
+        verify(transactionRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should delete a SAVINGS_DEPOSIT and give the money back to the account")
+    void shouldDeleteSavingsDeposit() {
+        Account account = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("250.00")).build();
+        SavingsGoal goal = activeGoal("50.00", "100.00");
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("50.00"))
+                .type(TransactionType.SAVINGS_DEPOSIT)
+                .account(account)
+                .savingsGoal(goal)
+                .user(mockUser)
+                .build();
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+
+        transactionService.deleteById(transactionId);
+
+        assertEquals(new BigDecimal("300.00"), account.getBalance(), () -> "Account should regain the deposit");
+        assertEquals(new BigDecimal("0.00"), goal.getCurrentAmount(), () -> "Goal should be empty");
+        verify(transactionRepository).delete(existing);
+    }
+
+    @Test
+    @DisplayName("Should refuse deleting a deposit the goal has already partly withdrawn")
+    void shouldRejectDeletingDepositAfterWithdrawal() {
+        Account account = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("280.00")).build();
+        SavingsGoal goal = activeGoal("20.00", "100.00"); // 50 deposited, 30 withdrawn since
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("50.00"))
+                .type(TransactionType.SAVINGS_DEPOSIT)
+                .account(account)
+                .savingsGoal(goal)
+                .user(mockUser)
+                .build();
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+
+        assertThrows(SavingsGoalRuntimeException.class,
+                () -> transactionService.deleteById(transactionId),
+                () -> "Removing the deposit would leave the goal negative");
+        assertEquals(new BigDecimal("20.00"), goal.getCurrentAmount(), () -> "Goal must stay untouched");
+        verify(transactionRepository, never()).delete(any(Transaction.class));
+    }
+
+    @Test
+    @DisplayName("Should reject update that relinks a movement to another goal")
+    void shouldRejectSavingsGoalChangeOnUpdate() {
+        Account account = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("100.00")).build();
+        SavingsGoal goal = activeGoal("50.00", "100.00");
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("50.00"))
+                .type(TransactionType.SAVINGS_DEPOSIT)
+                .account(account)
+                .savingsGoal(goal)
+                .user(mockUser)
+                .build();
+        TransactionDTO updateDto = new TransactionDTO(
+                transactionId, LocalDateTime.now().toString(), new BigDecimal("50.00"), "SAVINGS_DEPOSIT",
+                "Vacation", "Desc", null, null, account.getId(), null, null, UUID.randomUUID(), null
+        );
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> transactionService.update(transactionId, updateDto),
+                () -> "The goal of a movement is immutable");
+        assertEquals(new BigDecimal("50.00"), goal.getCurrentAmount(), () -> "Goal must stay untouched");
+    }
+
+    @Test
+    @DisplayName("Should adjust account and goal when editing the amount of a SAVINGS_DEPOSIT")
+    void shouldUpdateSavingsDepositAmount() {
+        Account account = Account.builder().id(UUID.randomUUID()).balance(new BigDecimal("250.00")).build();
+        SavingsGoal goal = activeGoal("50.00", "100.00");
+        Transaction existing = Transaction.builder()
+                .id(transactionId)
+                .amount(new BigDecimal("50.00"))
+                .type(TransactionType.SAVINGS_DEPOSIT)
+                .account(account)
+                .savingsGoal(goal)
+                .user(mockUser)
+                .build();
+        TransactionDTO updateDto = new TransactionDTO(
+                transactionId, LocalDateTime.now().toString(), new BigDecimal("80.00"), "SAVINGS_DEPOSIT",
+                "Vacation", "Bigger share", null, null, account.getId(), null, null, goal.getId(), null
+        );
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByIdAndUser(transactionId, mockUser)).thenReturn(Optional.of(existing));
+        when(transactionMapper.toDto(existing)).thenReturn(updateDto);
+
+        transactionService.update(transactionId, updateDto);
+
+        // account: 250 + 50 (revert) - 80 (apply) = 220 ; goal: 50 - 50 + 80 = 80
+        assertEquals(new BigDecimal("220.00"), account.getBalance(), () -> "Account should reflect the delta");
+        assertEquals(new BigDecimal("80.00"), goal.getCurrentAmount(), () -> "Goal should reflect the delta");
     }
 }
