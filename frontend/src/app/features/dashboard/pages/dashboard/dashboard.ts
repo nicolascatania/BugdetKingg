@@ -63,6 +63,13 @@ export class Dashboard implements OnInit {
   filterTrigger = signal(0);
   loading = signal(true);
 
+  /**
+   * Bar heights (in %) for the chart placeholder shown while the dashboard
+   * loads. Hardcoded and uneven on purpose: a skeleton with equal bars reads as
+   * a broken chart, while an irregular silhouette reads as data on its way.
+   */
+  readonly barPlaceholders: readonly number[] = [45, 70, 35, 85, 55, 75, 40, 65, 50, 80, 60, 30];
+
   /** Last rendered slice data, kept so the chart can be repainted on theme change. */
   private lastExpenseData: CategoryExpense[] = [];
 

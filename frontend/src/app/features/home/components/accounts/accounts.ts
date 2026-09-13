@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../../../accounts/services/AccountService';
 
@@ -13,16 +13,11 @@ import { AccountService } from '../../../accounts/services/AccountService';
 export class Accounts {
   private accountService = inject(AccountService);
   accounts = this.accountService.accounts;
-  
-  // Local signal driving the skeleton placeholders.
-  loading = signal(true);
 
-  constructor() {
-    // As soon as the accounts signal emits, the skeleton can be dismissed.
-    effect(() => {
-      if (this.accounts().length >= 0) {
-        this.loading.set(false);
-      }
-    });
-  }
+  /**
+   * Request state owned by the service. The previous local effect checked
+   * `accounts().length >= 0`, which is true for an empty array too, so it
+   * cleared the flag on its first run and the skeleton never actually showed.
+   */
+  loading = this.accountService.loading;
 }

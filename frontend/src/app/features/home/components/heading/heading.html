@@ -44,8 +44,22 @@
     <!-- Market context -->
     @if (isLoading()) {
       <div class="grid w-full gap-3 sm:grid-cols-2 lg:w-[360px] lg:grid-cols-1">
+        <!-- Mirrors the market tiles: label + icon, then the two figures. -->
         @for (i of [1, 2]; track i) {
-          <div class="skeleton h-[118px] rounded-2xl lg:h-[86px]"></div>
+          <article
+            class="relative flex min-h-[118px] flex-col justify-between overflow-hidden rounded-2xl
+                   border border-line bg-surface-2 p-4 lg:min-h-[86px]"
+            aria-hidden="true"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <div class="skeleton-line h-2.5 w-20"></div>
+              <div class="skeleton h-8 w-8 rounded-lg"></div>
+            </div>
+            <div class="mt-3 flex items-end gap-4">
+              <div class="skeleton-line h-5 w-20"></div>
+              <div class="skeleton-line h-5 w-20"></div>
+            </div>
+          </article>
         }
       </div>
     } @else {

@@ -48,8 +48,33 @@
   <!-- Goals grid -->
   <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     @if (loading()) {
+      <!-- Mirrors the goal card: icon + name, progress bar, the 2x2 stats grid. -->
       @for (i of [1, 2, 3]; track i) {
-        <div class="skeleton h-48 rounded-2xl"></div>
+        <article class="skeleton-card min-h-[12rem]" aria-hidden="true">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex min-w-0 items-center gap-3">
+              <div class="skeleton-avatar"></div>
+              <div class="skeleton-line w-28"></div>
+            </div>
+          </div>
+
+          <div class="mt-4 space-y-2">
+            <div class="flex items-baseline justify-between">
+              <div class="skeleton-line w-20"></div>
+              <div class="skeleton-line h-3 w-24"></div>
+            </div>
+            <div class="skeleton h-2 w-full rounded-full"></div>
+          </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-3 border-t border-line pt-3">
+            @for (cell of [1, 2, 3, 4]; track cell) {
+              <div class="space-y-1.5">
+                <div class="skeleton-line h-2.5 w-16"></div>
+                <div class="skeleton-line h-3 w-20"></div>
+              </div>
+            }
+          </div>
+        </article>
       }
     } @else {
       @for (goal of goals(); track goal.id) {

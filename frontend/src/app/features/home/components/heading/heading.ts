@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
 import { AccountService } from '../../../accounts/services/AccountService';
 import { DolarService } from '../../../../core/services/dolarService';
 import { ArgentinaAPIService } from '../../../../core/services/ArgentinaAPIService';
@@ -26,16 +27,24 @@ export class Heading {
   private readonly dolarService = inject(DolarService);
   private readonly argentinaAPIService = inject(ArgentinaAPIService);
 
-  private readonly dolarData = toSignal(this.dolarService.getDollarValue(), {
-    initialValue: { compra: 0, venta: 0 },
-  });
+  /**
+   * Both feeds start as `null` rather than as a zero-filled object, so "not
+   * answered yet" stays distinguishable from "answered with 0". A failing
+   * external API resolves to `null` too, which dismisses the placeholders
+   * instead of leaving them shimmering forever.
+   */
+  private readonly dolarData = toSignal(
+    this.dolarService.getDollarValue().pipe(catchError(() => of(null))),
+    { initialValue: undefined },
+  );
 
   private readonly inflationData = toSignal(
-    this.argentinaAPIService.getInflation(),
-    {
-      initialValue: { value: 0, date: new Date(0) } as InflationResponseDTO,
-    },
+    this.argentinaAPIService
+      .getInflation()
+      .pipe(catchError(() => of(null as InflationResponseDTO | null))),
+    { initialValue: undefined },
   );
+
   readonly dolarCompra = computed(() => this.dolarData()?.compra ?? 0);
   readonly dolarVenta = computed(() => this.dolarData()?.venta ?? 0);
   readonly inflationValue = computed(() => this.inflationData()?.value ?? 0);
@@ -43,9 +52,9 @@ export class Heading {
 
   readonly totalBalance = this.accountService.totalBalance;
 
-  // Still loading while the critical market figures remain at their initial 0.
+  /** Placeholders stay up only while a feed has not settled yet. */
   isLoading = computed(
-    () => this.dolarCompra() === 0 || this.inflationValue() === 0,
+    () => this.dolarData() === undefined || this.inflationData() === undefined,
   );
 
   @Output() readonly newAccount = new EventEmitter<void>();

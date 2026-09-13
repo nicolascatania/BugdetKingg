@@ -48,8 +48,26 @@
   <!-- Progress cards -->
   <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     @if (loading()) {
+      <!-- Mirrors the budget card: icon + category, amounts, progress bar, actions. -->
       @for (i of [1, 2, 3]; track i) {
-        <div class="skeleton h-40 rounded-2xl"></div>
+        <article class="skeleton-card min-h-[10rem]" aria-hidden="true">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex min-w-0 items-center gap-3">
+              <div class="skeleton-avatar"></div>
+              <div class="skeleton-line w-24"></div>
+            </div>
+            <div class="skeleton h-6 w-16 rounded-full"></div>
+          </div>
+
+          <div class="mt-4 space-y-2">
+            <div class="flex items-baseline justify-between">
+              <div class="skeleton-line w-20"></div>
+              <div class="skeleton-line h-3 w-24"></div>
+            </div>
+            <div class="skeleton h-2 w-full rounded-full"></div>
+            <div class="skeleton-line h-3 w-2/3"></div>
+          </div>
+        </article>
       }
     } @else {
       @for (p of progress(); track p.budgetId) {

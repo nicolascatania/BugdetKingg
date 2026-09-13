@@ -16,6 +16,15 @@ export class AccountService extends BaseService<AccountDTO> {
   private _accounts = signal<AccountDTO[]>([]);
   readonly accounts = this._accounts.asReadonly();
 
+  /**
+   * True while an account request is in flight. Starts as `true` so the very
+   * first paint shows placeholders instead of a flash of the empty state:
+   * consumers must not infer loading from an empty list, because "no accounts
+   * yet" and "accounts not fetched yet" are different states.
+   */
+  private _loading = signal(true);
+  readonly loading = this._loading.asReadonly();
+
   private refreshable = new RefreshableCrudService();
   readonly refresh$ = this.refreshable.getRefreshSignal();
 
@@ -39,9 +48,14 @@ export class AccountService extends BaseService<AccountDTO> {
   );
 
   private loadAccounts(): void {
-    this.http
-      .get<AccountDTO[]>(`${this.baseUrl}/by-user`)
-      .subscribe((accs) => this._accounts.set(accs));
+    this._loading.set(true);
+    this.http.get<AccountDTO[]>(`${this.baseUrl}/by-user`).subscribe({
+      next: (accs) => {
+        this._accounts.set(accs);
+        this._loading.set(false);
+      },
+      error: () => this._loading.set(false),
+    });
   }
 
   override create(account: AccountDTO) {

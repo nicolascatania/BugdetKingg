@@ -58,7 +58,8 @@ export class TransactionList {
   private ns = inject(NotificationService);
   private importExportService = inject(TransactionImportExportService);
 
-  loading = signal(false);
+  /** Starts true so the first paint shows placeholders, never a flash of the empty state. */
+  loading = signal(true);
   isImportModalOpen = signal(false);
 
   /** Disables the export button and shows progress while the CSV request is in flight. */

@@ -39,7 +39,8 @@ export class RecurringTransactionList implements OnInit {
   private ns = inject(NotificationService);
   private fb = inject(FormBuilder);
 
-  loading = signal(false);
+  /** Starts true so the first paint shows placeholders, never a flash of the empty state. */
+  loading = signal(true);
   templates = signal<RecurringTransactionDTO[]>([]);
   upcoming = signal<RecurringTransactionDTO[]>([]);
 

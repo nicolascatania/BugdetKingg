@@ -34,7 +34,13 @@ export class AccountList {
   selectedAccount = signal<AccountDTO | null>(null);
 
   accounts = computed(() => this.accountService.accounts());
-  loading = computed(() => this.accounts().length === 0);
+
+  /**
+   * Mirrors the service's request state. It used to be derived from an empty
+   * list, which left a user with zero accounts stuck on skeletons forever and
+   * hid the empty state.
+   */
+  loading = this.accountService.loading;
 
   /** Disables the export button and shows progress while the CSV request is in flight. */
   readonly exporting = signal(false);
