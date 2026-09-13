@@ -1,6 +1,7 @@
 package com.veritech.BudgetKing.security.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -49,11 +50,15 @@ public class JwtUtil {
         return extractAllClaims(token).getSubject();
     }
 
+    /**
+     * A token is valid when its signature checks out, it has not expired and
+     * its subject is the given user. Parsing already enforces the first two.
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
+            Claims claims = extractAllClaims(token);
+            return userDetails.getUsername().equals(claims.getSubject());
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }

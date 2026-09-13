@@ -419,3 +419,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Database dumps contain real user data; never commit them
+*.sql
+!BudgetKing/src/**/*.sql

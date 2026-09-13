@@ -7,7 +7,6 @@ import com.veritech.BudgetKing.interfaces.ICrudController;
 import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.service.AppUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,9 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
+/**
+ * User administration endpoints. Every route under {@code /users}, including the
+ * generic CRUD ones inherited from {@link ICrudController} (get/update/delete/search/options),
+ * is restricted to administrators by the URL rule in
+ * {@link com.veritech.BudgetKing.security.config.SecurityConfig}; a regular user must
+ * never be able to read or alter other accounts.
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor

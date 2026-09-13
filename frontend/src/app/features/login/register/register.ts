@@ -10,6 +10,9 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../core/services/NotificationService';
 
+/** At least one letter and one digit; length is enforced by the min/max validators. */
+const PASSWORD_PATTERN = /^(?=.*\p{L})(?=.*\d).+$/u;
+
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -35,7 +38,8 @@ export class Register {
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      // Mirrors the backend policy (RegisterRequest): 8-72 chars, at least one letter and one digit.
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(72), Validators.pattern(PASSWORD_PATTERN)]],
       name: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
     });
