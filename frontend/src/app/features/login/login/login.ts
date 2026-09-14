@@ -6,8 +6,6 @@ import {
   NgZone,
   OnDestroy,
   ViewChild,
-  effect,
-  inject,
   signal,
 } from '@angular/core';
 import { AuthService } from '../../../core/services/auth';
@@ -20,7 +18,6 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../core/services/NotificationService';
-import { Theme, ThemeService } from '../../../core/services/theme.service';
 import { environment } from '../../../../environments/environment';
 
 /**
@@ -58,11 +55,6 @@ export class Login implements AfterViewInit, OnDestroy {
 
   @ViewChild('googleButton') googleButton?: ElementRef<HTMLDivElement>;
 
-  private readonly themeService = inject(ThemeService);
-
-  /** Set once Google Identity Services is initialized and its button can be drawn. */
-  private readonly googleInitialized = signal(false);
-
   /** Last width handed to Google, so a resize that leaves it unchanged does not redraw. */
   private lastRenderedWidth = 0;
 
@@ -78,16 +70,6 @@ export class Login implements AfterViewInit, OnDestroy {
     this.loginForm = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
       password: ['', [Validators.required]],
-    });
-
-    // Google paints the button into its own DOM and cannot inherit our CSS
-    // tokens, so the matching light/dark variant has to be re-requested from it
-    // every time the theme flips.
-    effect(() => {
-      const theme = this.themeService.theme();
-      if (this.googleInitialized()) {
-        this.renderGoogleButton(theme);
-      }
     });
   }
 
@@ -124,8 +106,7 @@ export class Login implements AfterViewInit, OnDestroy {
       callback: (response) => this.ngZone.run(() => this.onGoogleCredential(response.credential)),
     });
 
-    // The theme effect in the constructor draws the button from here on.
-    this.googleInitialized.set(true);
+    this.renderGoogleButton();
     this.observeAvailableWidth();
   }
 
@@ -133,28 +114,37 @@ export class Login implements AfterViewInit, OnDestroy {
    * Google only accepts a fixed pixel width, so the button has to be redrawn
    * whenever the card resizes — rotating a phone, or resizing the window —
    * otherwise it keeps a width the card can no longer fit and overflows it.
+   * Only the DOM is touched here, so there is no need to re-enter Angular's zone.
    */
   private observeAvailableWidth(): void {
     this.resizeObserver = new ResizeObserver(() => {
       if (this.measureButtonWidth() !== this.lastRenderedWidth) {
-        this.ngZone.run(() => this.renderGoogleButton(this.themeService.theme()));
+        this.renderGoogleButton();
       }
     });
     this.resizeObserver.observe(this.googleButton!.nativeElement);
   }
 
-  /** (Re)draws Google's button at the current width, in the active theme's variant. */
-  private renderGoogleButton(theme: Theme): void {
+  /**
+   * (Re)draws Google's button at the current width.
+   *
+   * Always the light `outline` variant, in dark mode too. The personalised
+   * button Google shows to a browser with an active session sits on a white
+   * box that `filled_black` does not cover, which left a white frame around a
+   * black button on the dark theme. A light button on a dark surface is the
+   * variant Google itself ships for dark backgrounds, and it hides that box.
+   */
+  private renderGoogleButton(): void {
     const host = this.googleButton!.nativeElement;
     const width = this.measureButtonWidth();
 
-    // renderButton appends rather than replaces; drop the previous variant so
-    // switching themes does not stack two buttons.
+    // renderButton appends rather than replaces; drop the previous one so a
+    // resize does not stack two buttons.
     host.replaceChildren();
 
     google.accounts.id.renderButton(host, {
       type: 'standard',
-      theme: theme === 'dark' ? 'filled_black' : 'outline',
+      theme: 'outline',
       size: 'large',
       shape: 'pill',
       logo_alignment: 'center',
