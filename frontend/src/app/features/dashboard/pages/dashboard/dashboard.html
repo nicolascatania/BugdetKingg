@@ -43,10 +43,10 @@
   </section>
 
   <!-- Key figures -->
-  <section appReveal [revealDelay]="100" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+  <section appReveal [revealDelay]="100" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
     @if (loading()) {
       <!-- Mirrors a key-figure tile: caption line above, big figure below. -->
-      @for (i of [1, 2, 3]; track i) {
+      @for (i of [1, 2, 3, 4]; track i) {
         <article class="skeleton-card flex min-h-[96px] flex-col justify-center gap-3" aria-hidden="true">
           <div class="skeleton-line h-2.5 w-24"></div>
           <div class="skeleton-line h-6 w-2/5"></div>
@@ -95,6 +95,24 @@
           </div>
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-positive/10 text-positive">
             <i class="fa-solid fa-arrow-trend-up text-sm"></i>
+          </span>
+        </div>
+      </article>
+
+      <!-- Net result of the range: what was left after spending, unlike the account total above. -->
+      <article class="card-interactive p-5">
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <p class="eyebrow">{{ t('dashboard.rangeBalance') }}</p>
+            <p
+              class="tabular mt-1.5 truncate text-xl font-bold"
+              [ngClass]="(dashboardData()?.netBalance ?? 0) >= 0 ? 'text-body' : 'text-negative'"
+            >
+              {{ dashboardData()?.netBalance | currency: 'ARS' : 'symbol' : '1.0-0' }}
+            </p>
+          </div>
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+            <i class="fa-solid fa-scale-balanced text-sm"></i>
           </span>
         </div>
       </article>
@@ -180,11 +198,14 @@
     </div>
   </section>
 
-  <!-- Movements -->
+  <!-- Movements: follow the applied range, same as every figure above. -->
   <section appReveal [revealDelay]="180">
-    <div class="mb-4 flex items-center justify-between gap-4">
-      <h2 class="section-title">{{ t('dashboard.movementsThisMonth') }}</h2>
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <h2 class="section-title">{{ t('dashboard.movementsInRange') }}</h2>
+      @if (appliedRange(); as range) {
+        <span class="chip-brand tabular">{{ range.from | date: 'dd/MM/yyyy' }} – {{ range.to | date: 'dd/MM/yyyy' }}</span>
+      }
     </div>
-    <last-moves></last-moves>
+    <last-moves [dateFrom]="appliedRange()?.from ?? null" [dateTo]="appliedRange()?.to ?? null"></last-moves>
   </section>
 </div>

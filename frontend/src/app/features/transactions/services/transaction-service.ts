@@ -5,6 +5,7 @@ import { TransactionDTO } from '../interfaces/TransactionDTO.interface';
 import { HttpClient } from '@angular/common/http';
 import { MonthlyTransactionReportDTO } from '../interfaces/MonthlyTransactionReportDTO.interface';
 import { LastMovesDTO } from '../interfaces/LastMovesDTO.interface';
+import { MonthComparisonDTO } from '../interfaces/MonthComparisonDTO.interface';
 import { DashboardFilter } from '../../dashboard/interfaces/dashboardFilter.interface';
 import { DashBoardDTO } from '../../dashboard/interfaces/DashBoardDTO.interface';
 import { MonthlyIncomeExpenseDTO } from '../interfaces/MonthlyIncomeExpenseDTO.interface';
@@ -61,6 +62,16 @@ export class TransactionService extends BaseService<TransactionDTO> {
 
   getMovementsOfThisMonth(): Observable<LastMovesDTO[]> {
     return this.http.get<LastMovesDTO[]>(`${this.baseUrl}/movements-this-month`);
+  }
+
+  /** Movements inside `[dateFrom, dateTo]` (ISO dates, both inclusive), most recent first. */
+  getMovementsBetween(dateFrom: string, dateTo: string): Observable<LastMovesDTO[]> {
+    return this.http.get<LastMovesDTO[]>(`${this.baseUrl}/movements`, { params: { dateFrom, dateTo } });
+  }
+
+  /** Current month against the previous one. */
+  getMonthComparison(): Observable<MonthComparisonDTO> {
+    return this.http.get<MonthComparisonDTO>(`${this.baseUrl}/month-comparison`);
   }
 
   getCurrentMonthlyReport(): Observable<MonthlyTransactionReportDTO> {

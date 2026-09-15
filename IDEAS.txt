@@ -7,7 +7,7 @@
 3. CSV export medium
 4. Skeleton screens DONE
 5. Input masking for ammounts inputs. low
-6. Savings view or some way to tell the user you saved this money last month, or you spent less money than last month. high
+6. DONE (month comparison on the home summary, see docs/features/dashboard-range-and-month-comparison.md). Savings view or some way to tell the user you saved this money last month, or you spent less money than last month. high
 7. Streak badge. low
 8. Auto categorizing low
 9. Goals ... Set a goal that has certain money to be acomplished and a progress bar... low

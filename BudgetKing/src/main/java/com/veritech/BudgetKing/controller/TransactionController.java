@@ -35,6 +35,24 @@ public class TransactionController implements ICrudController<TransactionDTO, UU
         return ResponseEntity.ok(service.getMonthlyBalance());
     }
 
+    /**
+     * Movements inside a date range, most recent first. Backs the dashboard list so
+     * it follows the range filter instead of always showing the current month.
+     */
+    @GetMapping("/movements")
+    public ResponseEntity<List<LastMovesDTO>> movementsBetween(
+            @RequestParam String dateFrom,
+            @RequestParam String dateTo
+    ) {
+        return ResponseEntity.ok(service.movementsBetween(dateFrom, dateTo));
+    }
+
+    /** Current month against the previous one, for the home page comparison. */
+    @GetMapping("/month-comparison")
+    public ResponseEntity<MonthComparisonDTO> monthComparison() {
+        return ResponseEntity.ok(service.getMonthComparison());
+    }
+
     @PostMapping("dashboard")
     public ResponseEntity<DashBoardDTO> dashboard(@RequestBody DashBoardFilter filter) {
         return ResponseEntity.ok(service.getDataForDashBoard(filter));

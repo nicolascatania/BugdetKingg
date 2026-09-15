@@ -391,7 +391,47 @@ public class TransactionService implements ICrudService<TransactionDTO, UUID, Tr
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new DashBoardDTO(balance, totals.expense(), totals.income(), listWithPercentage);
+        BigDecimal netBalance = totals.income().subtract(totals.expense());
+
+        return new DashBoardDTO(balance, totals.expense(), totals.income(), netBalance, listWithPercentage);
+    }
+
+    /**
+     * Every movement of the user inside {@code [dateFrom, dateTo]} (both inclusive,
+     * whole days), most recent first. Same shape as {@link #movementsOfThisMonth()}
+     * so the same list component can render either.
+     *
+     * @param dateFrom first day of the range, ISO {@code yyyy-MM-dd}
+     * @param dateTo   last day of the range, ISO {@code yyyy-MM-dd}
+     */
+    public List<LastMovesDTO> movementsBetween(String dateFrom, String dateTo) {
+        AppUser user = securityUtils.getCurrentUser();
+        LocalDateTime start = DateUtils.parseStart(dateFrom);
+        LocalDateTime end = DateUtils.parseEnd(dateTo);
+
+        return transactionRepository
+                .findByUserAndDateBetween(user, start, end)
+                .stream()
+                .map(mapper::toLastMovesDTO)
+                .sorted((a, b) -> b.date().compareTo(a.date()))
+                .toList();
+    }
+
+    /**
+     * Income and expenses of the current calendar month next to the previous one.
+     * The current month is partial by nature; the comparison is still useful as a
+     * running indicator and the UI labels it as such.
+     */
+    public MonthComparisonDTO getMonthComparison() {
+        AppUser user = securityUtils.getCurrentUser();
+        LocalDateTime currentStart = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime currentEnd = currentStart.plusMonths(1);
+        LocalDateTime previousStart = currentStart.minusMonths(1);
+
+        MonthlyTransactionReportDTO current = transactionRepository.getMonthlyReport(user, currentStart, currentEnd);
+        MonthlyTransactionReportDTO previous = transactionRepository.getMonthlyReport(user, previousStart, currentStart);
+
+        return new MonthComparisonDTO(current.income(), current.outcome(), previous.income(), previous.outcome());
     }
 
 
