@@ -777,6 +777,16 @@
       "title": "Język",
       "subtitle": "Menu, etykiety i komunikaty w Twoim języku.",
       "reloadHint": "Zmiana języka przeładowuje stronę, aby daty i kwoty używały nowych ustawień regionalnych."
+    },
+    "region": {
+      "title": "Region",
+      "subtitle": "Miejsce zamieszkania decyduje, jakie lokalne dane pokazuje BudgetKing.",
+      "country": "Kraj",
+      "none": "Nie ustawiono",
+      "hint": "Argentyna pokazuje kurs USD i inflację INDEC na stronie głównej. Inne kraje nie mają jeszcze danych rynkowych; będą dodawane stopniowo.",
+      "saved": "Region zapisany.",
+      "error": "Nie udało się zapisać regionu. Spróbuj ponownie.",
+      "loadError": "Nie udało się wczytać listy krajów. Odśwież stronę."
     }
   }
 }

@@ -62,6 +62,16 @@ public class AppUser {
     @Builder.Default
     private boolean enabled = true;
 
+    /**
+     * ISO 3166-1 alpha-2 code of the country the user lives in (e.g. {@code AR}),
+     * validated against {@link java.util.Locale#getISOCountries()}. Null until the
+     * user picks one in Settings. Drives region-specific UI such as the Argentine
+     * market widgets on the home page; it is <em>not</em> a currency (that will
+     * live per account, see {@code docs/proposals/multi-currency.md}).
+     */
+    @Column(length = 2)
+    private String country;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",

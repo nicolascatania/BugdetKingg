@@ -55,11 +55,11 @@
       </div>
     </div>
 
-    <!-- Market context -->
+    <!-- Market context: only for countries with a region entry (see core/regions). -->
     @if (isLoading()) {
       <div class="grid w-full gap-3 sm:grid-cols-2 lg:w-[360px] lg:grid-cols-1">
         <!-- Mirrors the market tiles: label + icon, then the two figures. -->
-        @for (i of [1, 2]; track i) {
+        @for (widget of marketWidgets(); track widget) {
           <article
             class="relative flex min-h-[118px] flex-col justify-between overflow-hidden rounded-2xl
                    border border-line bg-surface-2 p-4 lg:min-h-[86px]"
@@ -76,9 +76,10 @@
           </article>
         }
       </div>
-    } @else {
+    } @else if (showMarket()) {
       <div class="grid w-full gap-3 sm:grid-cols-2 lg:w-[360px] lg:grid-cols-1">
         <!-- Dollar -->
+        @if (showDollar()) {
         <article class="hover-lift rounded-2xl border border-line bg-surface-2 p-4">
           <!-- Stacked on phones (header on top, metrics below); single row from sm up. -->
           <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-3">
@@ -111,8 +112,10 @@
             </div>
           </div>
         </article>
+        }
 
         <!-- Inflation -->
+        @if (showInflation()) {
         <article class="hover-lift rounded-2xl border border-line bg-surface-2 p-4">
           <!-- Stacked on phones (header on top, metrics below); single row from sm up. -->
           <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-3">
@@ -141,6 +144,7 @@
             </div>
           </div>
         </article>
+        }
       </div>
     }
   </div>

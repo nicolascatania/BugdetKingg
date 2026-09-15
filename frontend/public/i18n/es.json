@@ -777,6 +777,16 @@
       "title": "Idioma",
       "subtitle": "Menús, etiquetas y mensajes en tu idioma.",
       "reloadHint": "Cambiar el idioma recarga la página para que fechas y montos sigan la nueva configuración regional."
+    },
+    "region": {
+      "title": "Región",
+      "subtitle": "Dónde vivís define qué datos locales muestra BudgetKing.",
+      "country": "País",
+      "none": "Sin definir",
+      "hint": "Argentina muestra la cotización del dólar y la inflación del INDEC en el inicio. Otros países todavía no muestran datos de mercado; se irán sumando.",
+      "saved": "Región guardada.",
+      "error": "No se pudo guardar tu región. Probá de nuevo.",
+      "loadError": "No se pudo cargar la lista de países. Recargá la página."
     }
   }
 }
