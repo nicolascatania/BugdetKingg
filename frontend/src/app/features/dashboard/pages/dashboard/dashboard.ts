@@ -61,6 +61,13 @@ export class Dashboard implements OnInit {
   filterForm!: FormGroup;
 
   dashboardData = signal<DashBoardDTO | null>(null);
+
+  /**
+   * Range the figures on screen were computed for. Only moves when the user
+   * applies the form, so the movements list and the cards never disagree with
+   * each other while a new range is being typed.
+   */
+  readonly appliedRange = signal<{ from: string; to: string } | null>(null);
   annualChartData = signal<MonthlyIncomeExpenseDTO[]>([]);
   accountsSignal = signal<OptionDTO[]>([]);
   filterTrigger = signal(0);
@@ -130,6 +137,8 @@ export class Dashboard implements OnInit {
 
   private loadDashboardData() {
     this.loading.set(true);
+    const { dateFrom, dateTo } = this.filterForm.value;
+    this.appliedRange.set({ from: dateFrom, to: dateTo });
 
     //destroys the canvas to avoid conflicts on the re render when data arrives.
     if (this.expenseChart) {

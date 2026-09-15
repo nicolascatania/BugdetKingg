@@ -23,8 +23,9 @@ export class MonthlySummary {
   private transactionService = inject(TransactionService);
   private ns = inject(NotificationService);
 
-  monthlyReport = toSignal(
-    this.transactionService.getCurrentMonthlyReport().pipe(
+  /** Current and previous month in one call; the tiles read the current half. */
+  comparison = toSignal(
+    this.transactionService.getMonthComparison().pipe(
       catchError((err) => {
         this.ns.error(err);
         return of(null);
@@ -34,7 +35,30 @@ export class MonthlySummary {
   );
 
   balance = computed(() => {
-    const r = this.monthlyReport();
-    return r ? r.income - r.outcome : 0;
+    const c = this.comparison();
+    return c ? c.currentIncome - c.currentExpense : 0;
   });
+
+  previousBalance = computed(() => {
+    const c = this.comparison();
+    return c ? c.previousIncome - c.previousExpense : 0;
+  });
+
+  /** Signed change vs last month, in absolute money, per figure. */
+  incomeDelta = computed(() => this.delta(this.comparison()?.currentIncome, this.comparison()?.previousIncome));
+  expenseDelta = computed(() => this.delta(this.comparison()?.currentExpense, this.comparison()?.previousExpense));
+  balanceDelta = computed(() => this.balance() - this.previousBalance());
+
+  /** Percentage change vs last month; `null` when last month was zero (no ratio to show). */
+  incomePct = computed(() => this.pct(this.comparison()?.currentIncome, this.comparison()?.previousIncome));
+  expensePct = computed(() => this.pct(this.comparison()?.currentExpense, this.comparison()?.previousExpense));
+
+  private delta(current?: number, previous?: number): number {
+    return (current ?? 0) - (previous ?? 0);
+  }
+
+  private pct(current?: number, previous?: number): number | null {
+    if (!previous) return null;
+    return (((current ?? 0) - previous) / previous) * 100;
+  }
 }

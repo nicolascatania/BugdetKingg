@@ -402,7 +402,11 @@
       "title": "Monatsübersicht",
       "income": "Einnahmen",
       "outcome": "Ausgaben",
-      "balance": "Saldo"
+      "balance": "Saldo",
+      "vsLastMonthPct": "{{percent}} % ggü. Vormonat",
+      "vsLastMonthAmount": "{{amount}} ggü. Vormonat",
+      "savedMore": "{{amount}} mehr als im Vormonat",
+      "savedLess": "{{amount}} weniger als im Vormonat"
     },
     "lastMoves": {
       "empty": "Diesen Monat noch keine Buchungen."
@@ -734,10 +738,11 @@
     "totalBalance": "Gesamtsaldo",
     "expenses": "Ausgaben",
     "income": "Einnahmen",
+    "rangeBalance": "Saldo im Zeitraum",
     "expense": "Ausgabe",
     "expensesByCategory": "Ausgaben nach Kategorie",
     "noExpenses": "Keine Ausgaben in diesem Zeitraum.",
-    "movementsThisMonth": "Buchungen dieses Monats",
+    "movementsInRange": "Bewegungen im Zeitraum",
     "chart": {
       "title": "Einnahmen vs. Ausgaben",
       "subtitle": "Aktuelles Jahr, Monat für Monat",

@@ -1,6 +1,12 @@
 package com.veritech.BudgetKing.service;
 
+import com.veritech.BudgetKing.dto.DashBoardDTO;
+import com.veritech.BudgetKing.dto.IncomeExpenseDTO;
+import com.veritech.BudgetKing.dto.LastMovesDTO;
+import com.veritech.BudgetKing.dto.MonthComparisonDTO;
+import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.dto.TransactionDTO;
+import com.veritech.BudgetKing.filter.DashBoardFilter;
 import com.veritech.BudgetKing.enumerator.SavingsGoalStatus;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.exception.SavingsGoalRuntimeException;
@@ -22,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -621,5 +628,63 @@ class TransactionServiceTest {
         // account: 250 + 50 (revert) - 80 (apply) = 220 ; goal: 50 - 50 + 80 = 80
         assertEquals(new BigDecimal("220.00"), account.getBalance(), () -> "Account should reflect the delta");
         assertEquals(new BigDecimal("80.00"), goal.getCurrentAmount(), () -> "Goal should reflect the delta");
+    }
+
+    @Test
+    @DisplayName("Should report the range's net balance as income minus expense on the dashboard")
+    void shouldReportNetBalanceOnDashboard() {
+        DashBoardFilter filter = new DashBoardFilter();
+        filter.setDateFrom("2026-03-01");
+        filter.setDateTo("2026-03-31");
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.getIncomeAndExpense(eq(mockUser), any(), any()))
+                .thenReturn(new IncomeExpenseDTO(new BigDecimal("1000.00"), new BigDecimal("1250.00")));
+        when(transactionRepository.getExpensesByCategoryWithIcon(eq(mockUser), any(), any())).thenReturn(List.of());
+        when(accountService.getAccounts()).thenReturn(List.of());
+
+        DashBoardDTO result = transactionService.getDataForDashBoard(filter);
+
+        assertEquals(0, new BigDecimal("-250.00").compareTo(result.netBalance()), () -> "Net must go negative when expenses exceed income");
+        assertEquals(0, new BigDecimal("1250.00").compareTo(result.expense()));
+        assertEquals(0, new BigDecimal("1000.00").compareTo(result.income()));
+    }
+
+    @Test
+    @DisplayName("Should list the movements of a date range most recent first")
+    void shouldListMovementsBetween() {
+        Transaction older = Transaction.builder().id(UUID.randomUUID()).date(LocalDateTime.of(2026, 3, 2, 9, 0)).build();
+        Transaction newer = Transaction.builder().id(UUID.randomUUID()).date(LocalDateTime.of(2026, 3, 20, 9, 0)).build();
+        LastMovesDTO olderDto = new LastMovesDTO(older.getId(), "02/03/2026 09:00", BigDecimal.ONE, "EXPENSE", "a", "b", "c", "d");
+        LastMovesDTO newerDto = new LastMovesDTO(newer.getId(), "20/03/2026 09:00", BigDecimal.ONE, "EXPENSE", "a", "b", "c", "d");
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.findByUserAndDateBetween(
+                mockUser, LocalDateTime.of(2026, 3, 1, 0, 0), LocalDateTime.of(2026, 4, 1, 0, 0)))
+                .thenReturn(List.of(older, newer));
+        when(transactionMapper.toLastMovesDTO(older)).thenReturn(olderDto);
+        when(transactionMapper.toLastMovesDTO(newer)).thenReturn(newerDto);
+
+        List<LastMovesDTO> result = transactionService.movementsBetween("2026-03-01", "2026-03-31");
+
+        assertEquals(List.of(newerDto, olderDto), result, () -> "The end of the range is inclusive and newest comes first");
+    }
+
+    @Test
+    @DisplayName("Should compare the current month against the whole previous month")
+    void shouldCompareCurrentAndPreviousMonth() {
+        LocalDateTime currentStart = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+        when(transactionRepository.getMonthlyReport(mockUser, currentStart, currentStart.plusMonths(1)))
+                .thenReturn(new MonthlyTransactionReportDTO(new BigDecimal("500.00"), new BigDecimal("300.00")));
+        when(transactionRepository.getMonthlyReport(mockUser, currentStart.minusMonths(1), currentStart))
+                .thenReturn(new MonthlyTransactionReportDTO(new BigDecimal("400.00"), new BigDecimal("350.00")));
+
+        MonthComparisonDTO result = transactionService.getMonthComparison();
+
+        assertEquals(0, new BigDecimal("500.00").compareTo(result.currentIncome()));
+        assertEquals(0, new BigDecimal("300.00").compareTo(result.currentExpense()));
+        assertEquals(0, new BigDecimal("400.00").compareTo(result.previousIncome()));
+        assertEquals(0, new BigDecimal("350.00").compareTo(result.previousExpense()));
+        assertEquals(0, new BigDecimal("200.00").compareTo(result.currentNet()), () -> "Current net mismatch");
+        assertEquals(0, new BigDecimal("50.00").compareTo(result.previousNet()), () -> "Previous net mismatch");
     }
 }

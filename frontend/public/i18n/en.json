@@ -402,7 +402,11 @@
       "title": "Monthly summary",
       "income": "Income",
       "outcome": "Outcome",
-      "balance": "Balance"
+      "balance": "Balance",
+      "vsLastMonthPct": "{{percent}}% vs last month",
+      "vsLastMonthAmount": "{{amount}} vs last month",
+      "savedMore": "{{amount}} more than last month",
+      "savedLess": "{{amount}} less than last month"
     },
     "lastMoves": {
       "empty": "No movements this month yet."
@@ -734,10 +738,11 @@
     "totalBalance": "Total balance",
     "expenses": "Expenses",
     "income": "Income",
+    "rangeBalance": "Range balance",
     "expense": "Expense",
     "expensesByCategory": "Expenses by category",
     "noExpenses": "No expenses in this range.",
-    "movementsThisMonth": "Movements of this month",
+    "movementsInRange": "Movements in range",
     "chart": {
       "title": "Income vs expense",
       "subtitle": "Current year, month by month",

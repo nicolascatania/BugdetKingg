@@ -1,7 +1,7 @@
 <section *transloco="let t">
   <h2 class="section-title mb-4">{{ t('home.summary.title') }}</h2>
 
-  @if (monthlyReport() === null) {
+  @if (comparison() === null) {
     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
       <!-- Mirrors the summary tile: caption + badge on top, figure below. -->
       @for (i of [1, 2, 3]; track i) {
@@ -24,7 +24,16 @@
           </span>
         </div>
         <p class="tabular mt-3 text-2xl font-bold text-positive">
-          {{ monthlyReport()?.income | currency: 'ARS' : 'symbol' : '1.2-2' }}
+          {{ comparison()?.currentIncome | currency: 'ARS' : 'symbol' : '1.2-2' }}
+        </p>
+        <!-- More income than last month is good: up arrow, positive colour. -->
+        <p class="tabular mt-1.5 flex items-center gap-1.5 text-xs" [ngClass]="incomeDelta() >= 0 ? 'text-positive' : 'text-negative'">
+          <i class="fa-solid text-[10px]" [ngClass]="incomeDelta() >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+          @if (incomePct() !== null) {
+            {{ t('home.summary.vsLastMonthPct', { percent: (incomePct()! | number: '1.0-0') }) }}
+          } @else {
+            {{ t('home.summary.vsLastMonthAmount', { amount: (incomeDelta() | currency: 'ARS' : 'symbol' : '1.0-0') }) }}
+          }
         </p>
       </article>
 
@@ -36,7 +45,16 @@
           </span>
         </div>
         <p class="tabular mt-3 text-2xl font-bold text-negative">
-          {{ monthlyReport()?.outcome | currency: 'ARS' : 'symbol' : '1.2-2' }}
+          {{ comparison()?.currentExpense | currency: 'ARS' : 'symbol' : '1.2-2' }}
+        </p>
+        <!-- Spending less than last month is good: down arrow, positive colour. -->
+        <p class="tabular mt-1.5 flex items-center gap-1.5 text-xs" [ngClass]="expenseDelta() <= 0 ? 'text-positive' : 'text-negative'">
+          <i class="fa-solid text-[10px]" [ngClass]="expenseDelta() <= 0 ? 'fa-arrow-down' : 'fa-arrow-up'"></i>
+          @if (expensePct() !== null) {
+            {{ t('home.summary.vsLastMonthPct', { percent: (expensePct()! | number: '1.0-0') }) }}
+          } @else {
+            {{ t('home.summary.vsLastMonthAmount', { amount: (expenseDelta() | currency: 'ARS' : 'symbol' : '1.0-0') }) }}
+          }
         </p>
       </article>
 
@@ -55,6 +73,14 @@
           [ngClass]="balance() >= 0 ? 'text-body' : 'text-negative'"
         >
           {{ balance() | currency: 'ARS' : 'symbol' : '1.2-2' }}
+        </p>
+        <p class="tabular mt-1.5 flex items-center gap-1.5 text-xs" [ngClass]="balanceDelta() >= 0 ? 'text-positive' : 'text-negative'">
+          <i class="fa-solid text-[10px]" [ngClass]="balanceDelta() >= 0 ? 'fa-piggy-bank' : 'fa-arrow-down'"></i>
+          @if (balanceDelta() >= 0) {
+            {{ t('home.summary.savedMore', { amount: (balanceDelta() | currency: 'ARS' : 'symbol' : '1.0-0') }) }}
+          } @else {
+            {{ t('home.summary.savedLess', { amount: (-balanceDelta() | currency: 'ARS' : 'symbol' : '1.0-0') }) }}
+          }
         </p>
       </article>
     </div>
