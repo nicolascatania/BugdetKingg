@@ -48,7 +48,29 @@
     <app-theme-toggle />
   </div>
 
-  <main class="relative z-10 flex min-h-screen items-center justify-center px-4 py-10 sm:px-6">
+  <main
+    class="relative z-10 flex min-h-screen flex-col items-center justify-center gap-5 px-4 py-10 sm:px-6"
+  >
+    <!--
+      Cold-start notice. The backend runs on a free hosting tier that spins
+      down when idle, so the first request after a while can hang for a
+      couple of minutes. Shown on every public screen so nobody mistakes
+      the wake-up delay for a broken app.
+    -->
+    <aside
+      role="note"
+      aria-label="Demo hosting notice"
+      class="cold-start-note flex w-full max-w-lg items-start gap-3 rounded-2xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-body backdrop-blur-sm"
+    >
+      <i class="fa-solid fa-mug-hot mt-0.5 shrink-0 text-warning" aria-hidden="true"></i>
+      <p class="m-0 leading-snug">
+        <strong class="font-semibold">Heads up:</strong> this is a demo hosted on a free tier.
+        The server sleeps when idle, so your first sign-in or sign-up may take
+        <strong class="font-semibold">up to a couple of minutes</strong> while it wakes up.
+        Nothing is broken &mdash; hang tight.
+      </p>
+    </aside>
+
     <router-outlet></router-outlet>
   </main>
 </div>
