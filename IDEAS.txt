@@ -4,17 +4,17 @@
 	3rd step go to another view to see how much money acorrding to a monthly income i can spend (aprox)
 		this will be adapted to new incomes. high
 2. Connect to browsers voice api. high
-3. CSV export medium
+3. DONE. CSV export medium
 4. Skeleton screens DONE
 5. Input masking for ammounts inputs. low
 6. DONE (month comparison on the home summary, see docs/features/dashboard-range-and-month-comparison.md). Savings view or some way to tell the user you saved this money last month, or you spent less money than last month. high
 7. Streak badge. low
 8. Auto categorizing low
-9. Goals ... Set a goal that has certain money to be acomplished and a progress bar... low
+9. DONE (savings goals, see docs/features/savings-goals.md). Goals ... Set a goal that has certain money to be acomplished and a progress bar... low
 10. DONE (Google-only, see docs/features/google-oauth2-login.md). OAuth2 login to replace the internal user/password management. Check whether it also gives us email verification for free (most providers confirm the email themselves, so we might not need to build that ourselves). high
-11. i18n system (English + Spanish), do this after OAuth2 is settled. high
+11. DONE (en/es/de/pl, Transloco). i18n system (English + Spanish), do this after OAuth2 is settled. high
 	IMPORTANT: right when the account is created, detect the browser language (navigator.language) and set it as the user's default language; fall back to English if the browser language isn't supported.
-12. Settings view: language switch + light/dark mode toggle. Do this after i18n is in place (needs the language switch to hook into). Will grow with more options later (notifications, currency, etc). medium
+12. DONE. Settings view: language switch + light/dark mode toggle. Do this after i18n is in place (needs the language switch to hook into). Will grow with more options later (notifications, currency, etc). medium
 13. WhatsApp bot to auto-add transactions. User sends a voice note or short text like "spent X on account Y, description, at merchant Z" and it creates the transaction. high
 	Needs a queue + outbox pattern: outbox table written in the same DB transaction as the domain change, a consumer polls/reads it and calls the WhatsApp API — survives retries and avoids losing messages if the API call fails.
 	Voice notes need a speech-to-text step first; then an NLP/parsing step to extract account, amount, description, type and counterparty from the free text (or transcript).

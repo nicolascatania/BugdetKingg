@@ -16,6 +16,7 @@ import { UserList } from './features/users/pages/user-list/user-list.component';
 import { BudgetList } from './features/budgets/pages/budget-list/budget-list';
 import { RecurringTransactionList } from './features/recurring-transactions/pages/recurring-transaction-list/recurring-transaction-list';
 import { SavingsGoalList } from './features/savings-goals/pages/savings-goal-list/savings-goal-list';
+import { Settings } from './features/settings/pages/settings/settings';
 
 export const routes: Routes = [
   // Public marketing/legal pages: landing at the root, terms next to it.
@@ -58,6 +59,7 @@ export const routes: Routes = [
       },
       { path: 'savings-goals', component: SavingsGoalList, canActivate: [AuthGuard] },
       { path: 'users', component: UserList, canActivate: [AuthGuard] },
+      { path: 'settings', component: Settings, canActivate: [AuthGuard] },
     ],
   },
 
