@@ -1,0 +1,730 @@
+{
+  "common": {
+    "language": "Idioma",
+    "brandHome": "Inicio de BudgetKing",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "delete": "Eliminar",
+    "deleting": "Eliminando…",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "all": "Todos",
+    "back": "Volver",
+    "actions": "Acciones",
+    "create": "Crear",
+    "update": "Actualizar",
+    "none": "Ninguna",
+    "working": "Procesando…",
+    "genericError": "Algo salió mal. Intentá de nuevo."
+  },
+  "nav": {
+    "mainNavigation": "Navegación principal",
+    "home": "Inicio",
+    "transactions": "Movimientos",
+    "recurring": "Recurrentes",
+    "budgets": "Presupuestos",
+    "savingsGoals": "Metas de ahorro",
+    "dashboard": "Panel",
+    "accounts": "Cuentas",
+    "categories": "Categorías",
+    "users": "Usuarios",
+    "collapseSidebar": "Contraer barra lateral",
+    "expandSidebar": "Expandir barra lateral",
+    "logOut": "Cerrar sesión",
+    "openNavigation": "Abrir navegación",
+    "closeNavigation": "Cerrar navegación"
+  },
+  "theme": {
+    "toggle": "Cambiar tema",
+    "switchToLight": "Cambiar a tema claro",
+    "switchToDark": "Cambiar a tema oscuro",
+    "light": "Tema claro",
+    "dark": "Tema oscuro"
+  },
+  "modal": {
+    "close": "Cerrar diálogo"
+  },
+  "tutorial": {
+    "gotIt": "Entendido"
+  },
+  "pagination": {
+    "label": "Paginación",
+    "showing": "Mostrando",
+    "of": "de",
+    "results": "resultados",
+    "previous": "Página anterior",
+    "next": "Página siguiente"
+  },
+  "multiselect": {
+    "placeholder": "Seleccioná elementos…",
+    "remove": "Quitar {{item}}",
+    "empty": "No hay opciones disponibles."
+  },
+  "monthPicker": {
+    "quickSelect": "Elegir un mes rápido",
+    "month": "Mes",
+    "hint": "Selecciona el rango completo del mes para {{year}}"
+  },
+  "public": {
+    "primaryNav": "Principal",
+    "features": "Funciones",
+    "terms": "Términos",
+    "signIn": "Iniciar sesión",
+    "openApp": "Abrir app"
+  },
+  "footer": {
+    "brandHome": "Inicio de BudgetKing",
+    "tagline": "Finanzas personales sin ruido. Cuentas, movimientos, presupuestos y metas de ahorro en un solo lugar — gratis, y con el código en GitHub.",
+    "product": "Producto",
+    "signIn": "Iniciar sesión",
+    "features": "Funciones",
+    "terms": "Términos y privacidad",
+    "sourceCode": "Código fuente",
+    "author": "Autor",
+    "builtBy": "Hecho por",
+    "builtIn": "Hecho en Argentina.",
+    "freeTier": "Demo alojada en planes gratuitos — la primera solicitud puede tardar un momento.",
+    "home": "Inicio"
+  },
+  "auth": {
+    "coldStart": {
+      "label": "Aviso sobre el alojamiento de la demo",
+      "headsUp": "Atención:",
+      "body": "esta es una demo alojada en un plan gratuito. El servidor se duerme cuando está inactivo, así que tu primer inicio de sesión o registro puede tardar",
+      "duration": "hasta un par de minutos",
+      "tail": "mientras se despierta. No está roto — esperá un poco."
+    },
+    "login": {
+      "welcome": "Bienvenido de nuevo. Tu plata te espera.",
+      "secureSignIn": "Inicio de sesión seguro",
+      "signingIn": "Iniciando sesión…",
+      "privacyNote": "Solo leemos tu nombre, email y foto para identificar tu cuenta. BudgetKing nunca ve tu contraseña de Google.",
+      "termsLink": "Términos y privacidad",
+      "orWithEmail": "O con email",
+      "emailLabel": "Email",
+      "emailPlaceholder": "vos@ejemplo.com",
+      "emailInvalid": "Ingresá un email válido.",
+      "passwordLabel": "Contraseña",
+      "passwordRequired": "La contraseña es obligatoria.",
+      "hidePassword": "Ocultar contraseña",
+      "showPassword": "Mostrar contraseña",
+      "signIn": "Iniciar sesión",
+      "newHere": "¿Nuevo por acá?",
+      "createAccount": "Crear una cuenta",
+      "tagline": "Cuentas, categorías y cada movimiento — todo en un solo lugar.",
+      "googleLoadFailed": "No se pudo cargar el inicio de sesión de Google. Recargá la página.",
+      "googleNotConfigured": "El inicio de sesión con Google no está configurado.",
+      "googleFailed": "Falló el inicio de sesión con Google, intentá de nuevo",
+      "loginFailed": "Error al iniciar sesión, contactá a un administrador"
+    },
+    "register": {
+      "titleStart": "Creá tu",
+      "titleHighlight": "cuenta",
+      "subtitle": "Dos minutos ahora, control total de tu presupuesto después.",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "María",
+      "nameRequired": "El nombre es obligatorio.",
+      "lastNameLabel": "Apellido",
+      "lastNamePlaceholder": "Pérez",
+      "lastNameRequired": "El apellido es obligatorio.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "vos@ejemplo.com",
+      "emailInvalid": "Ingresá un email válido.",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Al menos 8 caracteres",
+      "passwordInvalid": "Usá al menos 8 caracteres con una letra y un número.",
+      "passwordHint": "Mínimo 8 caracteres, incluyendo una letra y un número.",
+      "hidePassword": "Ocultar contraseña",
+      "showPassword": "Mostrar contraseña",
+      "creating": "Creando cuenta…",
+      "create": "Crear cuenta",
+      "alreadyMember": "¿Ya tenés cuenta?",
+      "signIn": "Iniciar sesión",
+      "failed": "Falló el registro, intentá de nuevo más tarde"
+    }
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "Finanzas personales, sin ruido",
+      "titleStart": "Sabé a dónde va tu",
+      "titleHighlight": "plata",
+      "titleEnd": ".",
+      "lead": "BudgetKing reúne tus cuentas, movimientos, presupuestos y metas de ahorro en un solo lugar. Gratis, sin publicidad, sin analytics — iniciá sesión con Google y empezá a registrar.",
+      "signInGoogle": "Iniciar sesión con Google",
+      "openApp": "Abrir la app",
+      "seeSource": "Ver el código",
+      "perkFree": "Gratis",
+      "perkGoogle": "Solo inicio con Google, sin contraseña",
+      "perkPrivacy": "Tus datos nunca se venden ni comparten"
+    },
+    "preview": {
+      "totalBalance": "Saldo total",
+      "bank": "Banco",
+      "wallet": "Billetera",
+      "cash": "Efectivo",
+      "budgetLabel": "Comida · Septiembre",
+      "supermarket": "Supermercado",
+      "salary": "Sueldo",
+      "tripFund": "Fondo para viaje"
+    },
+    "features": {
+      "eyebrow": "Todo lo que necesitás, nada que no",
+      "title": "Hecho para cómo manejás la plata de verdad.",
+      "lead": "Sin gamificación, sin rachas, sin rankings. Solo las herramientas, en una interfaz que funciona igual en tu teléfono y en tu notebook.",
+      "items": {
+        "accounts": {
+          "title": "Cuentas",
+          "description": "Efectivo, banco, billetera, tarjeta — cada lugar donde vive tu plata, cada uno con su saldo e ícono."
+        },
+        "transactions": {
+          "title": "Movimientos",
+          "description": "Ingresos, gastos y transferencias entre cuentas, con categoría, contraparte y notas. Filtrá y recorré años de historial."
+        },
+        "recurring": {
+          "title": "Movimientos recurrentes",
+          "description": "Alquiler, sueldo, suscripciones. Definí la frecuencia una vez, mirá qué viene, y registrá cada uno con un clic cuando vence."
+        },
+        "budgets": {
+          "title": "Presupuestos mensuales",
+          "description": "Un límite de gasto por categoría y mes, con una barra de progreso que te dice cuánto margen queda."
+        },
+        "savings": {
+          "title": "Metas de ahorro",
+          "description": "Un monto y una fecha objetivo, aportes vinculados a una cuenta real, y un estado que pasa a alcanzada solo."
+        },
+        "dashboard": {
+          "title": "Panel",
+          "description": "Ingresos versus gastos por mes, gasto por categoría, y las cifras oficiales de dólar e inflación de Argentina."
+        },
+        "csv": {
+          "title": "Importar y exportar CSV",
+          "description": "Traé cuentas, categorías y movimientos desde una planilla, previsualizá antes de confirmar, y exportalos cuando quieras."
+        },
+        "themes": {
+          "title": "Claro y oscuro, en cualquier pantalla",
+          "description": "Un solo sistema de diseño, ambos temas, del teléfono al escritorio. Las tablas se vuelven tarjetas en pantallas chicas en vez de desplazarse de lado."
+        }
+      }
+    },
+    "steps": {
+      "eyebrow": "Tres pasos",
+      "title": "Listo en minutos.",
+      "items": {
+        "signIn": {
+          "title": "Iniciá sesión con Google",
+          "description": "Sin formulario, sin contraseña que inventar. Tu cuenta se crea en el primer inicio de sesión."
+        },
+        "setUp": {
+          "title": "Agregá tus cuentas y categorías",
+          "description": "O importalas desde un CSV. Unos minutos y la app refleja cómo ya pensás tu plata."
+        },
+        "track": {
+          "title": "Registrá movimientos, poné límites, mirá el panel",
+          "description": "Cada movimiento actualiza saldos, presupuestos y metas al instante."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Tus datos, tus reglas.",
+      "lead": "Es un proyecto personal, no un negocio de datos. No hay píxel de seguimiento, ni script de analytics, ni nada que vender. Lo que ingresás se usa para mostrarte tus propios números y nada más.",
+      "readTerms": "Leer los términos y el aviso de privacidad",
+      "google": {
+        "title": "De Google, solo tres cosas",
+        "body": "Tu nombre, email y foto de perfil, para identificar tu cuenta. Nunca tu contraseña."
+      },
+      "stored": {
+        "title": "Guardado, no compartido",
+        "body": "Tus cuentas y movimientos viven en la base de datos de la app y solo vos los ves."
+      },
+      "export": {
+        "title": "Llevátelo con vos",
+        "body": "Exportá cuentas, categorías y movimientos a CSV cuando quieras."
+      },
+      "delete": {
+        "title": "Borrado a pedido",
+        "body": "Pedilo y tu cuenta y todo lo que contiene se elimina para siempre."
+      }
+    },
+    "cta": {
+      "title": "Empezá a registrar hoy.",
+      "lead": "Un inicio de sesión con Google y ya estás adentro. Alojado en un plan gratuito, así que dale un momento a la primera solicitud."
+    }
+  },
+  "terms": {
+    "eyebrow": "Legal",
+    "title": "Términos de uso y aviso de privacidad",
+    "lead": "En lenguaje claro, a propósito. Esta página explica qué es BudgetKing, qué pasa con la información que le das, y qué podés esperar de un proyecto personal gratuito.",
+    "lastUpdated": "Última actualización: {{date}}",
+    "onThisPage": "En esta página",
+    "englishOnly": "Este documento se mantiene solo en inglés. El texto en inglés es la versión vinculante."
+  },
+  "fields": {
+    "date": "Fecha",
+    "account": "Cuenta",
+    "type": "Tipo",
+    "category": "Categoría",
+    "amount": "Monto",
+    "description": "Descripción",
+    "counterparty": "Contraparte",
+    "name": "Nombre",
+    "icon": "Ícono",
+    "month": "Mes",
+    "year": "Año",
+    "status": "Estado"
+  },
+  "filters": {
+    "title": "Filtros",
+    "from": "Desde",
+    "to": "Hasta",
+    "min": "Mín",
+    "max": "Máx",
+    "searchDetails": "Buscar en detalles…",
+    "searchCounterparty": "Buscar contraparte…",
+    "clear": "Limpiar",
+    "apply": "Aplicar filtros",
+    "applying": "Aplicando…"
+  },
+  "csv": {
+    "export": "Exportar CSV",
+    "exporting": "Exportando…",
+    "import": "Importar CSV"
+  },
+  "transactionType": {
+    "INCOME": "Ingreso",
+    "EXPENSE": "Gasto",
+    "TRANSFER": "Transferencia",
+    "SAVINGS_DEPOSIT": "A ahorro",
+    "SAVINGS_WITHDRAWAL": "De ahorro",
+    "UNKNOWN": "—"
+  },
+  "frequency": {
+    "DAILY": "Diaria",
+    "WEEKLY": "Semanal",
+    "MONTHLY": "Mensual",
+    "YEARLY": "Anual"
+  },
+  "icons": {
+    "wallet": "Billetera",
+    "bank": "Banco",
+    "creditCard": "Tarjeta de crédito",
+    "cash": "Efectivo",
+    "savings": "Ahorros",
+    "cryptoCoins": "Cripto/Monedas",
+    "stocksInvestments": "Acciones / Inversiones",
+    "business": "Negocio",
+    "restaurants": "Restaurantes",
+    "fastFood": "Comida rápida",
+    "supermarket": "Supermercado",
+    "cafe": "Café",
+    "barNightlife": "Bar y vida nocturna",
+    "carExpenses": "Auto / Gastos",
+    "fuel": "Combustible",
+    "publicTransport": "Transporte público",
+    "travelFlights": "Viajes y vuelos",
+    "motorcycle": "Moto",
+    "rentHome": "Alquiler / Hogar",
+    "electricityUtilities": "Electricidad / Servicios",
+    "waterServices": "Agua",
+    "internetTelecom": "Internet / Telefonía",
+    "furnitureDecor": "Muebles / Decoración",
+    "cinemaStreaming": "Cine y streaming",
+    "gaming": "Videojuegos",
+    "musicConcerts": "Música y recitales",
+    "sportsFootball": "Deportes / Fútbol",
+    "eventsTickets": "Eventos / Entradas",
+    "clothingApparel": "Ropa",
+    "shopping": "Compras",
+    "personalCareBeauty": "Cuidado personal y belleza",
+    "donations": "Donaciones",
+    "gymFitness": "Gimnasio y fitness",
+    "healthMedical": "Salud",
+    "pharmacyMedicine": "Farmacia / Medicamentos",
+    "doctorVisit": "Consulta médica",
+    "booksEducation": "Libros y educación",
+    "tuitionCourses": "Matrícula / Cursos",
+    "softwareSubscriptions": "Software / Suscripciones",
+    "loansDebts": "Préstamos / Deudas",
+    "salaryIncome": "Sueldo / Ingresos",
+    "othersGeneral": "Otros / General",
+    "virtualReality": "Realidad virtual",
+    "techHardware": "Tecnología y hardware",
+    "programming": "Programación",
+    "artsDesign": "Arte y diseño",
+    "photography": "Fotografía",
+    "cycling": "Ciclismo",
+    "swimming": "Natación",
+    "pets": "Mascotas",
+    "childcare": "Cuidado infantil",
+    "gardening": "Jardinería",
+    "diyRepairs": "Bricolaje / Reparaciones",
+    "legalTaxes": "Legal / Impuestos",
+    "insurance": "Seguros",
+    "socialFamily": "Social / Familia",
+    "mobilePlan": "Plan de celular",
+    "electronics": "Electrónica",
+    "subscriptions": "Suscripciones",
+    "portfolio": "Portafolio",
+    "crypto": "Cripto",
+    "bondsBank": "Bonos / Banco",
+    "growth": "Crecimiento",
+    "volleyball": "Vóley",
+    "basketball": "Básquet",
+    "tennis": "Tenis",
+    "running": "Running",
+    "awardsCompetitions": "Premios / Competencias",
+    "government": "Gobierno",
+    "investments": "Inversiones",
+    "giftsDonations": "Regalos y donaciones"
+  },
+  "home": {
+    "recentActivity": "Actividad reciente",
+    "thisMonth": "Este mes",
+    "heading": {
+      "totalBalance": "Saldo total",
+      "setAside": "apartados en metas de ahorro",
+      "newTransaction": "Nuevo movimiento",
+      "newAccount": "Nueva cuenta",
+      "dollarValue": "Cotización del dólar",
+      "liveQuote": "Cotización en vivo",
+      "buy": "Compra",
+      "sell": "Venta",
+      "inflation": "Inflación",
+      "date": "Fecha",
+      "value": "Valor"
+    },
+    "accounts": {
+      "title": "Cuentas",
+      "registered": "{{count}} registradas",
+      "empty": "Todavía no hay cuentas registradas."
+    },
+    "summary": {
+      "title": "Resumen mensual",
+      "income": "Ingresos",
+      "outcome": "Egresos",
+      "balance": "Balance"
+    },
+    "lastMoves": {
+      "empty": "Todavía no hay movimientos este mes."
+    }
+  },
+  "accounts": {
+    "title": "Mis cuentas",
+    "subtitle": "Cada lugar donde vive tu plata, en una sola vista.",
+    "newAccount": "Nueva cuenta",
+    "noDescription": "Sin descripción",
+    "balance": "Saldo",
+    "editNamed": "Editar {{name}}",
+    "deleteNamed": "Eliminar {{name}}",
+    "emptyTitle": "No hay cuentas registradas",
+    "emptyHint": "Creá tu primera cuenta para empezar a registrar movimientos.",
+    "deleted": "Cuenta eliminada correctamente",
+    "exportError": "Error al exportar cuentas",
+    "form": {
+      "createTitle": "Crear cuenta",
+      "editTitle": "Editar cuenta",
+      "name": "Nombre",
+      "namePlaceholder": "p. ej. Banco, Efectivo, Cripto",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Detalles opcionales…",
+      "icon": "Ícono de la cuenta",
+      "saveError": "Algo salió mal. Intentá de nuevo."
+    }
+  },
+  "categories": {
+    "title": "Categorías",
+    "subtitle": "Cómo se agrupan tus gastos.",
+    "newCategory": "Nueva categoría",
+    "emptyTitle": "No hay categorías definidas",
+    "emptyHint": "Las categorías hacen que tu panel sea realmente útil.",
+    "loadError": "Error al cargar categorías",
+    "deleteError": "Error al eliminar la categoría",
+    "exportError": "Error al exportar categorías",
+    "saved": "Categoría guardada correctamente",
+    "saveError": "Error al guardar la categoría",
+    "form": {
+      "createTitle": "Nueva categoría",
+      "editTitle": "Editar categoría",
+      "name": "Nombre",
+      "namePlaceholder": "p. ej. Delivery, Servicios, Suscripciones",
+      "icon": "Ícono de la categoría",
+      "searchIconPlaceholder": "Buscar ícono (p. ej. 'juegos')…",
+      "searchIcons": "Buscar íconos",
+      "noIcons": "No se encontraron íconos.",
+      "create": "Crear",
+      "update": "Actualizar"
+    }
+  },
+  "csvImport": {
+    "expectedColumns": "Columnas esperadas, en orden:",
+    "file": "Archivo CSV",
+    "valid": "Válidas",
+    "duplicate": "Duplicadas",
+    "errors": "Errores",
+    "error": "Error",
+    "line": "Línea",
+    "status": "Estado",
+    "reason": "Motivo",
+    "destination": "Destino",
+    "reading": "Leyendo…",
+    "preview": "Previsualizar",
+    "importing": "Importando…",
+    "importRows": "Importar {{count}} filas",
+    "done": "Listo",
+    "skipped": "Se omitieron {{duplicates}} filas duplicadas y {{errors}} inválidas.",
+    "readError": "Error al leer el archivo CSV",
+    "accounts": {
+      "title": "Importar cuentas desde CSV",
+      "hint": "Un ícono desconocido o vacío nunca invalida una fila — se usa el ícono de banco automáticamente. Las cuentas importadas siempre empiezan con saldo $0.",
+      "done": "{{count}} cuentas importadas correctamente.",
+      "importError": "Error al importar cuentas"
+    },
+    "categories": {
+      "title": "Importar categorías desde CSV",
+      "hint": "Un ícono desconocido o vacío nunca invalida una fila — se usa un ícono por defecto automáticamente.",
+      "done": "{{count}} categorías importadas correctamente.",
+      "importError": "Error al importar categorías"
+    },
+    "transactions": {
+      "title": "Importar movimientos desde CSV",
+      "hint": "destination_account solo es obligatorio para filas TRANSFER (debe ser una cuenta existente, distinta de account). category es opcional para TRANSFER.",
+      "done": "{{count}} movimientos importados correctamente.",
+      "importError": "Error al importar movimientos"
+    }
+  },
+  "transactions": {
+    "title": "Movimientos",
+    "matchCount": "{{count}} movimientos coinciden con tus filtros.",
+    "new": "Nuevo movimiento",
+    "newHint": "Registrar un nuevo movimiento",
+    "importHint": "Importar movimientos desde un archivo CSV",
+    "needAccount": "Primero creá una cuenta",
+    "editAria": "Editar movimiento",
+    "deleteAria": "Eliminar movimiento",
+    "empty": "Ningún movimiento coincide con estos filtros.",
+    "deleteTitle": "Eliminar movimiento",
+    "deleteConfirm": "¿Eliminar el {{type}} de {{amount}} por \"{{description}}\"? El saldo de la cuenta se ajustará de vuelta. Esto no se puede deshacer.",
+    "deleted": "Movimiento eliminado.",
+    "deleteError": "Error al eliminar el movimiento",
+    "exportError": "Error al exportar movimientos",
+    "form": {
+      "createTitle": "Nuevo movimiento",
+      "editTitle": "Editar movimiento",
+      "typeLocked": "El tipo no se puede cambiar una vez creado — eliminalo y volvé a crearlo",
+      "accountLocked": "La cuenta no se puede cambiar una vez creado — eliminalo y volvé a crearlo",
+      "destinationLocked": "La cuenta destino no se puede cambiar una vez creado — eliminalo y volvé a crearlo",
+      "originAccount": "Cuenta origen",
+      "destinationAccount": "Cuenta destino",
+      "selectCategory": "Elegí una categoría",
+      "counterpartyPlaceholder": "p. ej. Supermercado, Empleador",
+      "descriptionPlaceholder": "Detalles del movimiento",
+      "completeFields": "Completá primero todos los campos obligatorios",
+      "fillRequired": "Completá correctamente todos los campos obligatorios.",
+      "selectDestination": "Elegí una cuenta destino para la transferencia."
+    }
+  },
+  "budgets": {
+    "title": "Presupuestos",
+    "subtitle": "Definí un límite mensual por categoría y seguilo en vivo.",
+    "new": "Nuevo presupuesto",
+    "ofLimit": "de {{limit}}",
+    "usage": "{{percent}}% usado · quedan {{remaining}}",
+    "status": {
+      "OK": "OK",
+      "WARNING": "Atención",
+      "EXCEEDED": "Excedido"
+    },
+    "emptyTitle": "No hay presupuestos para este período",
+    "emptyHint": "Creá uno para empezar a seguir el gasto de una categoría.",
+    "deleteError": "Error al eliminar el presupuesto",
+    "saved": "Presupuesto guardado correctamente",
+    "saveError": "Error al guardar el presupuesto",
+    "form": {
+      "createTitle": "Nuevo presupuesto",
+      "editTitle": "Editar presupuesto",
+      "selectCategory": "Elegí una categoría",
+      "limitAmount": "Monto límite"
+    },
+    "tutorial": {
+      "title": "Cómo funcionan los presupuestos",
+      "intro": "Los presupuestos te permiten poner un tope a cuánto gastás en una categoría durante un mes, y ver en vivo qué tan cerca estás de ese tope.",
+      "s1": {
+        "heading": "1. Definí un límite por categoría",
+        "body": "Elegí una categoría, un mes y año, y cuánto querés gastar como máximo en ese período."
+      },
+      "s2": {
+        "heading": "2. Mirá cómo se llena solo",
+        "body": "Cada gasto que registrás en esa categoría cuenta para el límite — no hay nada más que hacer. La barra de progreso y las cifras de gastado/restante se actualizan solas."
+      },
+      "s3": {
+        "heading": "3. Los colores indican el estado",
+        "body": "Verde (OK) mientras estás por debajo del 80% gastado, ámbar (Atención) desde el 80%, rojo (Excedido) cuando superás el límite."
+      },
+      "s4": {
+        "heading": "4. Los presupuestos son por mes",
+        "body": "Cambiá el selector de mes/año arriba para revisar un período pasado o dejar preparados los límites del mes que viene."
+      }
+    }
+  },
+  "recurring": {
+    "title": "Movimientos recurrentes",
+    "configuredCount": "{{count}} plantillas configuradas.",
+    "new": "Nueva plantilla",
+    "newHint": "Crear una plantilla recurrente",
+    "upcoming": "Próximos en los siguientes 30 días",
+    "frequency": "Frecuencia",
+    "nextRun": "Próxima ejecución",
+    "nextShort": "Próxima: {{date}}",
+    "active": "Activa",
+    "paused": "Pausada",
+    "activate": "Activar plantilla",
+    "deactivate": "Desactivar plantilla",
+    "activeHint": "Activa — clic para pausar",
+    "pausedHint": "Pausada — clic para activar",
+    "runNow": "Ejecutar ahora",
+    "run": "Ejecutar",
+    "running": "Ejecutando…",
+    "empty": "Ninguna plantilla recurrente coincide con estos filtros.",
+    "deleteError": "Error al eliminar la plantilla",
+    "statusError": "Error al actualizar el estado de la plantilla",
+    "generated": "Movimiento generado",
+    "runError": "Error al ejecutar la plantilla",
+    "saved": "Movimiento recurrente guardado correctamente",
+    "saveError": "Error al guardar el movimiento recurrente",
+    "form": {
+      "createTitle": "Nuevo movimiento recurrente",
+      "editTitle": "Editar movimiento recurrente",
+      "nextRunDate": "Fecha de próxima ejecución",
+      "endDate": "Fecha de fin (opcional)",
+      "counterpartyPlaceholder": "p. ej. Propietario, Netflix",
+      "descriptionPlaceholder": "Detalles de la plantilla"
+    },
+    "tutorial": {
+      "title": "Cómo funcionan los movimientos recurrentes",
+      "intro": "Los movimientos recurrentes son plantillas para movimientos que ocurren según un calendario — el alquiler, una suscripción, tu sueldo — así no tenés que cargarlos a mano cada vez.",
+      "s1": {
+        "heading": "1. Creá una plantilla",
+        "body": "Una plantilla es un molde de movimiento: monto, cuenta, categoría (o cuenta destino para transferencias), contraparte y cada cuánto se repite."
+      },
+      "s2": {
+        "heading": "2. Nada se dispara solo — todavía",
+        "body": "No hay ningún proceso en segundo plano en esta app. Una plantilla solo se convierte en un movimiento real cuando presionás \"Ejecutar\", o cuando alguien llama al endpoint run-due (pensado para un programador externo)."
+      },
+      "s3": {
+        "heading": "3. Ejecutar ahora vs. próxima ejecución",
+        "body": "\"Ejecutar\" genera una ocurrencia de inmediato, sin importar la fecha programada, y avanza el cursor de la plantilla. La columna \"Próxima ejecución\" muestra cuándo se dispararía sola una vez que exista un programador."
+      },
+      "s4": {
+        "heading": "4. Pausá en vez de eliminar",
+        "body": "Desactivá una plantilla para que deje de contar como vencida sin perder su configuración — útil para una suscripción que pausaste, por ejemplo."
+      }
+    }
+  },
+  "savings": {
+    "title": "Metas de ahorro",
+    "subtitle": "Para qué estás ahorrando, y qué tan cerca estás.",
+    "new": "Nueva meta",
+    "totalSaved": "Total ahorrado",
+    "totalTarget": "Objetivo total",
+    "progress": "Progreso",
+    "goalsAchieved": "Metas alcanzadas",
+    "state": {
+      "ACHIEVED": "Alcanzada",
+      "OVERDUE": "Vencida",
+      "CLOSED": "Cerrada"
+    },
+    "ofTarget": "de {{target}}",
+    "percentSetAside": "{{percent}}% apartado",
+    "remaining": "Restante",
+    "monthlyNeeded": "Necesario por mes",
+    "targetDate": "Fecha objetivo",
+    "daysLeft": "Días restantes",
+    "linkedDefault": "Aporta desde {{account}} por defecto",
+    "addMoney": "Agregar plata",
+    "withdraw": "Retirar",
+    "close": "Cerrar",
+    "closeHint": "Devolver todo a una cuenta y congelar la meta",
+    "deleteBlocked": "Retirá o cerrá la meta antes de eliminarla",
+    "deleteGoal": "Eliminar meta",
+    "emptyTitle": "Todavía no hay metas de ahorro",
+    "emptyHint": "Definí un objetivo y empezá a seguir tu progreso.",
+    "deleteError": "Error al eliminar la meta de ahorro",
+    "saved": "Meta de ahorro guardada correctamente",
+    "saveError": "Error al guardar la meta de ahorro",
+    "closed": "Meta de ahorro cerrada",
+    "updated": "Meta de ahorro actualizada",
+    "form": {
+      "createTitle": "Nueva meta de ahorro",
+      "editTitle": "Editar meta de ahorro",
+      "namePlaceholder": "p. ej. Fondo de emergencia, Notebook nueva",
+      "targetAmount": "Monto objetivo",
+      "linkedAccount": "Cuenta de origen por defecto (opcional)",
+      "linkedAccountHint": "Se preselecciona cuando agregás plata a la meta. El progreso solo cuenta lo que realmente apartaste."
+    },
+    "contribute": {
+      "depositTitle": "Agregar plata a la meta",
+      "withdrawTitle": "Retirar de la meta",
+      "closeTitle": "Cerrar meta",
+      "savedOf": "{{saved}} ahorrados de {{target}}",
+      "closeWithMoney": "Todo lo que tiene la meta ({{amount}}) vuelve a la cuenta que elijas. Después la meta queda en solo lectura.",
+      "closeEmpty": "Esta meta no tiene plata. Cerrarla la conserva como historial y la deja en solo lectura.",
+      "fromAccount": "Desde la cuenta",
+      "toAccount": "A la cuenta",
+      "available": "Disponible: {{amount}}",
+      "max": "Máx",
+      "upTo": "Se pueden retirar hasta {{amount}}.",
+      "note": "Nota (opcional)",
+      "notePlaceholder": "p. ej. Cuota de enero",
+      "moveError": "No se pudo mover la plata. Intentá de nuevo."
+    },
+    "tutorial": {
+      "title": "Cómo funcionan las metas de ahorro",
+      "intro": "Las metas de ahorro te permiten apartar plata real para algo concreto. Lo que agregás a una meta sale de tu saldo habitual y se sigue bajo Ahorros hasta que lo recuperás.",
+      "s1": {
+        "heading": "1. Poné nombre a un objetivo",
+        "body": "Dale a la meta un nombre, un ícono, cuánto necesitás para alcanzarla y la fecha para la que querés lograrla."
+      },
+      "s2": {
+        "heading": "2. Apartá plata",
+        "body": "Usá \"Agregar plata\" para mover un monto desde una de tus cuentas a la meta. Esa plata sale de tu saldo habitual y aparece bajo Ahorros — está realmente apartada. \"Retirar\" devuelve parte cuando la necesites."
+      },
+      "s3": {
+        "heading": "3. El progreso se calcula solo",
+        "body": "El % de progreso, el monto restante, el aporte mensual necesario y los días restantes se derivan de lo que tiene la meta y su fecha objetivo. La cuenta vinculada opcional es solo el origen por defecto al agregar plata."
+      },
+      "s4": {
+        "heading": "4. Cuando llega la fecha",
+        "body": "Nada se mueve solo. Una meta muestra \"Alcanzada\" cuando tiene el objetivo, o \"Vencida\" si la fecha pasó antes. En cualquier caso decidís vos: extender la fecha, seguir aportando, o \"Cerrar\" para devolver todo a una cuenta."
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Tus ingresos, gastos y balance para el rango elegido.",
+    "applyRange": "Aplicar rango",
+    "totalBalance": "Saldo total",
+    "expenses": "Gastos",
+    "income": "Ingresos",
+    "expense": "Gasto",
+    "expensesByCategory": "Gastos por categoría",
+    "noExpenses": "No hay gastos en este rango.",
+    "movementsThisMonth": "Movimientos de este mes",
+    "chart": {
+      "title": "Ingresos vs gastos",
+      "subtitle": "Año actual, mes a mes",
+      "filterByAccount": "Filtrar por cuenta",
+      "allAccounts": "Todas las cuentas"
+    }
+  },
+  "users": {
+    "title": "Usuarios",
+    "subtitle": "Habilitá o deshabilitá el acceso a BudgetKing.",
+    "enabled": "Habilitado",
+    "disabled": "Deshabilitado",
+    "toggleAccess": "Cambiar acceso de {{email}}",
+    "empty": "No se encontraron usuarios.",
+    "loadError": "Error al cargar usuarios",
+    "statusUpdated": "Estado actualizado",
+    "statusError": "No se pudo actualizar el estado"
+  }
+}
