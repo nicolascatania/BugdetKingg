@@ -47,7 +47,12 @@ export class RevealDirective implements OnInit, OnDestroy {
     }
 
     element.classList.add('reveal');
-    element.style.setProperty('--reveal-delay', `${this.revealDelay()}ms`);
+
+    // Only pin the delay when one was asked for: an inline `0ms` would beat
+    // any `--reveal-delay` a stylesheet sets per `nth-child` for cascades.
+    if (this.revealDelay() > 0) {
+      element.style.setProperty('--reveal-delay', `${this.revealDelay()}ms`);
+    }
 
     this.observer = new IntersectionObserver(
       (entries) => {

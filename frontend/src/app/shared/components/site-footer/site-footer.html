@@ -1,0 +1,101 @@
+@if (variant() === 'full') {
+  <footer class="relative z-10 border-t border-line bg-surface/70 backdrop-blur-xl">
+    <div class="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="grid gap-10 md:grid-cols-[1.6fr_1fr_1fr]">
+        <!-- Brand -->
+        <div class="max-w-sm">
+          <a routerLink="/" class="group inline-flex items-center gap-3" aria-label="BudgetKing home">
+            <span
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl
+                     bg-gradient-to-br from-brand to-accent text-brand-contrast shadow-soft
+                     transition-transform duration-300 ease-spring group-hover:scale-105"
+            >
+              <i class="fa-solid fa-crown text-sm" aria-hidden="true"></i>
+            </span>
+            <span class="font-display text-base font-bold tracking-tight text-body">
+              Budget<span class="text-brand">King</span>
+            </span>
+          </a>
+          <p class="mt-4 text-sm leading-relaxed text-muted">
+            Personal finance without the noise. Accounts, transactions, budgets and savings goals
+            in one place &mdash; free, and the source is on GitHub.
+          </p>
+        </div>
+
+        <!-- Product -->
+        <nav aria-label="Product">
+          <p class="eyebrow">Product</p>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a routerLink="/login" class="footer-link">Sign in</a></li>
+            <li><a routerLink="/" fragment="features" class="footer-link">Features</a></li>
+            <li><a routerLink="/terms" class="footer-link">Terms &amp; privacy</a></li>
+            <li>
+              <a [href]="repositoryUrl" target="_blank" rel="noopener noreferrer" class="footer-link">
+                Source code
+                <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]" aria-hidden="true"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Author -->
+        <nav aria-label="Author">
+          <p class="eyebrow">Built by</p>
+          <p class="mt-4 text-sm font-semibold text-body">Nicolás Catania</p>
+          <ul class="mt-3 flex items-center gap-2">
+            @for (link of socialLinks; track link.href) {
+              <li>
+                <a
+                  [href]="link.href"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="link.label"
+                  [title]="link.label"
+                  class="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface-2
+                         text-muted transition-all duration-200 ease-smooth
+                         hover:-translate-y-0.5 hover:border-brand/40 hover:text-brand"
+                >
+                  <i [class]="link.icon" aria-hidden="true"></i>
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+      </div>
+
+      <div
+        class="mt-10 flex flex-col gap-2 border-t border-line pt-6 text-xs text-subtle sm:flex-row sm:items-center sm:justify-between"
+      >
+        <p class="m-0">&copy; {{ year }} Nicolás Catania. Built in Argentina.</p>
+        <p class="m-0">Demo hosted on free tiers &mdash; the first request may take a moment.</p>
+      </div>
+    </div>
+  </footer>
+} @else {
+  <footer
+    class="relative z-10 flex w-full max-w-lg flex-col items-center gap-3 text-xs text-subtle sm:flex-row sm:justify-between"
+  >
+    <p class="m-0">
+      <a routerLink="/" class="footer-link">Home</a>
+      &middot;
+      <a routerLink="/terms" class="footer-link">Terms &amp; privacy</a>
+      &middot; &copy; {{ year }} Nicolás Catania
+    </p>
+    <ul class="flex items-center gap-1">
+      @for (link of socialLinks; track link.href) {
+        <li>
+          <a
+            [href]="link.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            [attr.aria-label]="link.label"
+            [title]="link.label"
+            class="flex h-11 w-11 items-center justify-center rounded-xl text-muted transition-colors hover:text-brand"
+          >
+            <i [class]="link.icon" aria-hidden="true"></i>
+          </a>
+        </li>
+      }
+    </ul>
+  </footer>
+}

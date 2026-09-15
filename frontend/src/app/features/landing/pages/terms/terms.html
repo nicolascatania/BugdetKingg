@@ -1,0 +1,273 @@
+<div class="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+  <header class="terms-header max-w-3xl">
+    <p class="eyebrow">Legal</p>
+    <h1 class="page-title mt-3">Terms of use &amp; privacy notice</h1>
+    <p class="mt-4 text-base leading-relaxed text-muted">
+      Plain language, on purpose. This page explains what BudgetKing is, what happens with the
+      information you give it, and what you can expect from a free personal project.
+    </p>
+    <p class="mt-3 text-xs text-subtle">Last updated: {{ lastUpdated }}</p>
+  </header>
+
+  <div class="mt-12 grid gap-12 lg:grid-cols-[15rem_1fr] lg:gap-16">
+    <!-- Table of contents: sticky on large screens, a plain list above the text elsewhere. -->
+    <nav aria-label="On this page" class="lg:sticky lg:top-24 lg:self-start">
+      <p class="eyebrow">On this page</p>
+      <ol class="mt-3 space-y-1.5 text-sm">
+        @for (section of sections; track section.id; let i = $index) {
+          <li>
+            <a
+              routerLink="/terms"
+              [fragment]="section.id"
+              class="footer-link flex gap-2.5 py-0.5"
+            >
+              <span class="tabular w-5 shrink-0 text-subtle">{{ i + 1 }}.</span>
+              <span>{{ section.title }}</span>
+            </a>
+          </li>
+        }
+      </ol>
+    </nav>
+
+    <article class="terms-body max-w-3xl">
+      <section id="about">
+        <h2>1. About this service</h2>
+        <p>
+          BudgetKing (&ldquo;the service&rdquo;, &ldquo;the app&rdquo;) is a personal finance tracker
+          built and operated by <strong>Nicolás Catania</strong>, an individual software developer
+          based in Argentina (&ldquo;I&rdquo;, &ldquo;me&rdquo;). It is a personal and portfolio
+          project, offered free of charge. It is not a company, not a bank, and not a financial
+          institution of any kind.
+        </p>
+        <p>
+          The source code is publicly available on
+          <a href="https://github.com/nicolascatania/BugdetKingg" target="_blank" rel="noopener noreferrer" class="prose-link">GitHub</a>,
+          so anything stated here can be checked against what the code actually does.
+        </p>
+        <p>
+          By signing in you accept these terms. If you do not agree with them, simply do not use
+          the service.
+        </p>
+      </section>
+
+      <section id="account">
+        <h2>2. Your account</h2>
+        <p>
+          Sign-in is through your Google account only. There is no BudgetKing password. Your
+          account is created automatically the first time you sign in, and every later sign-in
+          with the same Google account reuses it.
+        </p>
+        <ul>
+          <li>You must have a Google account with a verified email address.</li>
+          <li>You are responsible for keeping your Google account secure.</li>
+          <li>
+            One person, one account. Do not use the service to hold data on behalf of other people
+            without their consent.
+          </li>
+        </ul>
+      </section>
+
+      <section id="data-collected">
+        <h2>3. What data we collect</h2>
+
+        <h3>3.1 From Google, when you sign in</h3>
+        <p>
+          Google hands the app a signed identity token. From it the following claims are read and
+          stored:
+        </p>
+        <ul>
+          <li><strong>Google subject id</strong> &mdash; a stable, opaque identifier for your Google account, used to recognise you on later sign-ins.</li>
+          <li><strong>Email address</strong> &mdash; used as your unique account identifier and shown inside the app.</li>
+          <li><strong>Given name and family name</strong> &mdash; shown inside the app.</li>
+          <li><strong>Profile photo URL</strong> &mdash; a link to the picture Google serves; the image itself is not copied.</li>
+        </ul>
+        <p>
+          Nothing else. The app never sees your Google password, your contacts, your calendar,
+          your Drive, your Gmail or any other Google data. The Google token is verified once and
+          then discarded; it is not stored.
+        </p>
+
+        <h3>3.2 What you enter yourself</h3>
+        <p>Everything you create in the app is stored so it can be shown back to you:</p>
+        <ul>
+          <li><strong>Accounts</strong> &mdash; name, description, balance and icon.</li>
+          <li><strong>Categories</strong> &mdash; name and icon.</li>
+          <li><strong>Transactions</strong> &mdash; date, amount, type, description, counterparty, account(s), category and any linked savings goal.</li>
+          <li><strong>Recurring transactions</strong> &mdash; the same fields plus frequency, next run date, end date and active flag.</li>
+          <li><strong>Budgets</strong> &mdash; category, month, year and spending limit.</li>
+          <li><strong>Savings goals</strong> &mdash; name, icon, target amount and date, current amount, linked account and status.</li>
+          <li><strong>CSV files you import</strong> &mdash; parsed into the records above; the file itself is not kept.</li>
+        </ul>
+        <p>
+          Each record also carries a creation and last-update timestamp and the email of the
+          account that created or changed it (which is always your own).
+        </p>
+
+        <h3>3.3 Technical data</h3>
+        <ul>
+          <li>
+            <strong>IP address</strong> &mdash; used in memory on the server to limit how many
+            sign-in attempts a single address can make per minute. It is not written to the
+            database.
+          </li>
+          <li>
+            <strong>Hosting provider logs</strong> &mdash; the platforms that host the app (see
+            section 6) keep standard request logs (IP, time, path, user agent) for their own
+            operational purposes and retention periods, outside my control.
+          </li>
+        </ul>
+        <p>
+          There is <strong>no analytics, no tracking pixel, no advertising SDK and no
+          fingerprinting</strong> of any kind in the app.
+        </p>
+      </section>
+
+      <section id="data-use">
+        <h2>4. How we use it</h2>
+        <p>Your data is used for exactly one thing: running the app for you.</p>
+        <ul>
+          <li>Identifying you when you sign in and showing your own records back to you.</li>
+          <li>Computing balances, budget progress, goal progress and dashboard charts.</li>
+          <li>Enforcing security controls such as rate limiting.</li>
+        </ul>
+        <p>Your data is <strong>never</strong>:</p>
+        <ul>
+          <li>sold, rented or licensed to anyone;</li>
+          <li>shared with third parties for marketing or advertising;</li>
+          <li>used to build profiles, train models or make automated decisions about you;</li>
+          <li>used to contact you, unless you contacted me first.</li>
+        </ul>
+        <p>
+          As the operator I have administrator access to the database and to an administration
+          screen that lists registered users (name, email, photo, roles). I use it only to keep the
+          service running and to honour requests from you.
+        </p>
+      </section>
+
+      <section id="storage">
+        <h2>5. Where it is stored</h2>
+        <ul>
+          <li>The frontend (what runs in your browser) is served from <strong>GitHub Pages</strong>.</li>
+          <li>The backend runs on <strong>Render</strong>, on a free plan.</li>
+          <li>Records are kept in a <strong>MySQL database</strong> hosted by a third-party cloud database provider.</li>
+        </ul>
+        <p>
+          All traffic between your browser, the backend and Google travels over HTTPS. Access to
+          the database is restricted to the backend and to me.
+        </p>
+        <p>
+          Your records are kept for as long as your account exists. See section 8 for how to have
+          them deleted.
+        </p>
+      </section>
+
+      <section id="third-parties">
+        <h2>6. Third-party services</h2>
+        <p>The app relies on these providers. Each has its own privacy policy that applies to what they receive.</p>
+        <ul>
+          <li>
+            <strong>Google Identity Services</strong> &mdash; renders the &ldquo;Sign in with Google&rdquo;
+            button and issues the identity token. Google may set its own cookies when you use it.
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="prose-link">Google Privacy Policy</a>.
+          </li>
+          <li><strong>Google Fonts</strong> &mdash; serves the typefaces; your browser requests them directly from Google.</li>
+          <li><strong>Cloudflare cdnjs</strong> &mdash; serves the Font Awesome icon set; your browser requests it directly.</li>
+          <li><strong>GitHub Pages</strong> and <strong>Render</strong> &mdash; hosting, as described in section 5.</li>
+          <li>
+            <strong>dolarapi.com</strong> and <strong>argentinadatos.com</strong> &mdash; public
+            sources for the official dollar rate and inflation figures shown on the dashboard.
+            These are called by the backend, not by your browser, and receive no data about you.
+          </li>
+        </ul>
+      </section>
+
+      <section id="browser-storage">
+        <h2>7. Cookies and local storage</h2>
+        <p>BudgetKing itself sets no cookies. It keeps two values in your browser's local storage:</p>
+        <ul>
+          <li><code>jwt_token</code> &mdash; your session token, valid for 24 hours, removed when you sign out.</li>
+          <li><code>budgetking-theme</code> &mdash; your light/dark preference, if you chose one.</li>
+        </ul>
+        <p>
+          Clearing your browser's site data removes both. The Google sign-in button, being served
+          by Google, may set Google's own cookies under Google's policy.
+        </p>
+      </section>
+
+      <section id="your-rights">
+        <h2>8. Your rights</h2>
+        <p>
+          Under Argentina's Personal Data Protection Act (Law 25.326) and similar laws elsewhere,
+          you can:
+        </p>
+        <ul>
+          <li><strong>Access</strong> your data &mdash; it is all visible in the app, and accounts, categories and transactions can be exported to CSV at any time.</li>
+          <li><strong>Correct</strong> it &mdash; every record can be edited in the app. Your photo is refreshed from Google on every sign-in; your name is copied once, on your first sign-in &mdash; ask me (section 12) if it needs updating.</li>
+          <li><strong>Delete</strong> it &mdash; contact me (section 12) and your account and every record attached to it will be permanently removed within 30 days. Deletion is not reversible.</li>
+          <li><strong>Withdraw</strong> Google's permission &mdash; remove BudgetKing from the &ldquo;Third-party apps&rdquo; section of your Google account settings. Your records stay until you ask for deletion.</li>
+        </ul>
+        <p>
+          The Agencia de Acceso a la Información Pública (AAIP), as the enforcement authority for
+          Law 25.326, handles complaints about non-compliance with personal data protection rules.
+        </p>
+      </section>
+
+      <section id="acceptable-use">
+        <h2>9. Acceptable use</h2>
+        <p>Do not:</p>
+        <ul>
+          <li>attempt to access other users' data or the administrative endpoints;</li>
+          <li>probe, scan, overload or otherwise attack the service or its hosting;</li>
+          <li>upload content that is unlawful or that you have no right to hold;</li>
+          <li>automate sign-ins or requests in a way that degrades the service for others.</li>
+        </ul>
+        <p>Accounts that do so may be disabled without notice.</p>
+      </section>
+
+      <section id="disclaimer">
+        <h2>10. No warranty, no advice</h2>
+        <p>
+          The service is provided <strong>&ldquo;as is&rdquo;</strong>, free of charge, with no
+          warranty of any kind. In particular:
+        </p>
+        <ul>
+          <li>
+            It runs on free hosting tiers. It may be slow to wake up, go offline, or be
+            discontinued at any time. <strong>Export your data regularly</strong> if it matters to you.
+          </li>
+          <li>
+            Balances and figures are whatever you entered. Nothing in the app is financial, tax or
+            investment advice, and no figure is guaranteed to be accurate.
+          </li>
+          <li>
+            To the fullest extent the law allows, I am not liable for any loss, including loss of
+            data, arising from your use of, or inability to use, the service.
+          </li>
+        </ul>
+      </section>
+
+      <section id="changes">
+        <h2>11. Changes to these terms</h2>
+        <p>
+          When the app changes in a way that affects what is collected or how it is used, this page
+          is updated and the date at the top moves. Continuing to use the service after a change
+          means you accept the updated terms. The full history of this page is in the public
+          repository.
+        </p>
+      </section>
+
+      <section id="contact">
+        <h2>12. Contact</h2>
+        <p>
+          Questions, corrections or deletion requests: reach me through
+          <a href="https://nicolascatania.dev/" target="_blank" rel="noopener noreferrer" class="prose-link">nicolascatania.dev</a>,
+          <a href="https://github.com/nicolascatania" target="_blank" rel="noopener noreferrer" class="prose-link">GitHub</a>
+          or
+          <a href="https://www.linkedin.com/in/ncatania1" target="_blank" rel="noopener noreferrer" class="prose-link">LinkedIn</a>.
+          Write from the Google email you sign in with so the request can be matched to your
+          account.
+        </p>
+      </section>
+    </article>
+  </div>
+</div>

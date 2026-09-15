@@ -269,6 +269,16 @@
     @apply text-[11px] font-bold uppercase tracking-[0.14em] text-muted;
   }
 
+  /* Quiet inline links for footers and legal copy: muted at rest, brand on hover. */
+  .footer-link {
+    @apply text-muted transition-colors duration-200 hover:text-brand;
+  }
+
+  /* Body links inside long-form copy (terms, help): underlined so they read as links. */
+  .prose-link {
+    @apply font-medium text-brand underline decoration-brand/40 underline-offset-2 transition-colors hover:decoration-brand;
+  }
+
   /* ---- Skeletons ---------------------------------------------------------
      `.skeleton` is a single placeholder bar. `.skeleton-card` is the empty
      card shell the lists and dashboards render while their data is in flight,

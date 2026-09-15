@@ -1,0 +1,258 @@
+<!-- ===================== Hero ===================== -->
+<section class="mx-auto w-full max-w-6xl px-4 pb-16 pt-14 sm:px-6 sm:pt-20 lg:px-8 lg:pb-24 lg:pt-24">
+  <div class="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+    <div class="hero-copy max-w-xl">
+      <p class="eyebrow">Personal finance, without the noise</p>
+      <h1 class="mt-4 font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+        Know where every <span class="text-gradient-brand">peso</span> goes.
+      </h1>
+      <p class="mt-6 text-base leading-relaxed text-muted sm:text-lg">
+        BudgetKing keeps your accounts, transactions, budgets and savings goals in one place.
+        Free, no ads, no analytics &mdash; sign in with Google and start logging.
+      </p>
+
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a [routerLink]="ctaRoute" class="btn-primary px-6">
+          <i class="fa-brands fa-google text-xs" aria-hidden="true"></i>
+          {{ ctaLabel }}
+        </a>
+        <a [href]="repositoryUrl" target="_blank" rel="noopener noreferrer" class="btn-secondary px-6">
+          <i class="fa-brands fa-github text-sm" aria-hidden="true"></i>
+          See the source
+        </a>
+      </div>
+
+      <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
+        <li class="flex items-center gap-2">
+          <i class="fa-solid fa-check text-xs text-brand" aria-hidden="true"></i>
+          Free to use
+        </li>
+        <li class="flex items-center gap-2">
+          <i class="fa-solid fa-check text-xs text-brand" aria-hidden="true"></i>
+          Google sign-in only, no password
+        </li>
+        <li class="flex items-center gap-2">
+          <i class="fa-solid fa-check text-xs text-brand" aria-hidden="true"></i>
+          Your data is never sold or shared
+        </li>
+      </ul>
+    </div>
+
+    <!--
+      Product preview. A static, hand-written snapshot of the home screen —
+      no real data, just enough to show the shape of the app. Decorative:
+      hidden from assistive technology so it is not read out as figures.
+    -->
+    <div class="hero-preview relative mx-auto w-full max-w-md lg:max-w-none" aria-hidden="true">
+      <div
+        class="pointer-events-none absolute -inset-6 rounded-[2rem] bg-brand/10 blur-2xl"
+      ></div>
+
+      <div class="preview-card card-sheen relative rounded-3xl border border-line bg-surface/85 p-5 shadow-lifted backdrop-blur-2xl sm:p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="eyebrow">Total balance</p>
+            <p class="tabular mt-1 font-display text-3xl font-extrabold tracking-tight">$ 1.284.500,00</p>
+          </div>
+          <span class="chip-positive">
+            <i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i>
+            +12%
+          </span>
+        </div>
+
+        <!-- Accounts -->
+        <div class="mt-5 grid grid-cols-3 gap-2.5">
+          <div class="preview-account rounded-2xl border border-line bg-surface-2 p-3">
+            <i class="fa-solid fa-building-columns text-xs text-brand" aria-hidden="true"></i>
+            <p class="mt-2 text-[11px] font-semibold text-muted">Bank</p>
+            <p class="tabular text-sm font-bold">$ 842.300</p>
+          </div>
+          <div class="preview-account rounded-2xl border border-line bg-surface-2 p-3">
+            <i class="fa-solid fa-wallet text-xs text-accent" aria-hidden="true"></i>
+            <p class="mt-2 text-[11px] font-semibold text-muted">Wallet</p>
+            <p class="tabular text-sm font-bold">$ 312.200</p>
+          </div>
+          <div class="preview-account rounded-2xl border border-line bg-surface-2 p-3">
+            <i class="fa-solid fa-money-bill text-xs text-warning" aria-hidden="true"></i>
+            <p class="mt-2 text-[11px] font-semibold text-muted">Cash</p>
+            <p class="tabular text-sm font-bold">$ 130.000</p>
+          </div>
+        </div>
+
+        <!-- Budget -->
+        <div class="mt-5 rounded-2xl border border-line bg-surface-2 p-4">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-semibold text-body">
+              <i class="fa-solid fa-utensils mr-1.5 text-brand" aria-hidden="true"></i>
+              Food &middot; September
+            </span>
+            <span class="tabular text-muted">$ 96.000 / $ 150.000</span>
+          </div>
+          <div class="mt-2.5 h-2 overflow-hidden rounded-full bg-surface-3">
+            <div class="preview-bar h-full rounded-full bg-gradient-to-r from-brand to-accent"></div>
+          </div>
+        </div>
+
+        <!-- Recent moves -->
+        <ul class="mt-5 space-y-2.5">
+          <li class="preview-row flex items-center gap-3 text-sm">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-negative/10 text-negative">
+              <i class="fa-solid fa-cart-shopping text-xs" aria-hidden="true"></i>
+            </span>
+            <span class="min-w-0 flex-1 truncate">Supermarket</span>
+            <span class="tabular font-semibold text-negative">- $ 18.450</span>
+          </li>
+          <li class="preview-row flex items-center gap-3 text-sm">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-positive/10 text-positive">
+              <i class="fa-solid fa-briefcase text-xs" aria-hidden="true"></i>
+            </span>
+            <span class="min-w-0 flex-1 truncate">Salary</span>
+            <span class="tabular font-semibold text-positive">+ $ 950.000</span>
+          </li>
+          <li class="preview-row flex items-center gap-3 text-sm">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
+              <i class="fa-solid fa-piggy-bank text-xs" aria-hidden="true"></i>
+            </span>
+            <span class="min-w-0 flex-1 truncate">Trip fund</span>
+            <span class="tabular font-semibold text-muted">$ 40.000</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Features ===================== -->
+<section id="features" class="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+  <div appReveal class="max-w-2xl">
+    <p class="eyebrow">Everything you need, nothing you don't</p>
+    <h2 class="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+      Built for how you actually manage money.
+    </h2>
+    <p class="mt-4 text-base leading-relaxed text-muted">
+      No gamification, no streaks, no leaderboard. Just the tools, in one interface that
+      works the same on your phone and your laptop.
+    </p>
+  </div>
+
+  <ul class="feature-grid mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    @for (feature of features; track feature.title) {
+      <li appReveal class="card-interactive p-5">
+        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 text-brand">
+          <i [class]="'fa-solid ' + feature.icon" aria-hidden="true"></i>
+        </span>
+        <h3 class="mt-4 font-display text-base font-bold tracking-tight">{{ feature.title }}</h3>
+        <p class="mt-2 text-sm leading-relaxed text-muted">{{ feature.description }}</p>
+      </li>
+    }
+  </ul>
+</section>
+
+<!-- ===================== How it works ===================== -->
+<section class="border-y border-line bg-surface/60 backdrop-blur-sm">
+  <div class="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <div appReveal class="max-w-2xl">
+      <p class="eyebrow">Three steps</p>
+      <h2 class="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+        Up and running in minutes.
+      </h2>
+    </div>
+
+    <ol class="mt-12 grid gap-6 md:grid-cols-3">
+      @for (step of steps; track step.title; let i = $index) {
+        <li appReveal class="relative rounded-2xl border border-line bg-surface p-6 shadow-soft">
+          <span
+            class="tabular flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-accent font-display text-sm font-extrabold text-brand-contrast shadow-soft"
+          >
+            {{ i + 1 }}
+          </span>
+          <h3 class="mt-4 font-display text-lg font-bold tracking-tight">{{ step.title }}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-muted">{{ step.description }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== Privacy ===================== -->
+<section class="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+  <div appReveal class="grid gap-10 rounded-3xl border border-line bg-surface p-8 shadow-soft lg:grid-cols-[1fr_1.2fr] lg:p-12">
+    <div>
+      <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+        <i class="fa-solid fa-shield-halved text-lg" aria-hidden="true"></i>
+      </span>
+      <h2 class="mt-5 font-display text-3xl font-bold tracking-tight">Your data, your rules.</h2>
+      <p class="mt-4 text-base leading-relaxed text-muted">
+        This is a personal project, not a data business. There is no tracking pixel, no
+        analytics script and nothing to sell. What you enter is used to show you your own numbers
+        and nothing else.
+      </p>
+      <a routerLink="/terms" class="btn-secondary mt-6">
+        Read the terms &amp; privacy notice
+        <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <ul class="grid gap-4 sm:grid-cols-2">
+      <li class="rounded-2xl bg-surface-2 p-4">
+        <p class="flex items-center gap-2 text-sm font-semibold">
+          <i class="fa-brands fa-google text-xs text-brand" aria-hidden="true"></i>
+          From Google, only three things
+        </p>
+        <p class="mt-1.5 text-sm leading-relaxed text-muted">
+          Your name, email and profile photo, to identify your account. Never your password.
+        </p>
+      </li>
+      <li class="rounded-2xl bg-surface-2 p-4">
+        <p class="flex items-center gap-2 text-sm font-semibold">
+          <i class="fa-solid fa-database text-xs text-brand" aria-hidden="true"></i>
+          Stored, not shared
+        </p>
+        <p class="mt-1.5 text-sm leading-relaxed text-muted">
+          Your accounts and transactions live in the app's database and are shown to you only.
+        </p>
+      </li>
+      <li class="rounded-2xl bg-surface-2 p-4">
+        <p class="flex items-center gap-2 text-sm font-semibold">
+          <i class="fa-solid fa-file-export text-xs text-brand" aria-hidden="true"></i>
+          Take it with you
+        </p>
+        <p class="mt-1.5 text-sm leading-relaxed text-muted">
+          Export accounts, categories and transactions to CSV whenever you like.
+        </p>
+      </li>
+      <li class="rounded-2xl bg-surface-2 p-4">
+        <p class="flex items-center gap-2 text-sm font-semibold">
+          <i class="fa-solid fa-trash-can text-xs text-brand" aria-hidden="true"></i>
+          Delete on request
+        </p>
+        <p class="mt-1.5 text-sm leading-relaxed text-muted">
+          Ask and your account and everything in it is removed for good.
+        </p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== Final CTA ===================== -->
+<section class="mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6 lg:px-8 lg:pb-28">
+  <div
+    appReveal
+    class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-accent px-8 py-12 text-center text-brand-contrast shadow-glow sm:px-12 lg:py-16"
+  >
+    <div class="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-contrast/15 blur-2xl" aria-hidden="true"></div>
+    <h2 class="font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
+      Start tracking today.
+    </h2>
+    <p class="mx-auto mt-3 max-w-md text-base opacity-90">
+      One Google sign-in and you are in. Hosted on a free tier, so give the first request a moment.
+    </p>
+    <a
+      [routerLink]="ctaRoute"
+      class="btn mt-8 bg-surface px-6 text-body shadow-lifted hover:-translate-y-0.5"
+    >
+      <i class="fa-brands fa-google text-xs" aria-hidden="true"></i>
+      {{ ctaLabel }}
+    </a>
+  </div>
+</section>

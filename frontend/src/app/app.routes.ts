@@ -5,6 +5,9 @@ import { Login } from './features/login/login/login';
 import { Register } from './features/login/register/register';
 import { MainLayout } from './core/layouts/main-layout/main-layout';
 import { AuthLayout } from './core/layouts/auth-layout/auth-layout';
+import { PublicLayout } from './core/layouts/public-layout/public-layout';
+import { Landing } from './features/landing/pages/landing/landing';
+import { Terms } from './features/landing/pages/terms/terms';
 import { AuthGuard } from './core/guard/auth-guard';
 import { TransactionList } from './features/transactions/pages/transaction-list/transaction-list';
 import { AccountList } from './features/accounts/pages/account-list/account-list';
@@ -15,7 +18,15 @@ import { RecurringTransactionList } from './features/recurring-transactions/page
 import { SavingsGoalList } from './features/savings-goals/pages/savings-goal-list/savings-goal-list';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // Public marketing/legal pages: landing at the root, terms next to it.
+  {
+    path: '',
+    component: PublicLayout,
+    children: [
+      { path: '', component: Landing, pathMatch: 'full' },
+      { path: 'terms', component: Terms },
+    ],
+  },
 
   {
     path: '',
@@ -50,5 +61,5 @@ export const routes: Routes = [
     ],
   },
 
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: '' },
 ];

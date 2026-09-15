@@ -1,0 +1,73 @@
+:host {
+  display: block;
+}
+
+/* Hero: copy slides up first, the preview card follows a beat later. */
+.hero-copy {
+  animation: hero-enter 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-preview {
+  animation: hero-enter 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 140ms;
+}
+
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Inside the preview, the account tiles and rows cascade in after the card. */
+.preview-account,
+.preview-row {
+  animation: hero-enter 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.preview-account:nth-child(1) { animation-delay: 420ms; }
+.preview-account:nth-child(2) { animation-delay: 480ms; }
+.preview-account:nth-child(3) { animation-delay: 540ms; }
+.preview-row:nth-child(1) { animation-delay: 640ms; }
+.preview-row:nth-child(2) { animation-delay: 700ms; }
+.preview-row:nth-child(3) { animation-delay: 760ms; }
+
+/* The budget bar fills to its value instead of appearing already full. */
+.preview-bar {
+  width: 64%;
+  transform-origin: left center;
+  animation: bar-fill 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 600ms;
+}
+
+@keyframes bar-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Feature tiles reveal in a cascade. `.reveal` reads `--reveal-delay`, so the
+   stagger lives here rather than as a per-item index bound in the template. */
+.feature-grid > li:nth-child(2) { --reveal-delay: 60ms; }
+.feature-grid > li:nth-child(3) { --reveal-delay: 120ms; }
+.feature-grid > li:nth-child(4) { --reveal-delay: 180ms; }
+.feature-grid > li:nth-child(6) { --reveal-delay: 60ms; }
+.feature-grid > li:nth-child(7) { --reveal-delay: 120ms; }
+.feature-grid > li:nth-child(8) { --reveal-delay: 180ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy,
+  .hero-preview,
+  .preview-account,
+  .preview-row,
+  .preview-bar {
+    animation: none;
+  }
+}
