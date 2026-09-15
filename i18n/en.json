@@ -29,6 +29,7 @@
     "accounts": "Accounts",
     "categories": "Categories",
     "users": "Users",
+    "settings": "Settings",
     "collapseSidebar": "Collapse sidebar",
     "expandSidebar": "Expand sidebar",
     "logOut": "Log out",
@@ -760,5 +761,22 @@
     "loadError": "Error loading users",
     "statusUpdated": "Status updated",
     "statusError": "Failed to update status"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "How BudgetKing looks and speaks to you.",
+    "appearance": {
+      "title": "Appearance",
+      "subtitle": "Pick a theme; it is remembered on this device.",
+      "light": "Light",
+      "lightHint": "Bright surfaces, dark text.",
+      "dark": "Dark",
+      "darkHint": "Easier on the eyes at night."
+    },
+    "language": {
+      "title": "Language",
+      "subtitle": "Menus, labels and messages in your language.",
+      "reloadHint": "Changing the language reloads the page so dates and amounts follow the new locale."
+    }
   }
 }

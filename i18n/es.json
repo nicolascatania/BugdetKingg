@@ -29,6 +29,7 @@
     "accounts": "Cuentas",
     "categories": "Categorías",
     "users": "Usuarios",
+    "settings": "Configuración",
     "collapseSidebar": "Contraer barra lateral",
     "expandSidebar": "Expandir barra lateral",
     "logOut": "Cerrar sesión",
@@ -760,5 +761,22 @@
     "loadError": "Error al cargar usuarios",
     "statusUpdated": "Estado actualizado",
     "statusError": "No se pudo actualizar el estado"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Cómo se ve y en qué idioma te habla BudgetKing.",
+    "appearance": {
+      "title": "Apariencia",
+      "subtitle": "Elegí un tema; se recuerda en este dispositivo.",
+      "light": "Claro",
+      "lightHint": "Fondos claros, texto oscuro.",
+      "dark": "Oscuro",
+      "darkHint": "Más cómodo de noche."
+    },
+    "language": {
+      "title": "Idioma",
+      "subtitle": "Menús, etiquetas y mensajes en tu idioma.",
+      "reloadHint": "Cambiar el idioma recarga la página para que fechas y montos sigan la nueva configuración regional."
+    }
   }
 }

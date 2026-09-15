@@ -29,6 +29,7 @@
     "accounts": "Konten",
     "categories": "Kategorien",
     "users": "Benutzer",
+    "settings": "Einstellungen",
     "collapseSidebar": "Seitenleiste einklappen",
     "expandSidebar": "Seitenleiste ausklappen",
     "logOut": "Abmelden",
@@ -760,5 +761,22 @@
     "loadError": "Fehler beim Laden der Benutzer",
     "statusUpdated": "Status aktualisiert",
     "statusError": "Status konnte nicht aktualisiert werden"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Wie BudgetKing aussieht und in welcher Sprache es mit dir spricht.",
+    "appearance": {
+      "title": "Erscheinungsbild",
+      "subtitle": "Wähle ein Design; es wird auf diesem Gerät gespeichert.",
+      "light": "Hell",
+      "lightHint": "Helle Flächen, dunkler Text.",
+      "dark": "Dunkel",
+      "darkHint": "Angenehmer für die Augen bei Nacht."
+    },
+    "language": {
+      "title": "Sprache",
+      "subtitle": "Menüs, Beschriftungen und Meldungen in deiner Sprache.",
+      "reloadHint": "Beim Sprachwechsel wird die Seite neu geladen, damit Datums- und Betragsformate der neuen Region folgen."
+    }
   }
 }
