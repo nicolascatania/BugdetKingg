@@ -402,7 +402,11 @@
       "title": "Podsumowanie miesiąca",
       "income": "Przychody",
       "outcome": "Wydatki",
-      "balance": "Bilans"
+      "balance": "Bilans",
+      "vsLastMonthPct": "{{percent}}% vs poprzedni miesiąc",
+      "vsLastMonthAmount": "{{amount}} vs poprzedni miesiąc",
+      "savedMore": "{{amount}} więcej niż w poprzednim miesiącu",
+      "savedLess": "{{amount}} mniej niż w poprzednim miesiącu"
     },
     "lastMoves": {
       "empty": "W tym miesiącu nie ma jeszcze ruchów."
@@ -734,10 +738,11 @@
     "totalBalance": "Saldo łączne",
     "expenses": "Wydatki",
     "income": "Przychody",
+    "rangeBalance": "Saldo w okresie",
     "expense": "Wydatek",
     "expensesByCategory": "Wydatki według kategorii",
     "noExpenses": "Brak wydatków w tym zakresie.",
-    "movementsThisMonth": "Ruchy w tym miesiącu",
+    "movementsInRange": "Ruchy w okresie",
     "chart": {
       "title": "Przychody a wydatki",
       "subtitle": "Bieżący rok, miesiąc po miesiącu",

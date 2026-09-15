@@ -402,7 +402,11 @@
       "title": "Resumen mensual",
       "income": "Ingresos",
       "outcome": "Egresos",
-      "balance": "Balance"
+      "balance": "Balance",
+      "vsLastMonthPct": "{{percent}}% vs mes pasado",
+      "vsLastMonthAmount": "{{amount}} vs mes pasado",
+      "savedMore": "{{amount}} más que el mes pasado",
+      "savedLess": "{{amount}} menos que el mes pasado"
     },
     "lastMoves": {
       "empty": "Todavía no hay movimientos este mes."
@@ -734,10 +738,11 @@
     "totalBalance": "Saldo total",
     "expenses": "Gastos",
     "income": "Ingresos",
+    "rangeBalance": "Balance del período",
     "expense": "Gasto",
     "expensesByCategory": "Gastos por categoría",
     "noExpenses": "No hay gastos en este rango.",
-    "movementsThisMonth": "Movimientos de este mes",
+    "movementsInRange": "Movimientos del período",
     "chart": {
       "title": "Ingresos vs gastos",
       "subtitle": "Año actual, mes a mes",
