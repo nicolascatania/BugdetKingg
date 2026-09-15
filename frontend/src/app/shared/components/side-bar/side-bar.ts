@@ -72,6 +72,7 @@ export class SideBar {
     { labelKey: 'nav.accounts', route: '/accounts', icon: 'fa-wallet' },
     { labelKey: 'nav.categories', route: '/categories', icon: 'fa-tags' },
     { labelKey: 'nav.users', route: '/users', icon: 'fa-users', adminOnly: true },
+    { labelKey: 'nav.settings', route: '/settings', icon: 'fa-gear' },
   ];
 
   /** Entries the current user is allowed to see. */

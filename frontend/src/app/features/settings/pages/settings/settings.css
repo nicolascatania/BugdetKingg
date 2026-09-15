@@ -1,0 +1,10 @@
+/* Option cards nudge on press so the selection feels physical. */
+.option-card:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option-card:active {
+    transform: none;
+  }
+}

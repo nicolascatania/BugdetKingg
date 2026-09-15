@@ -1,0 +1,100 @@
+<ng-container *transloco="let t">
+<div class="mx-auto w-full max-w-3xl space-y-6">
+  <!-- Header -->
+  <div appReveal>
+    <h1 class="page-title">{{ t('settings.title') }}</h1>
+    <p class="mt-1 text-sm text-muted">{{ t('settings.subtitle') }}</p>
+  </div>
+
+  <!-- Appearance -->
+  <section appReveal [revealDelay]="60" class="card p-5 sm:p-6">
+    <div class="mb-4 flex items-center gap-3">
+      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+        <i class="fa-solid fa-palette text-sm"></i>
+      </span>
+      <div>
+        <h2 class="section-title">{{ t('settings.appearance.title') }}</h2>
+        <p class="text-xs text-muted">{{ t('settings.appearance.subtitle') }}</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2" role="radiogroup" [attr.aria-label]="t('settings.appearance.title')">
+      @for (option of themeOptions; track option.value) {
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="theme.theme() === option.value"
+          (click)="selectTheme(option.value)"
+          class="option-card flex items-start gap-3 rounded-2xl border p-4 text-left transition-all duration-200 ease-smooth"
+          [ngClass]="theme.theme() === option.value
+            ? 'border-brand bg-brand/10'
+            : 'border-line bg-surface-2 hover:border-line-strong'"
+        >
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-200"
+            [ngClass]="theme.theme() === option.value ? 'bg-brand text-brand-contrast' : 'bg-surface-3 text-muted'"
+          >
+            <i class="fa-solid text-sm" [ngClass]="option.icon"></i>
+          </span>
+          <span class="min-w-0">
+            <span class="flex items-center gap-2 text-sm font-bold">
+              {{ t(option.labelKey) }}
+              @if (theme.theme() === option.value) {
+                <i class="fa-solid fa-check text-xs text-brand" aria-hidden="true"></i>
+              }
+            </span>
+            <span class="mt-0.5 block text-xs text-muted">{{ t(option.hintKey) }}</span>
+          </span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Language -->
+  <section appReveal [revealDelay]="120" class="card p-5 sm:p-6">
+    <div class="mb-4 flex items-center gap-3">
+      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+        <i class="fa-solid fa-globe text-sm"></i>
+      </span>
+      <div>
+        <h2 class="section-title">{{ t('settings.language.title') }}</h2>
+        <p class="text-xs text-muted">{{ t('settings.language.subtitle') }}</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2" role="radiogroup" [attr.aria-label]="t('settings.language.title')">
+      @for (option of language.languages; track option.code) {
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="language.current() === option.code"
+          [lang]="option.code"
+          (click)="selectLanguage(option.code)"
+          class="option-card flex items-center gap-3 rounded-2xl border p-4 text-left transition-all duration-200 ease-smooth"
+          [ngClass]="language.current() === option.code
+            ? 'border-brand bg-brand/10'
+            : 'border-line bg-surface-2 hover:border-line-strong'"
+        >
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold uppercase transition-colors duration-200"
+            [ngClass]="language.current() === option.code ? 'bg-brand text-brand-contrast' : 'bg-surface-3 text-muted'"
+          >
+            {{ option.code }}
+          </span>
+          <span class="flex min-w-0 flex-1 items-center justify-between gap-2">
+            <span class="truncate text-sm font-bold">{{ option.nativeName }}</span>
+            @if (language.current() === option.code) {
+              <i class="fa-solid fa-check shrink-0 text-xs text-brand" aria-hidden="true"></i>
+            }
+          </span>
+        </button>
+      }
+    </div>
+
+    <p class="mt-3 flex items-center gap-2 text-xs text-subtle">
+      <i class="fa-solid fa-circle-info text-[10px]"></i>
+      {{ t('settings.language.reloadHint') }}
+    </p>
+  </section>
+</div>
+</ng-container>
