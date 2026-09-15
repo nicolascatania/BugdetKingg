@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { LanguageService } from '../../../../core/i18n/language.service';
 
 /** One entry in the table of contents; `id` matches a section anchor in the template. */
 interface TermsSection {
@@ -18,12 +20,15 @@ interface TermsSection {
 @Component({
   selector: 'app-terms',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './terms.html',
   styleUrl: './terms.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Terms {
+  /** The legal text itself is English-only; readers of another language get a notice saying so. */
+  readonly showEnglishOnlyNotice = inject(LanguageService).current() !== 'en';
+
   /** Shown at the top; bump whenever the text changes. */
   readonly lastUpdated = 'September 14, 2026';
 

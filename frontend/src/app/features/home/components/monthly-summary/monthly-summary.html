@@ -1,5 +1,5 @@
-<section>
-  <h2 class="section-title mb-4">Monthly summary</h2>
+<section *transloco="let t">
+  <h2 class="section-title mb-4">{{ t('home.summary.title') }}</h2>
 
   @if (monthlyReport() === null) {
     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -18,7 +18,7 @@
     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
       <article class="card-interactive p-5">
         <div class="flex items-center justify-between">
-          <p class="eyebrow">Income</p>
+          <p class="eyebrow">{{ t('home.summary.income') }}</p>
           <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-positive/10 text-positive">
             <i class="fa-solid fa-arrow-trend-up text-xs"></i>
           </span>
@@ -30,7 +30,7 @@
 
       <article class="card-interactive p-5">
         <div class="flex items-center justify-between">
-          <p class="eyebrow">Outcome</p>
+          <p class="eyebrow">{{ t('home.summary.outcome') }}</p>
           <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-negative/10 text-negative">
             <i class="fa-solid fa-arrow-trend-down text-xs"></i>
           </span>
@@ -45,7 +45,7 @@
         class="card-interactive relative overflow-hidden border-brand/30 bg-gradient-to-br from-brand/10 to-transparent p-5"
       >
         <div class="flex items-center justify-between">
-          <p class="eyebrow text-brand">Balance</p>
+          <p class="eyebrow text-brand">{{ t('home.summary.balance') }}</p>
           <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/15 text-brand">
             <i class="fa-solid fa-scale-balanced text-xs"></i>
           </span>

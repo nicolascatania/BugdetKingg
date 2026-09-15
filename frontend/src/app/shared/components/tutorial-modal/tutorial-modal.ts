@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UiModalComponent } from '../../modal/ui-modal/ui-modal';
+import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
 
-/** One explained step/topic inside a tutorial modal. */
+/** One explained step/topic inside a tutorial modal; texts are translation keys. */
 export interface TutorialSection {
   icon: string;
-  heading: string;
-  body: string;
+  headingKey: string;
+  bodyKey: string;
 }
 
 /**
@@ -17,7 +18,7 @@ export interface TutorialSection {
 @Component({
   selector: 'app-tutorial-modal',
   standalone: true,
-  imports: [UiModalComponent, CommonModule],
+  imports: [UiModalComponent, CommonModule, TranslocoPipe, TranslocoDirective],
   templateUrl: './tutorial-modal.html',
   styleUrl: './tutorial-modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

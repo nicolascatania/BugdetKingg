@@ -1,0 +1,730 @@
+{
+  "common": {
+    "language": "Language",
+    "brandHome": "BudgetKing home",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "delete": "Delete",
+    "deleting": "Deleting…",
+    "edit": "Edit",
+    "close": "Close",
+    "all": "All",
+    "back": "Back",
+    "actions": "Actions",
+    "create": "Create",
+    "update": "Update",
+    "none": "None",
+    "working": "Working…",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "nav": {
+    "mainNavigation": "Main navigation",
+    "home": "Home",
+    "transactions": "Transactions",
+    "recurring": "Recurring",
+    "budgets": "Budgets",
+    "savingsGoals": "Savings Goals",
+    "dashboard": "Dashboard",
+    "accounts": "Accounts",
+    "categories": "Categories",
+    "users": "Users",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "logOut": "Log out",
+    "openNavigation": "Open navigation",
+    "closeNavigation": "Close navigation"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme",
+    "light": "Light theme",
+    "dark": "Dark theme"
+  },
+  "modal": {
+    "close": "Close dialog"
+  },
+  "tutorial": {
+    "gotIt": "Got it"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "showing": "Showing",
+    "of": "of",
+    "results": "results",
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "multiselect": {
+    "placeholder": "Select items…",
+    "remove": "Remove {{item}}",
+    "empty": "No options available."
+  },
+  "monthPicker": {
+    "quickSelect": "Quick-select a month",
+    "month": "Month",
+    "hint": "Selects the full month range for {{year}}"
+  },
+  "public": {
+    "primaryNav": "Primary",
+    "features": "Features",
+    "terms": "Terms",
+    "signIn": "Sign in",
+    "openApp": "Open app"
+  },
+  "footer": {
+    "brandHome": "BudgetKing home",
+    "tagline": "Personal finance without the noise. Accounts, transactions, budgets and savings goals in one place — free, and the source is on GitHub.",
+    "product": "Product",
+    "signIn": "Sign in",
+    "features": "Features",
+    "terms": "Terms & privacy",
+    "sourceCode": "Source code",
+    "author": "Author",
+    "builtBy": "Built by",
+    "builtIn": "Built in Argentina.",
+    "freeTier": "Demo hosted on free tiers — the first request may take a moment.",
+    "home": "Home"
+  },
+  "auth": {
+    "coldStart": {
+      "label": "Demo hosting notice",
+      "headsUp": "Heads up:",
+      "body": "this is a demo hosted on a free tier. The server sleeps when idle, so your first sign-in or sign-up may take",
+      "duration": "up to a couple of minutes",
+      "tail": "while it wakes up. Nothing is broken — hang tight."
+    },
+    "login": {
+      "welcome": "Welcome back. Your money is waiting.",
+      "secureSignIn": "Secure sign-in",
+      "signingIn": "Signing you in…",
+      "privacyNote": "We only read your name, email and photo to identify your account. BudgetKing never sees your Google password.",
+      "termsLink": "Terms & privacy",
+      "orWithEmail": "Or with email",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordLabel": "Password",
+      "passwordRequired": "Password is required.",
+      "hidePassword": "Hide password",
+      "showPassword": "Show password",
+      "signIn": "Sign in",
+      "newHere": "New here",
+      "createAccount": "Create an account",
+      "tagline": "Track accounts, categories and every move — in one place.",
+      "googleLoadFailed": "Could not load Google sign-in. Please refresh the page.",
+      "googleNotConfigured": "Google sign-in is not configured.",
+      "googleFailed": "Google sign-in failed, please try again",
+      "loginFailed": "Login error, please contact an administrator"
+    },
+    "register": {
+      "titleStart": "Create your",
+      "titleHighlight": "account",
+      "subtitle": "Two minutes now, full control of your budget after.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Maria",
+      "nameRequired": "Name is required.",
+      "lastNameLabel": "Last name",
+      "lastNamePlaceholder": "Perez",
+      "lastNameRequired": "Last name is required.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "passwordInvalid": "Use at least 8 characters with a letter and a number.",
+      "passwordHint": "Minimum 8 characters, including a letter and a number.",
+      "hidePassword": "Hide password",
+      "showPassword": "Show password",
+      "creating": "Creating account…",
+      "create": "Create account",
+      "alreadyMember": "Already a member?",
+      "signIn": "Sign in",
+      "failed": "Registration failed, please try again later"
+    }
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "Personal finance, without the noise",
+      "titleStart": "Know where your",
+      "titleHighlight": "money",
+      "titleEnd": "goes.",
+      "lead": "BudgetKing keeps your accounts, transactions, budgets and savings goals in one place. Free, no ads, no analytics — sign in with Google and start logging.",
+      "signInGoogle": "Sign in with Google",
+      "openApp": "Open the app",
+      "seeSource": "See the source",
+      "perkFree": "Free to use",
+      "perkGoogle": "Google sign-in only, no password",
+      "perkPrivacy": "Your data is never sold or shared"
+    },
+    "preview": {
+      "totalBalance": "Total balance",
+      "bank": "Bank",
+      "wallet": "Wallet",
+      "cash": "Cash",
+      "budgetLabel": "Food · September",
+      "supermarket": "Supermarket",
+      "salary": "Salary",
+      "tripFund": "Trip fund"
+    },
+    "features": {
+      "eyebrow": "Everything you need, nothing you don't",
+      "title": "Built for how you actually manage money.",
+      "lead": "No gamification, no streaks, no leaderboard. Just the tools, in one interface that works the same on your phone and your laptop.",
+      "items": {
+        "accounts": {
+          "title": "Accounts",
+          "description": "Cash, bank, wallet, card — every place your money lives, each with its own balance and icon."
+        },
+        "transactions": {
+          "title": "Transactions",
+          "description": "Income, expenses and transfers between accounts, with category, counterparty and notes. Filter and page through years of history."
+        },
+        "recurring": {
+          "title": "Recurring moves",
+          "description": "Rent, salary, subscriptions. Set the frequency once, see what is coming up, and post each one with a click when it is due."
+        },
+        "budgets": {
+          "title": "Monthly budgets",
+          "description": "A spending limit per category and month, with a progress bar that tells you how much room is left."
+        },
+        "savings": {
+          "title": "Savings goals",
+          "description": "A target amount and date, contributions linked to a real account, and a status that flips to achieved on its own."
+        },
+        "dashboard": {
+          "title": "Dashboard",
+          "description": "Income versus expenses per month, spending by category, and the official dollar and inflation figures for Argentina."
+        },
+        "csv": {
+          "title": "CSV import & export",
+          "description": "Bring accounts, categories and transactions in from a spreadsheet, preview before committing, and export them back out any time."
+        },
+        "themes": {
+          "title": "Light & dark, any screen",
+          "description": "One design system, both themes, phone to desktop. Tables become cards on small screens instead of scrolling sideways."
+        }
+      }
+    },
+    "steps": {
+      "eyebrow": "Three steps",
+      "title": "Up and running in minutes.",
+      "items": {
+        "signIn": {
+          "title": "Sign in with Google",
+          "description": "No form, no password to invent. Your account is created on the first sign-in."
+        },
+        "setUp": {
+          "title": "Add your accounts and categories",
+          "description": "Or import them from a CSV. A few minutes and the app mirrors how you already think about your money."
+        },
+        "track": {
+          "title": "Log moves, set limits, watch the dashboard",
+          "description": "Every transaction updates balances, budgets and goals immediately."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Your data, your rules.",
+      "lead": "This is a personal project, not a data business. There is no tracking pixel, no analytics script and nothing to sell. What you enter is used to show you your own numbers and nothing else.",
+      "readTerms": "Read the terms & privacy notice",
+      "google": {
+        "title": "From Google, only three things",
+        "body": "Your name, email and profile photo, to identify your account. Never your password."
+      },
+      "stored": {
+        "title": "Stored, not shared",
+        "body": "Your accounts and transactions live in the app's database and are shown to you only."
+      },
+      "export": {
+        "title": "Take it with you",
+        "body": "Export accounts, categories and transactions to CSV whenever you like."
+      },
+      "delete": {
+        "title": "Delete on request",
+        "body": "Ask and your account and everything in it is removed for good."
+      }
+    },
+    "cta": {
+      "title": "Start tracking today.",
+      "lead": "One Google sign-in and you are in. Hosted on a free tier, so give the first request a moment."
+    }
+  },
+  "terms": {
+    "eyebrow": "Legal",
+    "title": "Terms of use & privacy notice",
+    "lead": "Plain language, on purpose. This page explains what BudgetKing is, what happens with the information you give it, and what you can expect from a free personal project.",
+    "lastUpdated": "Last updated: {{date}}",
+    "onThisPage": "On this page",
+    "englishOnly": "This document is maintained in English only. The English text is the binding version."
+  },
+  "fields": {
+    "date": "Date",
+    "account": "Account",
+    "type": "Type",
+    "category": "Category",
+    "amount": "Amount",
+    "description": "Description",
+    "counterparty": "Counterparty",
+    "name": "Name",
+    "icon": "Icon",
+    "month": "Month",
+    "year": "Year",
+    "status": "Status"
+  },
+  "filters": {
+    "title": "Filters",
+    "from": "From",
+    "to": "To",
+    "min": "Min",
+    "max": "Max",
+    "searchDetails": "Search details…",
+    "searchCounterparty": "Search counterparty…",
+    "clear": "Clear",
+    "apply": "Apply filters",
+    "applying": "Applying…"
+  },
+  "csv": {
+    "export": "Export CSV",
+    "exporting": "Exporting…",
+    "import": "Import CSV"
+  },
+  "transactionType": {
+    "INCOME": "Income",
+    "EXPENSE": "Expense",
+    "TRANSFER": "Transfer",
+    "SAVINGS_DEPOSIT": "To savings",
+    "SAVINGS_WITHDRAWAL": "From savings",
+    "UNKNOWN": "—"
+  },
+  "frequency": {
+    "DAILY": "Daily",
+    "WEEKLY": "Weekly",
+    "MONTHLY": "Monthly",
+    "YEARLY": "Yearly"
+  },
+  "icons": {
+    "wallet": "Wallet",
+    "bank": "Bank",
+    "creditCard": "Credit Card",
+    "cash": "Cash",
+    "savings": "Savings",
+    "cryptoCoins": "Crypto/Coins",
+    "investments": "Investments",
+    "business": "Business",
+    "restaurants": "Restaurants",
+    "fastFood": "Fast Food",
+    "supermarket": "Supermarket",
+    "barNightlife": "Bar & Nightlife",
+    "carExpenses": "Car / Expenses",
+    "fuel": "Fuel",
+    "publicTransport": "Public Transport",
+    "travelFlights": "Travel & Flights",
+    "motorcycle": "Motorcycle",
+    "rentHome": "Rent / Home",
+    "electricityUtilities": "Electricity / Utilities",
+    "waterServices": "Water Services",
+    "internetTelecom": "Internet / Telecom",
+    "furnitureDecor": "Furniture / Decor",
+    "cinemaStreaming": "Cinema & Streaming",
+    "gaming": "Gaming",
+    "musicConcerts": "Music & Concerts",
+    "sportsFootball": "Sports / Football",
+    "eventsTickets": "Events / Tickets",
+    "clothingApparel": "Clothing & Apparel",
+    "shopping": "Shopping",
+    "personalCareBeauty": "Personal Care & Beauty",
+    "giftsDonations": "Gifts & Donations",
+    "gymFitness": "Gym & Fitness",
+    "healthMedical": "Health & Medical",
+    "pharmacyMedicine": "Pharmacy / Medicine",
+    "doctorVisit": "Doctor Visit",
+    "booksEducation": "Books & Education",
+    "tuitionCourses": "Tuition / Courses",
+    "softwareSubscriptions": "Software / Subscriptions",
+    "loansDebts": "Loans / Debts",
+    "salaryIncome": "Salary / Income",
+    "othersGeneral": "Others / General",
+    "virtualReality": "Virtual Reality",
+    "techHardware": "Tech & Hardware",
+    "programming": "Programming",
+    "artsDesign": "Arts & Design",
+    "photography": "Photography",
+    "cycling": "Cycling",
+    "swimming": "Swimming",
+    "pets": "Pets",
+    "childcare": "Childcare",
+    "gardening": "Gardening",
+    "diyRepairs": "DIY / Repairs",
+    "legalTaxes": "Legal / Taxes",
+    "government": "Government",
+    "insurance": "Insurance",
+    "donations": "Donations",
+    "socialFamily": "Social / Family",
+    "mobilePlan": "Mobile Plan",
+    "electronics": "Electronics",
+    "subscriptions": "Subscriptions",
+    "stocksInvestments": "Stocks / Investments",
+    "portfolio": "Portfolio",
+    "crypto": "Crypto",
+    "bondsBank": "Bonds / Bank",
+    "growth": "Growth",
+    "volleyball": "Volleyball",
+    "basketball": "Basketball",
+    "tennis": "Tennis",
+    "running": "Running",
+    "awardsCompetitions": "Awards / Competitions",
+    "cafe": "Café"
+  },
+  "home": {
+    "recentActivity": "Recent activity",
+    "thisMonth": "This month",
+    "heading": {
+      "totalBalance": "Total balance",
+      "setAside": "set aside in savings goals",
+      "newTransaction": "New transaction",
+      "newAccount": "New account",
+      "dollarValue": "Dollar value",
+      "liveQuote": "Live quote",
+      "buy": "Buy",
+      "sell": "Sell",
+      "inflation": "Inflation",
+      "date": "Date",
+      "value": "Value"
+    },
+    "accounts": {
+      "title": "Accounts",
+      "registered": "{{count}} registered",
+      "empty": "No accounts registered yet."
+    },
+    "summary": {
+      "title": "Monthly summary",
+      "income": "Income",
+      "outcome": "Outcome",
+      "balance": "Balance"
+    },
+    "lastMoves": {
+      "empty": "No movements this month yet."
+    }
+  },
+  "accounts": {
+    "title": "My accounts",
+    "subtitle": "Everywhere your money lives, in one view.",
+    "newAccount": "New account",
+    "noDescription": "No description",
+    "balance": "Balance",
+    "editNamed": "Edit {{name}}",
+    "deleteNamed": "Delete {{name}}",
+    "emptyTitle": "No accounts registered",
+    "emptyHint": "Create your first account to start tracking movements.",
+    "deleted": "Account deleted successfully",
+    "exportError": "Error exporting accounts",
+    "form": {
+      "createTitle": "Create account",
+      "editTitle": "Edit account",
+      "name": "Name",
+      "namePlaceholder": "e.g. Bank, Cash, Crypto",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional details…",
+      "icon": "Account icon",
+      "saveError": "Something went wrong. Please try again."
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "subtitle": "How your spending gets grouped.",
+    "newCategory": "New category",
+    "emptyTitle": "No categories defined",
+    "emptyHint": "Categories make your dashboard actually useful.",
+    "loadError": "Error loading categories",
+    "deleteError": "Error deleting category",
+    "exportError": "Error exporting categories",
+    "saved": "Category saved successfully",
+    "saveError": "Error saving category",
+    "form": {
+      "createTitle": "New category",
+      "editTitle": "Edit category",
+      "name": "Name",
+      "namePlaceholder": "e.g. Delivery, Services, Subscriptions",
+      "icon": "Category icon",
+      "searchIconPlaceholder": "Search icon (e.g. 'games')…",
+      "searchIcons": "Search icons",
+      "noIcons": "No icons found.",
+      "create": "Create",
+      "update": "Update"
+    }
+  },
+  "csvImport": {
+    "expectedColumns": "Expected columns, in order:",
+    "file": "CSV file",
+    "valid": "Valid",
+    "duplicate": "Duplicate",
+    "errors": "Errors",
+    "error": "Error",
+    "line": "Line",
+    "status": "Status",
+    "reason": "Reason",
+    "destination": "Destination",
+    "reading": "Reading…",
+    "preview": "Preview",
+    "importing": "Importing…",
+    "importRows": "Import {{count}} rows",
+    "done": "Done",
+    "skipped": "{{duplicates}} duplicate and {{errors}} invalid rows were skipped.",
+    "readError": "Error reading CSV file",
+    "accounts": {
+      "title": "Import accounts from CSV",
+      "hint": "An unrecognised or blank icon never fails a row — it falls back to the bank icon automatically. Imported accounts always start with a balance of $0.",
+      "done": "{{count}} accounts imported successfully.",
+      "importError": "Error importing accounts"
+    },
+    "categories": {
+      "title": "Import categories from CSV",
+      "hint": "An unrecognised or blank icon never fails a row — it falls back to a default icon automatically.",
+      "done": "{{count}} categories imported successfully.",
+      "importError": "Error importing categories"
+    },
+    "transactions": {
+      "title": "Import transactions from CSV",
+      "hint": "destination_account is only required for TRANSFER rows (must be an existing account, different from account). category is optional for TRANSFER.",
+      "done": "{{count}} transactions imported successfully.",
+      "importError": "Error importing transactions"
+    }
+  },
+  "transactions": {
+    "title": "Transactions",
+    "matchCount": "{{count}} movements match your filters.",
+    "new": "New transaction",
+    "newHint": "Record a new transaction",
+    "importHint": "Import transactions from a CSV file",
+    "needAccount": "Create an account first",
+    "editAria": "Edit transaction",
+    "deleteAria": "Delete transaction",
+    "empty": "No transactions match these filters.",
+    "deleteTitle": "Delete transaction",
+    "deleteConfirm": "Delete the {{type}} of {{amount}} for \"{{description}}\"? The account balance will be adjusted back. This cannot be undone.",
+    "deleted": "Transaction deleted.",
+    "deleteError": "Error deleting transaction",
+    "exportError": "Error exporting transactions",
+    "form": {
+      "createTitle": "New transaction",
+      "editTitle": "Edit transaction",
+      "typeLocked": "Type cannot be changed once created — delete and recreate instead",
+      "accountLocked": "Account cannot be changed once created — delete and recreate instead",
+      "destinationLocked": "Destination account cannot be changed once created — delete and recreate instead",
+      "originAccount": "Origin account",
+      "destinationAccount": "Destination account",
+      "selectCategory": "Select category",
+      "counterpartyPlaceholder": "e.g. Supermarket, Employer",
+      "descriptionPlaceholder": "Transaction details",
+      "completeFields": "Complete all required fields first",
+      "fillRequired": "Please fill in all required fields correctly.",
+      "selectDestination": "Please select a destination account for the transfer."
+    }
+  },
+  "budgets": {
+    "title": "Budgets",
+    "subtitle": "Set a monthly limit per category and track it live.",
+    "new": "New budget",
+    "ofLimit": "of {{limit}}",
+    "usage": "{{percent}}% used · {{remaining}} remaining",
+    "status": {
+      "OK": "OK",
+      "WARNING": "Warning",
+      "EXCEEDED": "Exceeded"
+    },
+    "emptyTitle": "No budgets for this period",
+    "emptyHint": "Create one to start tracking a category's spend.",
+    "deleteError": "Error deleting budget",
+    "saved": "Budget saved successfully",
+    "saveError": "Error saving budget",
+    "form": {
+      "createTitle": "New budget",
+      "editTitle": "Edit budget",
+      "selectCategory": "Select category",
+      "limitAmount": "Limit amount"
+    },
+    "tutorial": {
+      "title": "How budgets work",
+      "intro": "Budgets let you cap how much you spend on a category during a given month, and see live how close you are to that cap.",
+      "s1": {
+        "heading": "1. Set a limit per category",
+        "body": "Pick a category, a month and year, and how much you want to spend at most on it during that period."
+      },
+      "s2": {
+        "heading": "2. Watch it fill up automatically",
+        "body": "Every expense you log against that category counts toward the limit — there is nothing else to do. The progress bar and the spent/remaining numbers update on their own."
+      },
+      "s3": {
+        "heading": "3. Colors tell you the status",
+        "body": "Green (OK) while you are under 80% spent, amber (Warning) from 80% up, red (Exceeded) once you go over the limit."
+      },
+      "s4": {
+        "heading": "4. Budgets are per month",
+        "body": "Switch the month/year selector at the top to review a past period or set up next month's limits ahead of time."
+      }
+    }
+  },
+  "recurring": {
+    "title": "Recurring transactions",
+    "configuredCount": "{{count}} templates configured.",
+    "new": "New template",
+    "newHint": "Create a recurring template",
+    "upcoming": "Upcoming in the next 30 days",
+    "frequency": "Frequency",
+    "nextRun": "Next run",
+    "nextShort": "Next: {{date}}",
+    "active": "Active",
+    "paused": "Paused",
+    "activate": "Activate template",
+    "deactivate": "Deactivate template",
+    "activeHint": "Active — click to pause",
+    "pausedHint": "Paused — click to activate",
+    "runNow": "Run now",
+    "run": "Run",
+    "running": "Running…",
+    "empty": "No recurring templates match these filters.",
+    "deleteError": "Error deleting template",
+    "statusError": "Error updating template status",
+    "generated": "Transaction generated",
+    "runError": "Error running template",
+    "saved": "Recurring transaction saved successfully",
+    "saveError": "Error saving recurring transaction",
+    "form": {
+      "createTitle": "New recurring transaction",
+      "editTitle": "Edit recurring transaction",
+      "nextRunDate": "Next run date",
+      "endDate": "End date (optional)",
+      "counterpartyPlaceholder": "e.g. Landlord, Netflix",
+      "descriptionPlaceholder": "Template details"
+    },
+    "tutorial": {
+      "title": "How recurring transactions work",
+      "intro": "Recurring transactions are templates for movements that happen on a schedule — rent, a subscription, your salary — so you don't have to enter them by hand every time.",
+      "s1": {
+        "heading": "1. Create a template",
+        "body": "A template is a transaction blueprint: amount, account, category (or destination account for transfers), counterparty and how often it repeats."
+      },
+      "s2": {
+        "heading": "2. Nothing fires by itself — yet",
+        "body": "There is no background job running in this app. A template only turns into a real transaction when you press \"Run\" on it, or when someone calls the run-due endpoint (meant for an external scheduler)."
+      },
+      "s3": {
+        "heading": "3. Run now vs. next run date",
+        "body": "\"Run\" generates one occurrence immediately, regardless of the scheduled date, and advances the template's cursor. The \"Next run\" column shows when it would fire on its own once a scheduler exists."
+      },
+      "s4": {
+        "heading": "4. Pause instead of deleting",
+        "body": "Turn a template inactive to stop it from counting as due without losing its configuration — useful for a subscription you paused, for example."
+      }
+    }
+  },
+  "savings": {
+    "title": "Savings goals",
+    "subtitle": "What you're saving for, and how close you are.",
+    "new": "New goal",
+    "totalSaved": "Total saved",
+    "totalTarget": "Total target",
+    "progress": "Progress",
+    "goalsAchieved": "Goals achieved",
+    "state": {
+      "ACHIEVED": "Achieved",
+      "OVERDUE": "Overdue",
+      "CLOSED": "Closed"
+    },
+    "ofTarget": "of {{target}}",
+    "percentSetAside": "{{percent}}% set aside",
+    "remaining": "Remaining",
+    "monthlyNeeded": "Monthly needed",
+    "targetDate": "Target date",
+    "daysLeft": "Days left",
+    "linkedDefault": "Adds from {{account}} by default",
+    "addMoney": "Add money",
+    "withdraw": "Withdraw",
+    "close": "Close",
+    "closeHint": "Send everything back to an account and freeze the goal",
+    "deleteBlocked": "Withdraw or close the goal before deleting it",
+    "deleteGoal": "Delete goal",
+    "emptyTitle": "No savings goals yet",
+    "emptyHint": "Set a target and start tracking your progress.",
+    "deleteError": "Error deleting savings goal",
+    "saved": "Savings goal saved successfully",
+    "saveError": "Error saving savings goal",
+    "closed": "Savings goal closed",
+    "updated": "Savings goal updated",
+    "form": {
+      "createTitle": "New savings goal",
+      "editTitle": "Edit savings goal",
+      "namePlaceholder": "e.g. Emergency fund, New laptop",
+      "targetAmount": "Target amount",
+      "linkedAccount": "Default source account (optional)",
+      "linkedAccountHint": "Preselected when you add money to the goal. Progress only counts what you actually set aside."
+    },
+    "contribute": {
+      "depositTitle": "Add money to goal",
+      "withdrawTitle": "Withdraw from goal",
+      "closeTitle": "Close goal",
+      "savedOf": "{{saved}} saved of {{target}}",
+      "closeWithMoney": "Everything the goal holds ({{amount}}) goes back to the account you choose. The goal then becomes read-only.",
+      "closeEmpty": "This goal holds no money. Closing it keeps it as history and makes it read-only.",
+      "fromAccount": "From account",
+      "toAccount": "To account",
+      "available": "Available: {{amount}}",
+      "max": "Max",
+      "upTo": "Up to {{amount}} can be withdrawn.",
+      "note": "Note (optional)",
+      "notePlaceholder": "e.g. January share",
+      "moveError": "Could not move the money. Please try again."
+    },
+    "tutorial": {
+      "title": "How savings goals work",
+      "intro": "Savings goals let you set real money aside for something specific. What you add to a goal leaves your regular balance and is tracked under Savings until you take it back.",
+      "s1": {
+        "heading": "1. Name a target",
+        "body": "Give the goal a name, an icon, how much you need to reach it, and the date you want to reach it by."
+      },
+      "s2": {
+        "heading": "2. Set money aside",
+        "body": "Use \"Add money\" to move an amount from one of your accounts into the goal. That money leaves your regular balance and shows up under Savings instead — it is really set aside. \"Withdraw\" brings some of it back whenever you need it."
+      },
+      "s3": {
+        "heading": "3. Progress is calculated for you",
+        "body": "Progress %, remaining amount, monthly amount required and days left all derive from what the goal holds and its target date. The optional linked account is just the default source when you add money."
+      },
+      "s4": {
+        "heading": "4. When the date arrives",
+        "body": "Nothing moves on its own. A goal shows \"Achieved\" once it holds the target, or \"Overdue\" if the date passed first. Either way you decide: extend the date, keep adding, or \"Close\" it to send everything back to an account."
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your income, spending and balance for the selected range.",
+    "applyRange": "Apply range",
+    "totalBalance": "Total balance",
+    "expenses": "Expenses",
+    "income": "Income",
+    "expense": "Expense",
+    "expensesByCategory": "Expenses by category",
+    "noExpenses": "No expenses in this range.",
+    "movementsThisMonth": "Movements of this month",
+    "chart": {
+      "title": "Income vs expense",
+      "subtitle": "Current year, month by month",
+      "filterByAccount": "Filter by account",
+      "allAccounts": "All accounts"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Enable or disable access to BudgetKing.",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "toggleAccess": "Toggle access for {{email}}",
+    "empty": "No users found.",
+    "loadError": "Error loading users",
+    "statusUpdated": "Status updated",
+    "statusError": "Failed to update status"
+  }
+}

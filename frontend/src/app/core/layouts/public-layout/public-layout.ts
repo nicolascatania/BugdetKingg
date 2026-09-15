@@ -3,6 +3,8 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 import { SiteFooterComponent } from '../../../shared/components/site-footer/site-footer';
+import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 /**
  * Shell for the marketing/legal routes (landing, terms): a slim top bar with
@@ -14,7 +16,14 @@ import { SiteFooterComponent } from '../../../shared/components/site-footer/site
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, ThemeToggleComponent, SiteFooterComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    ThemeToggleComponent,
+    SiteFooterComponent,
+    LanguageSwitcherComponent,
+    TranslocoDirective,
+  ],
   templateUrl: './public-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -27,5 +36,5 @@ export class PublicLayout {
    * token only changes through a full page load (see AuthService.logout).
    */
   readonly ctaRoute = this.auth.isLoggedIn() ? '/home' : '/login';
-  readonly ctaLabel = this.auth.isLoggedIn() ? 'Open app' : 'Sign in';
+  readonly ctaLabelKey = this.auth.isLoggedIn() ? 'public.openApp' : 'public.signIn';
 }

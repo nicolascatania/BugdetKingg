@@ -1,3 +1,4 @@
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,7 +14,7 @@ import { catchError, delay, of } from 'rxjs';
 @Component({
   selector: 'monthly-summary',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoDirective],
   templateUrl: './monthly-summary.html',
   styleUrl: './monthly-summary.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

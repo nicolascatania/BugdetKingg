@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -27,12 +29,15 @@ import { TutorialModal, TutorialSection } from '../../../../shared/components/tu
     PaginationComponent,
     RevealDirective,
     TutorialModal,
+    TranslocoDirective,
   ],
   templateUrl: './recurring-transaction-list.html',
   styleUrl: './recurring-transaction-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecurringTransactionList implements OnInit {
+  private readonly transloco = inject(TranslocoService);
+
   private recurringService = inject(RecurringTransactionService);
   private accountService = inject(AccountService);
   private categoryService = inject(CategoryService);
@@ -63,26 +68,10 @@ export class RecurringTransactionList implements OnInit {
 
   isTutorialOpen = signal(false);
   readonly tutorialSections: TutorialSection[] = [
-    {
-      icon: 'fa-file-pen',
-      heading: '1. Create a template',
-      body: 'A template is a transaction blueprint: amount, account, category (or destination account for transfers), counterparty and how often it repeats.',
-    },
-    {
-      icon: 'fa-clock',
-      heading: '2. Nothing fires by itself — yet',
-      body: 'There is no background job running in this app. A template only turns into a real transaction when you press "Run" on it, or when someone calls the run-due endpoint (meant for an external scheduler).',
-    },
-    {
-      icon: 'fa-play',
-      heading: '3. Run now vs. next run date',
-      body: '"Run" generates one occurrence immediately, regardless of the scheduled date, and advances the template\'s cursor. The "Next run" column shows when it would fire on its own once a scheduler exists.',
-    },
-    {
-      icon: 'fa-toggle-on',
-      heading: '4. Pause instead of deleting',
-      body: 'Turn a template inactive to stop it from counting as due without losing its configuration — useful for a subscription you paused, for example.',
-    },
+    { icon: 'fa-file-pen', headingKey: 'recurring.tutorial.s1.heading', bodyKey: 'recurring.tutorial.s1.body' },
+    { icon: 'fa-clock', headingKey: 'recurring.tutorial.s2.heading', bodyKey: 'recurring.tutorial.s2.body' },
+    { icon: 'fa-play', headingKey: 'recurring.tutorial.s3.heading', bodyKey: 'recurring.tutorial.s3.body' },
+    { icon: 'fa-toggle-on', headingKey: 'recurring.tutorial.s4.heading', bodyKey: 'recurring.tutorial.s4.body' },
   ];
 
   constructor() {
@@ -192,7 +181,7 @@ export class RecurringTransactionList implements OnInit {
       },
       error: (err) => {
         this.deletingId.set(null);
-        this.ns.error(err?.error?.message ?? 'Error deleting template');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('recurring.deleteError'));
       },
     });
   }
@@ -211,7 +200,7 @@ export class RecurringTransactionList implements OnInit {
         this.templates.update((list) =>
           list.map((t) => (t.id === template.id ? { ...t, active: template.active } : t)),
         );
-        this.ns.error(err?.error?.message ?? 'Error updating template status');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('recurring.statusError'));
       },
     });
   }
@@ -224,13 +213,13 @@ export class RecurringTransactionList implements OnInit {
     this.recurringService.runNow(template.id).subscribe({
       next: () => {
         this.runningId.set(null);
-        this.ns.success('Transaction generated');
+        this.ns.success(this.transloco.translate('recurring.generated'));
         this.search();
         this.loadUpcoming();
       },
       error: (err) => {
         this.runningId.set(null);
-        this.ns.error(err?.error?.message ?? 'Error running template');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('recurring.runError'));
       },
     });
   }

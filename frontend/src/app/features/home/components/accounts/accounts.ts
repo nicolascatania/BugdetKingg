@@ -1,3 +1,4 @@
+import { TranslocoDirective } from '@jsverse/transloco';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../../../accounts/services/AccountService';
@@ -5,7 +6,7 @@ import { AccountService } from '../../../accounts/services/AccountService';
 @Component({
   selector: 'accounts',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoDirective],
   templateUrl: './accounts.html',
   styleUrl: './accounts.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

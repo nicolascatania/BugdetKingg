@@ -21,16 +21,13 @@ export function transactionTypeChip(type: string | null | undefined): string {
   }
 }
 
-/** Short, human label for the badge. */
+/**
+ * Translation key of the short badge label (`transactionType.<TYPE>`), so the
+ * template renders it with `t(...)`. Unknown/empty types map to the generic
+ * fallback key rather than leaking a raw enum value.
+ */
 export function transactionTypeLabel(type: string | null | undefined): string {
-  switch (type) {
-    case TransactionType.SAVINGS_DEPOSIT:
-      return 'TO SAVINGS';
-    case TransactionType.SAVINGS_WITHDRAWAL:
-      return 'FROM SAVINGS';
-    default:
-      return type ?? '';
-  }
+  return `transactionType.${type || 'UNKNOWN'}`;
 }
 
 /** Text color for the amount figure; transfers and savings stay neutral. */

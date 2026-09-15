@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher';
 
 /** One external link in the footer's author column. */
 interface SocialLink {
@@ -21,7 +23,7 @@ interface SocialLink {
 @Component({
   selector: 'app-site-footer',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective, LanguageSwitcherComponent],
   templateUrl: './site-footer.html',
   // The host is a custom element (inline by default); it must span its parent for the layout classes to apply.
   styles: [':host { display: block; width: 100%; }'],

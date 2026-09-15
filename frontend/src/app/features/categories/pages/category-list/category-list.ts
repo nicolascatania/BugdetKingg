@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -24,12 +26,14 @@ import { CategoryImportExportService } from '../../services/category-import-expo
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [CommonModule, EditCategory, PaginationComponent, RevealDirective, ImportCategories],
+  imports: [CommonModule, EditCategory, PaginationComponent, RevealDirective, ImportCategories, TranslocoDirective],
   templateUrl: './category-list.html',
   styleUrl: './category-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryList implements OnInit {
+  private readonly transloco = inject(TranslocoService);
+
   private categoryService = inject(CategoryService);
   private notificationService = inject(NotificationService);
   private importExportService = inject(CategoryImportExportService);
@@ -71,7 +75,7 @@ export class CategoryList implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.notificationService.error('Error loading categories');
+        this.notificationService.error(this.transloco.translate('categories.loadError'));
         this.categories.set([]);
         this.loading.set(false);
       },
@@ -105,7 +109,7 @@ export class CategoryList implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.deletingId.set(null);
         this.notificationService.error(
-          err?.error?.message ?? 'Error deleting category',
+          err?.error?.message ?? this.transloco.translate('categories.deleteError'),
         );
       },
     });
@@ -142,7 +146,7 @@ export class CategoryList implements OnInit {
       },
       error: (err) => {
         this.exporting.set(false);
-        this.notificationService.error(err?.error?.message ?? 'Error exporting categories');
+        this.notificationService.error(err?.error?.message ?? this.transloco.translate('categories.exportError'));
       },
     });
   }

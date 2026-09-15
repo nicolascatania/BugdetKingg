@@ -1,19 +1,20 @@
-<ui-modal [open]="true" [title]="category() ? 'Edit category' : 'New category'" (closed)="close()">
+<ng-container *transloco="let t">
+<ui-modal [open]="true" [title]="category() ? t('categories.form.editTitle') : t('categories.form.createTitle')" (closed)="close()">
   <div modal-body>
     <form [formGroup]="form" class="space-y-5">
       <div>
-        <label for="category-name" class="field-label">Name</label>
+        <label for="category-name" class="field-label">{{ t('categories.form.name') }}</label>
         <input
           id="category-name"
           type="text"
           formControlName="name"
-          placeholder="e.g. Delivery, Services, Subscriptions"
+          [placeholder]="t('categories.form.namePlaceholder')"
           class="field-input"
         />
       </div>
 
       <div>
-        <span class="field-label">Category icon</span>
+        <span class="field-label">{{ t('categories.form.icon') }}</span>
 
         <div class="relative">
           <i
@@ -21,10 +22,10 @@
           ></i>
           <input
             type="text"
-            placeholder="Search icon (e.g. 'games')…"
+            [placeholder]="t('categories.form.searchIconPlaceholder')"
             (input)="searchQuery.set($any($event.target).value)"
             class="field-input pl-10"
-            aria-label="Search icons"
+            [attr.aria-label]="t('categories.form.searchIcons')"
           />
         </div>
 
@@ -36,13 +37,13 @@
             <button
               type="button"
               (click)="form.patchValue({ icon: option.value })"
-              [title]="option.label"
-              [attr.aria-label]="option.label"
-              [attr.aria-pressed]="form.get('icon')?.value === option.value"
+              [title]="t(option.labelKey)"
+              [attr.aria-label]="t(option.labelKey)"
+              [attr.aria-pressed]="form.get('categories.form.icon')?.value === option.value"
               class="flex aspect-square items-center justify-center rounded-xl border text-sm
                      transition-all duration-200 ease-spring hover:-translate-y-0.5"
               [ngClass]="
-                form.get('icon')?.value === option.value
+                form.get('categories.form.icon')?.value === option.value
                   ? 'border-brand bg-brand/12 text-brand shadow-soft'
                   : 'border-line bg-surface text-muted hover:border-line-strong hover:text-body'
               "
@@ -50,7 +51,7 @@
               <i class="fa-solid" [ngClass]="option.preview"></i>
             </button>
           } @empty {
-            <p class="col-span-full py-6 text-center text-xs text-subtle">No icons found.</p>
+            <p class="col-span-full py-6 text-center text-xs text-subtle">{{ t('categories.form.noIcons') }}</p>
           }
         </div>
       </div>
@@ -58,14 +59,15 @@
   </div>
 
   <div modal-footer class="flex w-full justify-end gap-3">
-    <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+    <button type="button" class="btn-secondary" (click)="close()">{{ t('common.cancel') }}</button>
     <button type="button" class="btn-primary min-w-[6rem]" (click)="submit()" [disabled]="form.invalid || saving()">
       @if (saving()) {
         <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-        <span>Saving…</span>
+        <span>{{ t('common.saving') }}</span>
       } @else {
-        <span>{{ category() ? 'Update' : 'Create' }}</span>
+        <span>{{ category() ? t('categories.form.update') : t('categories.form.create') }}</span>
       }
     </button>
   </div>
 </ui-modal>
+</ng-container>

@@ -1,8 +1,8 @@
-<div class="mx-auto w-full max-w-screen-2xl space-y-6">
+<div class="mx-auto w-full max-w-screen-2xl space-y-6" *transloco="let t">
   <!-- Page header -->
   <div appReveal class="flex flex-col gap-1">
-    <h1 class="page-title">Dashboard</h1>
-    <p class="text-sm text-muted">Your income, spending and balance for the selected range.</p>
+    <h1 class="page-title">{{ t('dashboard.title') }}</h1>
+    <p class="text-sm text-muted">{{ t('dashboard.subtitle') }}</p>
   </div>
 
   <!-- Range filter -->
@@ -10,12 +10,12 @@
     <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="flex flex-col gap-4 lg:flex-row lg:items-end">
       <div class="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 lg:max-w-2xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <div>
-          <label for="dash-from" class="field-label">From</label>
+          <label for="dash-from" class="field-label">{{ t('filters.from') }}</label>
           <input id="dash-from" type="date" formControlName="dateFrom" class="field-input" />
         </div>
 
         <div>
-          <label for="dash-to" class="field-label">To</label>
+          <label for="dash-to" class="field-label">{{ t('filters.to') }}</label>
           <div class="flex items-end gap-2">
             <input id="dash-to" type="date" formControlName="dateTo" class="field-input" />
             <span class="lg:hidden">
@@ -25,7 +25,7 @@
         </div>
 
         <div class="hidden lg:flex lg:flex-col lg:justify-end">
-          <span class="field-label invisible">Month</span>
+          <span class="field-label invisible">{{ t('fields.month') }}</span>
           <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
         </div>
       </div>
@@ -33,10 +33,10 @@
       <button type="submit" class="btn-primary w-full lg:w-44" [disabled]="loading()">
         @if (loading()) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-          <span>Applying…</span>
+          <span>{{ t('filters.applying') }}</span>
         } @else {
           <i class="fa-solid fa-filter text-xs"></i>
-          <span>Apply range</span>
+          <span>{{ t('dashboard.applyRange') }}</span>
         }
       </button>
     </form>
@@ -60,7 +60,7 @@
         ></div>
         <div class="relative flex items-center justify-between gap-3">
           <div class="min-w-0">
-            <p class="eyebrow">Total balance</p>
+            <p class="eyebrow">{{ t('dashboard.totalBalance') }}</p>
             <p class="tabular mt-1.5 truncate text-xl font-extrabold">
               {{ dashboardData()?.totalBalance | currency: 'ARS' : 'symbol' : '1.0-0' }}
             </p>
@@ -74,7 +74,7 @@
       <article class="card-interactive p-5">
         <div class="flex items-center justify-between gap-3">
           <div class="min-w-0">
-            <p class="eyebrow">Expenses</p>
+            <p class="eyebrow">{{ t('dashboard.expenses') }}</p>
             <p class="tabular mt-1.5 truncate text-xl font-bold text-negative">
               {{ dashboardData()?.expense | currency: 'ARS' : 'symbol' : '1.0-0' }}
             </p>
@@ -88,7 +88,7 @@
       <article class="card-interactive p-5">
         <div class="flex items-center justify-between gap-3">
           <div class="min-w-0">
-            <p class="eyebrow">Income</p>
+            <p class="eyebrow">{{ t('dashboard.income') }}</p>
             <p class="tabular mt-1.5 truncate text-xl font-bold text-positive">
               {{ dashboardData()?.income | currency: 'ARS' : 'symbol' : '1.0-0' }}
             </p>
@@ -130,7 +130,7 @@
     </div>
 
     <div class="card p-5 xl:col-span-4">
-      <h3 class="section-title mb-4">Expenses by category</h3>
+      <h3 class="section-title mb-4">{{ t('dashboard.expensesByCategory') }}</h3>
 
       @if (loading()) {
         <div class="space-y-3">
@@ -173,7 +173,7 @@
               </span>
             </li>
           } @empty {
-            <li class="py-8 text-center text-xs text-subtle">No expenses in this range.</li>
+            <li class="py-8 text-center text-xs text-subtle">{{ t('dashboard.noExpenses') }}</li>
           }
         </ul>
       }
@@ -183,7 +183,7 @@
   <!-- Movements -->
   <section appReveal [revealDelay]="180">
     <div class="mb-4 flex items-center justify-between gap-4">
-      <h2 class="section-title">Movements of this month</h2>
+      <h2 class="section-title">{{ t('dashboard.movementsThisMonth') }}</h2>
     </div>
     <last-moves></last-moves>
   </section>

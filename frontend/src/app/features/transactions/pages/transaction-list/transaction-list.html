@@ -1,10 +1,11 @@
+<ng-container *transloco="let t">
 <div class="mx-auto w-full max-w-screen-2xl space-y-6">
   <!-- Header -->
   <div appReveal class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h1 class="page-title">Transactions</h1>
+      <h1 class="page-title">{{ t('transactions.title') }}</h1>
       <p class="mt-1 text-sm text-muted">
-        {{ paginationState.totalElements() }} movements match your filters.
+        {{ t('transactions.matchCount', { count: paginationState.totalElements() }) }}
       </p>
     </div>
 
@@ -16,7 +17,7 @@
         [attr.aria-expanded]="filtersOpen()"
       >
         <i class="fa-solid fa-sliders text-xs"></i>
-        Filters
+        {{ t('filters.title') }}
         @if (activeFilterCount() > 0) {
           <span class="chip-brand ml-1 !px-1.5 !py-0">{{ activeFilterCount() }}</span>
         }
@@ -25,10 +26,10 @@
       <button type="button" class="btn-secondary" (click)="exportCsv()" [disabled]="exporting()">
         @if (exporting()) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-          <span>Exporting…</span>
+          <span>{{ t('csv.exporting') }}</span>
         } @else {
           <i class="fa-solid fa-file-export text-xs"></i>
-          <span>Export CSV</span>
+          <span>{{ t('csv.export') }}</span>
         }
       </button>
 
@@ -37,10 +38,10 @@
         class="btn-secondary"
         (click)="openImportModal()"
         [disabled]="!userHasAccounts"
-        [title]="userHasAccounts ? 'Import transactions from a CSV file' : 'Create an account first'"
+        [title]="userHasAccounts ? t('transactions.importHint') : t('transactions.needAccount')"
       >
         <i class="fa-solid fa-file-import text-xs"></i>
-        Import CSV
+        {{ t('csv.import') }}
       </button>
 
       <button
@@ -48,10 +49,10 @@
         class="btn-primary"
         (click)="openNewTransactionModal()"
         [disabled]="!userHasAccounts"
-        [title]="userHasAccounts ? 'Record a new transaction' : 'Create an account first'"
+        [title]="userHasAccounts ? t('transactions.newHint') : t('transactions.needAccount')"
       >
         <i class="fa-solid fa-plus text-xs"></i>
-        New transaction
+        {{ t('transactions.new') }}
       </button>
     </div>
   </div>
@@ -66,12 +67,12 @@
     <form [formGroup]="form" (ngSubmit)="onSearch()" class="space-y-4">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <div>
-          <label for="tx-from" class="field-label">From</label>
+          <label for="tx-from" class="field-label">{{ t('filters.from') }}</label>
           <input id="tx-from" type="date" formControlName="dateFrom" class="field-input" />
         </div>
 
         <div>
-          <label for="tx-to" class="field-label">To</label>
+          <label for="tx-to" class="field-label">{{ t('filters.to') }}</label>
           <div class="flex items-end gap-2">
             <input id="tx-to" type="date" formControlName="dateTo" class="field-input" />
             <app-month-quick-picker [includeTime]="false" (rangeSelected)="onMonthRangeSelected($event)" />
@@ -79,9 +80,9 @@
         </div>
 
         <div>
-          <label for="tx-account" class="field-label">Account</label>
+          <label for="tx-account" class="field-label">{{ t('fields.account') }}</label>
           <select id="tx-account" formControlName="account" class="field-select">
-            <option value="">All</option>
+            <option value="">{{ t('common.all') }}</option>
             @for (account of accounts(); track account.id) {
               <option [value]="account.id">{{ account.value }}</option>
             }
@@ -89,9 +90,9 @@
         </div>
 
         <div>
-          <label for="tx-category" class="field-label">Category</label>
+          <label for="tx-category" class="field-label">{{ t('fields.category') }}</label>
           <select id="tx-category" formControlName="category" class="field-select">
-            <option value="">All</option>
+            <option value="">{{ t('common.all') }}</option>
             @for (category of categories(); track category.id) {
               <option [value]="category.id">{{ category.value }}</option>
             }
@@ -99,28 +100,28 @@
         </div>
 
         <div>
-          <label for="tx-type" class="field-label">Type</label>
+          <label for="tx-type" class="field-label">{{ t('fields.type') }}</label>
           <select id="tx-type" formControlName="type" class="field-select">
-            <option value="">All</option>
+            <option value="">{{ t('common.all') }}</option>
             @for (type of transactionTypes; track type) {
-              <option [value]="type">{{ type }}</option>
+              <option [value]="type">{{ t('transactionType.' + type) }}</option>
             }
           </select>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label for="tx-min" class="field-label">Min</label>
+            <label for="tx-min" class="field-label">{{ t('filters.min') }}</label>
             <input id="tx-min" type="number" formControlName="minAmount" placeholder="0" class="field-input" />
           </div>
           <div>
-            <label for="tx-max" class="field-label">Max</label>
+            <label for="tx-max" class="field-label">{{ t('filters.max') }}</label>
             <input id="tx-max" type="number" formControlName="maxAmount" placeholder="0" class="field-input" />
           </div>
         </div>
 
         <div class="sm:col-span-2 xl:col-span-3">
-          <label for="tx-description" class="field-label">Description</label>
+          <label for="tx-description" class="field-label">{{ t('fields.description') }}</label>
           <div class="relative">
             <i
               class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-subtle"
@@ -129,14 +130,14 @@
               id="tx-description"
               type="text"
               formControlName="description"
-              placeholder="Search details…"
+              [placeholder]="t('filters.searchDetails')"
               class="field-input pl-10"
             />
           </div>
         </div>
 
         <div class="sm:col-span-2 xl:col-span-3">
-          <label for="tx-counterparty" class="field-label">Counterparty</label>
+          <label for="tx-counterparty" class="field-label">{{ t('fields.counterparty') }}</label>
           <div class="relative">
             <i
               class="fa-solid fa-building pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-subtle"
@@ -145,7 +146,7 @@
               id="tx-counterparty"
               type="text"
               formControlName="counterparty"
-              placeholder="Search counterparty…"
+              [placeholder]="t('filters.searchCounterparty')"
               class="field-input pl-10"
             />
           </div>
@@ -155,15 +156,15 @@
       <div class="flex flex-col-reverse gap-3 border-t border-line pt-4 sm:flex-row sm:justify-end">
         <button type="button" class="btn-secondary sm:w-32" (click)="onClear()">
           <i class="fa-solid fa-eraser text-xs"></i>
-          Clear
+          {{ t('filters.clear') }}
         </button>
         <button type="submit" class="btn-primary sm:w-40" [disabled]="loading()">
           @if (loading()) {
             <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-            <span>Applying…</span>
+            <span>{{ t('filters.applying') }}</span>
           } @else {
             <i class="fa-solid fa-filter text-xs"></i>
-            <span>Apply filters</span>
+            <span>{{ t('filters.apply') }}</span>
           }
         </button>
       </div>
@@ -178,14 +179,14 @@
           class="bg-surface-2 text-[11px] font-bold uppercase tracking-wider text-muted"
         >
           <tr>
-            <th class="px-5 py-3.5 font-bold">Date</th>
-            <th class="px-5 py-3.5 font-bold">Account</th>
-            <th class="px-5 py-3.5 font-bold">Type</th>
-            <th class="px-5 py-3.5 font-bold">Category</th>
-            <th class="px-5 py-3.5 text-right font-bold">Amount</th>
-            <th class="px-5 py-3.5 font-bold">Description</th>
-            <th class="px-5 py-3.5 text-right font-bold">Counterparty</th>
-            <th class="px-5 py-3.5 text-right font-bold">Actions</th>
+            <th class="px-5 py-3.5 font-bold">{{ t('fields.date') }}</th>
+            <th class="px-5 py-3.5 font-bold">{{ t('fields.account') }}</th>
+            <th class="px-5 py-3.5 font-bold">{{ t('fields.type') }}</th>
+            <th class="px-5 py-3.5 font-bold">{{ t('fields.category') }}</th>
+            <th class="px-5 py-3.5 text-right font-bold">{{ t('fields.amount') }}</th>
+            <th class="px-5 py-3.5 font-bold">{{ t('fields.description') }}</th>
+            <th class="px-5 py-3.5 text-right font-bold">{{ t('fields.counterparty') }}</th>
+            <th class="px-5 py-3.5 text-right font-bold">{{ t('common.actions') }}</th>
           </tr>
         </thead>
 
@@ -207,7 +208,7 @@
                   <span
                     [ngClass]="typeChip(transaction.type)"
                 >
-                  {{ typeLabel(transaction.type) }}
+                  {{ t(typeLabel(transaction.type)) }}
                   </span>
                 </td>
                 <td class="px-5 py-3.5 text-muted">{{ transaction.categoryName }}</td>
@@ -228,8 +229,8 @@
                     <button
                       type="button"
                       class="btn-ghost !min-h-0 h-9 px-2.5 text-xs hover:text-brand"
-                      title="Edit"
-                      aria-label="Edit transaction"
+                      [title]="t('common.edit')"
+                      [attr.aria-label]="t('transactions.editAria')"
                       (click)="openEditModal(transaction)"
                     >
                       <i class="fa-solid fa-pen text-[10px]"></i>
@@ -237,8 +238,8 @@
                     <button
                       type="button"
                       class="btn-ghost !min-h-0 h-9 px-2.5 text-xs hover:bg-negative/10 hover:text-negative"
-                      title="Delete"
-                      aria-label="Delete transaction"
+                      [title]="t('common.delete')"
+                      [attr.aria-label]="t('transactions.deleteAria')"
                       (click)="confirmDelete(transaction)"
                     >
                       <i class="fa-solid fa-trash text-[10px]"></i>
@@ -250,7 +251,7 @@
               <tr>
                 <td colspan="8" class="px-5 py-16 text-center">
                   <i class="fa-solid fa-receipt mb-3 block text-2xl text-subtle"></i>
-                  <p class="text-sm text-muted">No transactions match these filters.</p>
+                  <p class="text-sm text-muted">{{ t('transactions.empty') }}</p>
                 </td>
               </tr>
             }
@@ -316,7 +317,7 @@
             <span
               [ngClass]="typeChip(transaction.type)"
                 >
-                  {{ typeLabel(transaction.type) }}
+                  {{ t(typeLabel(transaction.type)) }}
             </span>
           </div>
 
@@ -340,7 +341,7 @@
               (click)="openEditModal(transaction)"
             >
               <i class="fa-solid fa-pen text-[10px]"></i>
-              Edit
+              {{ t('common.edit') }}
             </button>
             <button
               type="button"
@@ -348,14 +349,14 @@
               (click)="confirmDelete(transaction)"
             >
               <i class="fa-solid fa-trash text-[10px]"></i>
-              Delete
+              {{ t('common.delete') }}
             </button>
           </div>
         </article>
       } @empty {
         <div class="card p-10 text-center">
           <i class="fa-solid fa-receipt mb-3 block text-2xl text-subtle"></i>
-          <p class="text-sm text-muted">No transactions match these filters.</p>
+          <p class="text-sm text-muted">{{ t('transactions.empty') }}</p>
         </div>
       }
     }
@@ -379,17 +380,19 @@
 }
 
 @if (transactionToDelete(); as tx) {
-  <ui-modal [open]="true" title="Delete transaction" maxWidth="max-w-md" (closed)="cancelDelete()">
+  <ui-modal [open]="true" [title]="t('transactions.deleteTitle')" maxWidth="max-w-md" (closed)="cancelDelete()">
     <div modal-body>
       <p class="text-sm text-muted">
-        Delete the {{ tx.type | lowercase }} of
-        <span class="font-semibold text-body">{{ tx.amount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
-        for "{{ tx.description }}"? The account balance will be adjusted back. This cannot be undone.
+        {{ t('transactions.deleteConfirm', {
+          type: t('transactionType.' + tx.type).toLowerCase(),
+          amount: (tx.amount | currency: 'ARS' : 'symbol' : '1.2-2'),
+          description: tx.description
+        }) }}
       </p>
     </div>
 
     <div modal-footer class="flex w-full justify-end gap-3">
-      <button type="button" class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button type="button" class="btn-secondary" (click)="cancelDelete()">{{ t('common.cancel') }}</button>
       <button
         type="button"
         class="btn-danger min-w-[7rem]"
@@ -398,11 +401,12 @@
       >
         @if (deleting()) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-          <span>Deleting…</span>
+          <span>{{ t('common.deleting') }}</span>
         } @else {
-          <span>Delete</span>
+          <span>{{ t('common.delete') }}</span>
         }
       </button>
     </div>
   </ui-modal>
 }
+</ng-container>

@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -23,11 +25,13 @@ export type ContributionMode = 'deposit' | 'withdraw' | 'close';
 @Component({
   selector: 'app-contribute-savings-goal',
   standalone: true,
-  imports: [UiModalComponent, ReactiveFormsModule, CommonModule],
+  imports: [UiModalComponent, ReactiveFormsModule, CommonModule, TranslocoDirective],
   templateUrl: './contribute-savings-goal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContributeSavingsGoal implements OnInit {
+  private readonly transloco = inject(TranslocoService);
+
   private fb = inject(FormBuilder);
   private savingsGoalService = inject(SavingsGoalService);
   private accountService = inject(AccountService);
@@ -49,27 +53,30 @@ export class ContributeSavingsGoal implements OnInit {
   /** Closing an empty goal has no money to return, so no account is needed. */
   readonly needsAccount = computed(() => !this.isClose() || this.goal().currentAmount > 0);
 
-  readonly title = computed(() => {
+  /** Translation keys; the template resolves them so the copy follows the active language. */
+  readonly titleKey = computed(() => {
     switch (this.mode()) {
       case 'deposit':
-        return 'Add money to goal';
+        return 'savings.contribute.depositTitle';
       case 'withdraw':
-        return 'Withdraw from goal';
+        return 'savings.contribute.withdrawTitle';
       default:
-        return 'Close goal';
+        return 'savings.contribute.closeTitle';
     }
   });
 
-  readonly accountLabel = computed(() => (this.isDeposit() ? 'From account' : 'To account'));
+  readonly accountLabelKey = computed(() =>
+    this.isDeposit() ? 'savings.contribute.fromAccount' : 'savings.contribute.toAccount',
+  );
 
-  readonly submitLabel = computed(() => {
+  readonly submitLabelKey = computed(() => {
     switch (this.mode()) {
       case 'deposit':
-        return 'Add money';
+        return 'savings.addMoney';
       case 'withdraw':
-        return 'Withdraw';
+        return 'savings.withdraw';
       default:
-        return 'Close goal';
+        return 'savings.contribute.closeTitle';
     }
   });
 
@@ -144,12 +151,12 @@ export class ContributeSavingsGoal implements OnInit {
     request$.subscribe({
       next: () => {
         this.saving.set(false);
-        this.ns.success(this.isClose() ? 'Savings goal closed' : 'Savings goal updated');
+        this.ns.success(this.transloco.translate(this.isClose() ? 'savings.closed' : 'savings.updated'));
         this.submitEvent.emit(true);
       },
       error: (err) => {
         this.saving.set(false);
-        this.ns.error(err?.error?.message ?? 'Could not move the money. Please try again.');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('savings.contribute.moveError'));
       },
     });
   }

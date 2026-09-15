@@ -7,6 +7,7 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 /**
  * Generic dialog shell used by every edit/create form in the app.
@@ -20,6 +21,7 @@ import {
 @Component({
   selector: 'ui-modal',
   standalone: true,
+  imports: [TranslocoPipe],
   templateUrl: './ui-modal.html',
   styleUrl: './ui-modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

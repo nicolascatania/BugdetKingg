@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
@@ -10,12 +12,14 @@ type Step = 'select' | 'preview' | 'done';
 @Component({
   selector: 'app-import-categories',
   standalone: true,
-  imports: [UiModalComponent, CommonModule],
+  imports: [UiModalComponent, CommonModule, TranslocoDirective],
   templateUrl: './import-categories.html',
   styleUrl: './import-categories.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportCategories {
+  private readonly transloco = inject(TranslocoService);
+
   private importExportService = inject(CategoryImportExportService);
   private ns = inject(NotificationService);
 
@@ -44,7 +48,7 @@ export class ImportCategories {
         this.loading.set(false);
       },
       error: (err) => {
-        this.ns.error(err?.error?.message ?? 'Error reading CSV file');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('csvImport.readError'));
         this.loading.set(false);
       },
     });
@@ -60,10 +64,10 @@ export class ImportCategories {
         this.preview.set(result);
         this.step.set('done');
         this.loading.set(false);
-        this.ns.success(`${result.validRows} categories imported`);
+        this.ns.success(this.transloco.translate('csvImport.categories.done', { count: result.validRows }));
       },
       error: (err) => {
-        this.ns.error(err?.error?.message ?? 'Error importing categories');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('csvImport.categories.importError'));
         this.loading.set(false);
       },
     });

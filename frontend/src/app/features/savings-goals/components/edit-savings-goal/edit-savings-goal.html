@@ -1,20 +1,21 @@
-<ui-modal [open]="true" [title]="isEdit() ? 'Edit savings goal' : 'New savings goal'" (closed)="close()">
+<ng-container *transloco="let t">
+<ui-modal [open]="true" [title]="isEdit() ? t('savings.form.editTitle') : t('savings.form.createTitle')" (closed)="close()">
   <div modal-body>
     <form [formGroup]="form" class="space-y-5">
       <div>
-        <label for="goal-name" class="field-label">Name</label>
+        <label for="goal-name" class="field-label">{{ t('fields.name') }}</label>
         <input
           id="goal-name"
           type="text"
           formControlName="name"
-          placeholder="e.g. Emergency fund, New laptop"
+          [placeholder]="t('savings.form.namePlaceholder')"
           class="field-input"
         />
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="goal-target-amount" class="field-label">Target amount</label>
+          <label for="goal-target-amount" class="field-label">{{ t('savings.form.targetAmount') }}</label>
           <div
             class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
                    focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
@@ -31,31 +32,31 @@
         </div>
 
         <div>
-          <label for="goal-target-date" class="field-label">Target date</label>
+          <label for="goal-target-date" class="field-label">{{ t('savings.targetDate') }}</label>
           <input id="goal-target-date" type="date" formControlName="targetDate" class="field-input" />
         </div>
       </div>
 
       <div>
-        <label for="goal-linked-account" class="field-label">Default source account (optional)</label>
+        <label for="goal-linked-account" class="field-label">{{ t('savings.form.linkedAccount') }}</label>
         <select id="goal-linked-account" formControlName="linkedAccountId" class="field-select">
-          <option value="">None</option>
+          <option value="">{{ t('common.none') }}</option>
           @for (account of accounts(); track account.id) {
             <option [value]="account.id">{{ account.value }}</option>
           }
         </select>
-        <p class="field-hint">Preselected when you add money to the goal. Progress only counts what you actually set aside.</p>
+        <p class="field-hint">{{ t('savings.form.linkedAccountHint') }}</p>
       </div>
 
       <div>
-        <span class="field-label">Icon</span>
+        <span class="field-label">{{ t('fields.icon') }}</span>
         <div class="grid grid-cols-5 gap-2 rounded-2xl border border-line bg-surface-2 p-2.5 sm:grid-cols-8">
           @for (option of iconOptions; track option.value) {
             <button
               type="button"
               (click)="form.patchValue({ icon: option.value })"
-              [title]="option.label"
-              [attr.aria-label]="option.label"
+              [title]="t(option.labelKey)"
+              [attr.aria-label]="t(option.labelKey)"
               [attr.aria-pressed]="form.get('icon')?.value === option.value"
               class="flex aspect-square items-center justify-center rounded-xl border text-sm
                      transition-all duration-200 ease-spring hover:-translate-y-0.5"
@@ -74,14 +75,15 @@
   </div>
 
   <div modal-footer class="flex w-full justify-end gap-3">
-    <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+    <button type="button" class="btn-secondary" (click)="close()">{{ t('common.cancel') }}</button>
     <button type="button" class="btn-primary min-w-[7rem]" (click)="submit()" [disabled]="form.invalid || saving()">
       @if (saving()) {
         <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-        <span>Saving…</span>
+        <span>{{ t('common.saving') }}</span>
       } @else {
-        <span>{{ isEdit() ? 'Update' : 'Create' }}</span>
+        <span>{{ isEdit() ? t('common.update') : t('common.create') }}</span>
       }
     </button>
   </div>
 </ui-modal>
+</ng-container>

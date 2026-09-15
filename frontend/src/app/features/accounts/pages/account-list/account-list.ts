@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,12 +21,14 @@ import { AccountImportExportService } from '../../services/account-import-export
 @Component({
   selector: 'app-account-list',
   standalone: true,
-  imports: [EditAccountModal, CommonModule, RevealDirective, ImportAccounts],
+  imports: [EditAccountModal, CommonModule, RevealDirective, ImportAccounts, TranslocoDirective],
   templateUrl: './account-list.html',
   styleUrl: './account-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountList {
+  private readonly transloco = inject(TranslocoService);
+
   private accountService = inject(AccountService);
   private ns = inject(NotificationService);
   private importExportService = inject(AccountImportExportService);
@@ -61,7 +65,7 @@ export class AccountList {
     this.accountService.delete(account.id).subscribe({
       next: () => {
         this.deletingId.set(null);
-        this.ns.success('Account deleted successfully');
+        this.ns.success(this.transloco.translate('accounts.deleted'));
       },
       error: (err) => {
         this.deletingId.set(null);
@@ -100,7 +104,7 @@ export class AccountList {
       },
       error: (err) => {
         this.exporting.set(false);
-        this.ns.error(err?.error?.message ?? 'Error exporting accounts');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('accounts.exportError'));
       },
     });
   }

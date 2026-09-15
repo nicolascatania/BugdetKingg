@@ -1,3 +1,6 @@
+import { inject } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -36,12 +39,14 @@ function isAccountDTO(acc: AccountLike): acc is AccountDTO {
 @Component({
   selector: 'app-edit-transaction',
   standalone: true,
-  imports: [UiModalComponent, ReactiveFormsModule, CommonModule],
+  imports: [UiModalComponent, ReactiveFormsModule, CommonModule, TranslocoDirective],
   templateUrl: './edit-transaction.html',
   styleUrl: './edit-transaction.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditTransaction implements OnInit {
+  private readonly transloco = inject(TranslocoService);
+
   @Input() transaction: TransactionDTO | null = null;
   @Output() closed = new EventEmitter<boolean>();
 
@@ -143,7 +148,7 @@ export class EditTransaction implements OnInit {
     if (this.saving()) return;
 
     if (this.form.invalid) {
-      this.ns.error('Please fill in all required fields correctly.');
+      this.ns.error(this.transloco.translate('transactions.form.fillRequired'));
       return;
     }
 
@@ -156,7 +161,7 @@ export class EditTransaction implements OnInit {
       payload.type === TransactionType.TRANSFER &&
       !payload.destinationAccount
     ) {
-      this.ns.info('Please select a destination account for the transfer.');
+      this.ns.info(this.transloco.translate('transactions.form.selectDestination'));
       return;
     }
 
@@ -170,7 +175,7 @@ export class EditTransaction implements OnInit {
       next: () => this.close(true),
       error: () => {
         this.saving.set(false);
-        this.ns.error('Something went wrong. Please try again.');
+        this.ns.error(this.transloco.translate('common.genericError'));
       },
     });
   }

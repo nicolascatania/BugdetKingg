@@ -1,3 +1,4 @@
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,6 +26,7 @@ import { RevealDirective } from '../../../../shared/directives/reveal.directive'
     EditAccountModal,
     EditTransaction,
     RevealDirective,
+    TranslocoDirective,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

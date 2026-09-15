@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,12 +26,14 @@ import { NotificationService } from '../../../../core/services/NotificationServi
 @Component({
   selector: 'app-edit-recurring-transaction',
   standalone: true,
-  imports: [UiModalComponent, ReactiveFormsModule, CommonModule],
+  imports: [UiModalComponent, ReactiveFormsModule, CommonModule, TranslocoDirective],
   templateUrl: './edit-recurring-transaction.html',
   styleUrl: './edit-recurring-transaction.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditRecurringTransaction {
+  private readonly transloco = inject(TranslocoService);
+
   private fb = inject(FormBuilder);
   private recurringService = inject(RecurringTransactionService);
   private accountService = inject(AccountService);
@@ -152,7 +156,7 @@ export class EditRecurringTransaction {
     if (this.saving()) return;
 
     if (this.form.invalid) {
-      this.ns.error('Please fill in all required fields correctly.');
+      this.ns.error(this.transloco.translate('transactions.form.fillRequired'));
       return;
     }
 
@@ -166,12 +170,12 @@ export class EditRecurringTransaction {
     request$.subscribe({
       next: () => {
         this.saving.set(false);
-        this.ns.success('Recurring transaction saved successfully');
+        this.ns.success(this.transloco.translate('recurring.saved'));
         this.submitEvent.emit(true);
       },
       error: (err) => {
         this.saving.set(false);
-        this.ns.error(err?.error?.message ?? 'Error saving recurring transaction');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('recurring.saveError'));
         this.submitEvent.emit(false);
       },
     });

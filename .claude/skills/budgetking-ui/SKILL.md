@@ -100,7 +100,28 @@ Defined in `@layer components` in `frontend/src/styles.css`:
 - Color is never the only signal: pair with an icon, a label or a swatch.
 - Every icon-only control needs `aria-label`; toggles need `role="switch"` + `aria-checked`.
 
-### 7. Angular conventions
+### 7. Internationalisation (Transloco)
+
+- **No hardcoded UI copy.** Every visible string, `placeholder`, `title`, `aria-label` and toast goes
+  through Transloco. Templates: `<root *transloco="let t">` then `{{ t('feature.key') }}`;
+  TS: `inject(TranslocoService).translate('feature.key')`.
+- **Always full keys, never `prefix:`.** The structural directive's prefix also prepends to dynamic
+  keys (`t(option.labelKey)`, `t('common.cancel')`), which silently mis-resolves.
+- Dictionaries live in `public/i18n/{en,es,de,pl}.json`; `en.json` is the reference. Add the key to
+  **all four** files in the same change — `missingHandler` falls back to English, so a gap is
+  invisible in dev and shows as English in production.
+- Data arrays carry keys, not text (`labelKey`, `headingKey`, `bodyKey`), and the template
+  translates them. Enum values map to key families: `transactionType.<TYPE>`, `frequency.<F>`,
+  `budgets.status.<S>`, `savings.state.<S>`, `icons.<slug>`.
+- Never name a loop variable `t` inside a transloco scope — it shadows the translate function.
+- Month names come from Angular locale data (`monthOptions()` / `monthAbbreviations()` in
+  `shared/models/months.const.ts`), not from translation keys.
+- Language resolution: `core/i18n/languages.ts` (stored choice → `navigator.languages` → `en`).
+  `LOCALE_ID` is fixed at bootstrap from the same answer, so switching language **reloads the
+  page** on purpose (see `LanguageService`). Switcher: `app-language-switcher`.
+- The Terms & privacy body is English-only by design; only its chrome is translated.
+
+### 8. Angular conventions
 
 - Standalone components, `ChangeDetectionStrategy.OnPush`, signals for state.
 - Control flow blocks (`@if` / `@for` / `@empty`), always `track` a stable id.

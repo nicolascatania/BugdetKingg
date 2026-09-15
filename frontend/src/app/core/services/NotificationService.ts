@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { TranslocoService } from '@jsverse/transloco';
 
 type NotificationType = 'success' | 'error' | 'warning' | 'info';
 
@@ -11,6 +12,8 @@ export class NotificationService {
     horizontalPosition: 'right',
     verticalPosition: 'top',
   };
+
+  private readonly transloco = inject(TranslocoService);
 
   constructor(private snackBar: MatSnackBar) { }
 
@@ -35,7 +38,7 @@ export class NotificationService {
     type: NotificationType,
     duration?: number
   ): void {
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message, this.transloco.translate('common.close'), {
       ...this.baseConfig,
       duration: duration ?? this.baseConfig.duration,
       panelClass: this.getPanelClass(type),

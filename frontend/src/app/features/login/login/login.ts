@@ -19,6 +19,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../core/services/NotificationService';
 import { environment } from '../../../../environments/environment';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 
 /**
  * Minimal shape of the `google.accounts.id` API used here. Google Identity
@@ -36,7 +37,7 @@ declare const google: {
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslocoDirective],
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,6 +67,7 @@ export class Login implements AfterViewInit, OnDestroy {
     private router: Router,
     private notificationService: NotificationService,
     private ngZone: NgZone,
+    private transloco: TranslocoService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
@@ -88,7 +90,7 @@ export class Login implements AfterViewInit, OnDestroy {
       return;
     }
     if (attemptsLeft <= 0) {
-      this.notificationService.error('Could not load Google sign-in. Please refresh the page.');
+      this.notificationService.error(this.transloco.translate('auth.login.googleLoadFailed'));
       return;
     }
     setTimeout(() => this.renderGoogleButtonWhenReady(attemptsLeft - 1), 150);
@@ -96,7 +98,7 @@ export class Login implements AfterViewInit, OnDestroy {
 
   private initializeGoogleButton(): void {
     if (!environment.googleClientId) {
-      this.notificationService.error('Google sign-in is not configured.');
+      this.notificationService.error(this.transloco.translate('auth.login.googleNotConfigured'));
       return;
     }
 
@@ -183,7 +185,7 @@ export class Login implements AfterViewInit, OnDestroy {
         const errorMessage =
           typeof err.error === 'string'
             ? err.error
-            : err.error?.message || 'Google sign-in failed, please try again';
+            : err.error?.message || this.transloco.translate('auth.login.googleFailed');
 
         this.notificationService.error(errorMessage);
       },
@@ -225,8 +227,7 @@ export class Login implements AfterViewInit, OnDestroy {
         const errorMessage =
           typeof err.error === 'string'
             ? err.error
-            : err.error?.message ||
-              'Login error, please contact an administrator';
+            : err.error?.message || this.transloco.translate('auth.login.loginFailed');
 
         this.notificationService.error(errorMessage);
       },

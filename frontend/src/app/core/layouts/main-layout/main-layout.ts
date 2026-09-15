@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, HostListener, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { SideBar } from '../../../shared/components/side-bar/side-bar';
 import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
@@ -13,7 +14,7 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [SideBar, RouterOutlet, ThemeToggleComponent],
+  imports: [SideBar, RouterOutlet, ThemeToggleComponent, TranslocoPipe],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

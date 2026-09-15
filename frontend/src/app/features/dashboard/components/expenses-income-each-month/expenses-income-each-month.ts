@@ -1,7 +1,10 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  LOCALE_ID,
   effect,
   inject,
   input,
@@ -19,6 +22,7 @@ import {
 import { MonthlyIncomeExpenseDTO } from '../../../transactions/interfaces/MonthlyIncomeExpenseDTO.interface';
 import { chartTheme, chartTooltipStyle } from '../../../../shared/utils/chartTheme';
 import { ThemeService } from '../../../../core/services/theme.service';
+import { monthAbbreviations } from '../../../../shared/models/months.const';
 
 Chart.register(
   BarController,
@@ -29,35 +33,27 @@ Chart.register(
   Legend,
 );
 
-const MONTH_LABELS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
 @Component({
   selector: 'app-expenses-income-each-month',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoDirective],
   templateUrl: './expenses-income-each-month.html',
   styleUrl: './expenses-income-each-month.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpensesIncomeEachMonth {
+  private readonly transloco = inject(TranslocoService);
+
   accounts = input<any[]>([]);
   chartData = input<MonthlyIncomeExpenseDTO[]>([]);
   accountChanged = output<string>();
 
   private barChart?: Chart;
+
+  private readonly locale = inject(LOCALE_ID);
+
+  /** Axis labels in the active locale. */
+  private readonly monthLabels = monthAbbreviations(this.locale);
   private readonly themeService = inject(ThemeService);
 
   constructor() {
@@ -113,10 +109,10 @@ export class ExpensesIncomeEachMonth {
     this.barChart = new Chart(canvasElement, {
       type: 'bar',
       data: {
-        labels: MONTH_LABELS,
+        labels: this.monthLabels,
         datasets: [
           {
-            label: 'Income',
+            label: this.transloco.translate('dashboard.income'),
             data: incomeData,
             backgroundColor: theme.positive,
             borderRadius: 6,
@@ -125,7 +121,7 @@ export class ExpensesIncomeEachMonth {
             categoryPercentage: 0.7,
           },
           {
-            label: 'Expense',
+            label: this.transloco.translate('dashboard.expense'),
             data: expenseData,
             backgroundColor: theme.negative,
             borderRadius: 6,
@@ -165,7 +161,7 @@ export class ExpensesIncomeEachMonth {
               color: theme.muted,
               font: { size: 11 },
               // Compact axis labels keep the plot area readable on phones.
-              callback: (value) => `$${Number(value).toLocaleString('es-AR')}`,
+              callback: (value) => `$${Number(value).toLocaleString(this.locale)}`,
             },
           },
         },

@@ -15,7 +15,7 @@
     <button
       type="button"
       class="fixed inset-0 z-40 animate-fade-in bg-black/50 backdrop-blur-sm md:hidden"
-      aria-label="Close navigation"
+      [attr.aria-label]="'nav.closeNavigation' | transloco"
       (click)="closeMobileNav()"
     ></button>
   }
@@ -36,7 +36,7 @@
         type="button"
         class="btn-icon border border-line bg-surface-2 text-muted hover:text-brand"
         (click)="toggleMobileNav()"
-        aria-label="Open navigation"
+        [attr.aria-label]="'nav.openNavigation' | transloco"
       >
         <i class="fa-solid fa-bars text-sm"></i>
       </button>

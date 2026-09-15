@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 /**
  * Pagination control shared by every paged list.
@@ -10,20 +11,22 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 @Component({
   selector: 'app-pagination',
   standalone: true,
+  imports: [TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav
+      *transloco="let t"
       class="flex flex-col items-center justify-between gap-3 border-t border-line px-1 py-4 sm:flex-row"
-      aria-label="Pagination"
+      [attr.aria-label]="t('pagination.label')"
     >
       <p class="text-xs text-muted">
-        Showing
+        {{ t('pagination.showing') }}
         <span class="font-semibold text-body">{{ rangeStart() }}</span>
         –
         <span class="font-semibold text-body">{{ rangeEnd() }}</span>
-        of
+        {{ t('pagination.of') }}
         <span class="font-semibold text-body">{{ totalElements() }}</span>
-        results
+        {{ t('pagination.results') }}
       </p>
 
       <div class="flex items-center gap-1.5">
@@ -32,7 +35,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
           class="pager-btn"
           [disabled]="page() === 0"
           (click)="changePage.emit(page() - 1)"
-          aria-label="Previous page"
+          [attr.aria-label]="t('pagination.previous')"
         >
           <i class="fa-solid fa-chevron-left text-[10px]"></i>
         </button>
@@ -65,7 +68,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
           class="pager-btn"
           [disabled]="page() >= totalPages() - 1"
           (click)="changePage.emit(page() + 1)"
-          aria-label="Next page"
+          [attr.aria-label]="t('pagination.next')"
         >
           <i class="fa-solid fa-chevron-right text-[10px]"></i>
         </button>

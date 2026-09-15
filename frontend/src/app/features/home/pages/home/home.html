@@ -1,4 +1,4 @@
-<div class="mx-auto w-full max-w-screen-2xl space-y-8">
+<div class="mx-auto w-full max-w-screen-2xl space-y-8" *transloco="let t">
   <div appReveal>
     <heading (newAccount)="openNewAccountModal()" (newTransaction)="openNewTransactionModal()"></heading>
   </div>
@@ -13,8 +13,8 @@
 
   <section appReveal [revealDelay]="180">
     <div class="mb-4 flex items-center justify-between gap-4">
-      <h2 class="section-title">Recent activity</h2>
-      <span class="chip-brand">This month</span>
+      <h2 class="section-title">{{ t('home.recentActivity') }}</h2>
+      <span class="chip-brand">{{ t('home.thisMonth') }}</span>
     </div>
     <last-moves></last-moves>
   </section>

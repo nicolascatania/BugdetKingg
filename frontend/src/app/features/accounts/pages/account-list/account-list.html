@@ -1,30 +1,30 @@
-<div class="mx-auto w-full max-w-screen-2xl space-y-6">
+<div class="mx-auto w-full max-w-screen-2xl space-y-6" *transloco="let t">
   <!-- Header -->
   <div appReveal class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h1 class="page-title">My accounts</h1>
-      <p class="mt-1 text-sm text-muted">Everywhere your money lives, in one view.</p>
+      <h1 class="page-title">{{ t('accounts.title') }}</h1>
+      <p class="mt-1 text-sm text-muted">{{ t('accounts.subtitle') }}</p>
     </div>
 
     <div class="flex items-center gap-3">
       <button type="button" class="btn-secondary" (click)="exportCsv()" [disabled]="exporting()">
         @if (exporting()) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-          <span>Exporting…</span>
+          <span>{{ t('csv.exporting') }}</span>
         } @else {
           <i class="fa-solid fa-file-export text-xs"></i>
-          <span>Export CSV</span>
+          <span>{{ t('csv.export') }}</span>
         }
       </button>
 
       <button type="button" class="btn-secondary" (click)="openImportModal()">
         <i class="fa-solid fa-file-import text-xs"></i>
-        Import CSV
+        {{ t('csv.import') }}
       </button>
 
       <button type="button" (click)="openAccountModal(null)" class="btn-primary">
         <i class="fa-solid fa-plus text-xs"></i>
-        New account
+        {{ t('accounts.newAccount') }}
       </button>
     </div>
   </div>
@@ -64,7 +64,7 @@
               <div class="min-w-0 flex-1">
                 <h3 class="truncate text-sm font-bold sm:text-base">{{ account.name }}</h3>
                 <p class="mt-0.5 truncate text-xs text-muted">
-                  {{ account.description || 'No description' }}
+                  {{ account.description || t('accounts.noDescription') }}
                 </p>
               </div>
             </div>
@@ -75,7 +75,7 @@
                 type="button"
                 (click)="openAccountModal(account)"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-all duration-200 hover:bg-brand/10 hover:text-brand"
-                [attr.aria-label]="'Edit ' + account.name"
+                [attr.aria-label]="t('accounts.editNamed', { name: account.name })"
               >
                 <i class="fa-solid fa-pen-to-square text-xs"></i>
               </button>
@@ -84,7 +84,7 @@
                 (click)="deleteAccount(account)"
                 [disabled]="deletingId() === account.id"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-all duration-200 hover:bg-negative/10 hover:text-negative"
-                [attr.aria-label]="'Delete ' + account.name"
+                [attr.aria-label]="t('accounts.deleteNamed', { name: account.name })"
               >
                 @if (deletingId() === account.id) {
                   <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
@@ -96,7 +96,7 @@
           </div>
 
           <div class="mt-5 flex items-end justify-between gap-3 border-t border-line pt-4">
-            <p class="eyebrow">Balance</p>
+            <p class="eyebrow">{{ t('accounts.balance') }}</p>
             <p
               class="tabular text-xl font-extrabold tracking-tight"
               [ngClass]="account.balance >= 0 ? 'text-positive' : 'text-negative'"
@@ -108,11 +108,11 @@
       } @empty {
         <div class="col-span-full rounded-2xl border border-dashed border-line bg-surface/50 p-12 text-center">
           <i class="fa-solid fa-building-columns mb-3 block text-3xl text-subtle"></i>
-          <p class="text-sm font-semibold">No accounts registered</p>
-          <p class="mt-1 text-xs text-muted">Create your first account to start tracking movements.</p>
+          <p class="text-sm font-semibold">{{ t('accounts.emptyTitle') }}</p>
+          <p class="mt-1 text-xs text-muted">{{ t('accounts.emptyHint') }}</p>
           <button type="button" (click)="openAccountModal(null)" class="btn-primary mx-auto mt-5">
             <i class="fa-solid fa-plus text-xs"></i>
-            New account
+            {{ t('accounts.newAccount') }}
           </button>
         </div>
       }
