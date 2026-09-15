@@ -529,6 +529,7 @@
     "new": "Nowy budżet",
     "ofLimit": "z {{limit}}",
     "usage": "Wykorzystano {{percent}}% · zostało {{remaining}}",
+    "overBy": "Wykorzystano {{percent}}% · {{over}} ponad limit",
     "status": {
       "OK": "OK",
       "WARNING": "Uwaga",

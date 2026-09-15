@@ -97,12 +97,22 @@
               ></div>
             </div>
 
-            <p class="tabular text-xs text-muted">
-              {{ t('budgets.usage', {
-                percent: (p.percentage | number: '1.0-0'),
-                remaining: (p.remainingAmount | currency: 'ARS' : 'symbol' : '1.2-2')
-              }) }}
-            </p>
+            <!-- Remaining goes negative once the limit is passed; show it as an overrun instead of "-$X remaining". -->
+            @if (p.remainingAmount < 0) {
+              <p class="tabular text-xs text-negative">
+                {{ t('budgets.overBy', {
+                  percent: (p.percentage | number: '1.0-0'),
+                  over: (-p.remainingAmount | currency: 'ARS' : 'symbol' : '1.2-2')
+                }) }}
+              </p>
+            } @else {
+              <p class="tabular text-xs text-muted">
+                {{ t('budgets.usage', {
+                  percent: (p.percentage | number: '1.0-0'),
+                  remaining: (p.remainingAmount | currency: 'ARS' : 'symbol' : '1.2-2')
+                }) }}
+              </p>
+            }
           </div>
 
           <div class="mt-4 flex items-center justify-end gap-2 border-t border-line pt-3">

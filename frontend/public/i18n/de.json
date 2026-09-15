@@ -529,6 +529,7 @@
     "new": "Neues Budget",
     "ofLimit": "von {{limit}}",
     "usage": "{{percent}}% verbraucht · {{remaining}} übrig",
+    "overBy": "{{percent}}% verbraucht · {{over}} über dem Limit",
     "status": {
       "OK": "OK",
       "WARNING": "Achtung",

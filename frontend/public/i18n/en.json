@@ -529,6 +529,7 @@
     "new": "New budget",
     "ofLimit": "of {{limit}}",
     "usage": "{{percent}}% used · {{remaining}} remaining",
+    "overBy": "{{percent}}% used · {{over}} over the limit",
     "status": {
       "OK": "OK",
       "WARNING": "Warning",
