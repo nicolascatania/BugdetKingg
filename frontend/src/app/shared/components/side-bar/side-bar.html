@@ -110,11 +110,6 @@
 
   <!-- Utilities -->
   <div class="space-y-2 border-t border-line p-3">
-    <!-- Language: only fits when labels are visible; the 76px rail has no room for a select. -->
-    @if (expanded()) {
-      <app-language-switcher class="block animate-fade-in" />
-    }
-
     <!--
       Desktop-only controls. The mobile drawer already has a theme toggle in the
       top bar and cannot be collapsed, so the whole row stays hidden below `md`.

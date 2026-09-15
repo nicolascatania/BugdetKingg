@@ -12,7 +12,6 @@ import { NgClass } from '@angular/common';
 import { AuthService } from '../../../core/services/auth';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { LanguageSwitcherComponent } from '../language-switcher/language-switcher';
 
 /** A single entry of the primary navigation. */
 interface NavItem {
@@ -36,7 +35,6 @@ interface NavItem {
     NgClass,
     ThemeToggleComponent,
     TranslocoDirective,
-    LanguageSwitcherComponent,
   ],
   templateUrl: './side-bar.html',
   styleUrl: './side-bar.css',
