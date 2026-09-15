@@ -213,6 +213,29 @@ class TransactionImportServiceTest {
     }
 
     @Test
+    @DisplayName("Should accept human-readable dates with and without time, plus legacy ISO ones")
+    void shouldAcceptHumanReadableDates() {
+        when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
+                .thenReturn(false);
+        mockValidAccount();
+
+        String csv = HEADER
+                + "15/01/2026 10:30,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash,\n"
+                + "15/01/2026,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash,\n"
+                + "2026-01-15T10:30:00,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash,\n"
+                + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash,\n";
+
+        ImportPreviewDTO preview = importService.preview(csvFile(csv));
+
+        assertEquals(0, preview.errorRows(), () -> "Every date format must be accepted");
+        assertEquals("2026-01-15T10:30:00", preview.rows().get(0).date(), () -> "dd/MM/yyyy HH:mm mismatch");
+        assertEquals("2026-01-15T00:00:00", preview.rows().get(1).date(), () -> "Bare dd/MM/yyyy must land on midnight");
+        assertEquals("2026-01-15T10:30:00", preview.rows().get(2).date(), () -> "ISO date-time mismatch");
+        assertEquals("2026-01-15T00:00:00", preview.rows().get(3).date(), () -> "ISO date must land on midnight");
+    }
+
+    @Test
     @DisplayName("Should default a blank counterparty to Unknown")
     void shouldDefaultBlankCounterparty() {
         when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));

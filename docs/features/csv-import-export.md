@@ -13,7 +13,7 @@ transactions, categories and accounts.
 ### Transactions CSV format
 
 Header (case-insensitive, exact column order): `date,description,amount,type,category,counterparty,account,destination_account`.
-Date accepts `yyyy-MM-ddTHH:mm:ss` or bare `yyyy-MM-dd` (normalized to midnight).
+Date accepts `dd/MM/yyyy HH:mm` or bare `dd/MM/yyyy` (normalized to midnight); the ISO forms `yyyy-MM-ddTHH:mm:ss` / `yyyy-MM-dd` are still accepted so older exports stay importable (`DateUtils.parseCsvDate`). Exports write `dd/MM/yyyy HH:mm`, the same format the UI shows.
 
 ### How transaction import/export works
 

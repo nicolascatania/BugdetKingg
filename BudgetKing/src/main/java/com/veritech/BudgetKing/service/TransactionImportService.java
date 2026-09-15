@@ -12,6 +12,7 @@ import com.veritech.BudgetKing.repository.AccountRepository;
 import com.veritech.BudgetKing.repository.CategoryRepository;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
+import com.veritech.BudgetKing.utils.DateUtils;
 import com.veritech.BudgetKing.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
@@ -26,7 +27,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -343,19 +343,14 @@ public class TransactionImportService {
     }
 
     /**
-     * Accepts either a full ISO-8601 local date-time ({@code yyyy-MM-ddTHH:mm:ss}) or a bare
-     * ISO local date ({@code yyyy-MM-dd}), which is normalised to midnight.
+     * Accepts {@code dd/MM/yyyy HH:mm}, {@code dd/MM/yyyy} and both ISO forms; see
+     * {@link DateUtils#parseCsvDate(String)}.
      */
     private LocalDateTime parseDate(String raw) {
         if (StringUtils.isBlankOrNUll(raw)) {
             throw new DateTimeParseException("Date is mandatory", raw == null ? "" : raw, 0);
         }
-        String trimmed = raw.trim();
-        try {
-            return LocalDateTime.parse(trimmed, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (DateTimeParseException e) {
-            return LocalDate.parse(trimmed, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
-        }
+        return DateUtils.parseCsvDate(raw.trim());
     }
 
     private ImportPreviewDTO buildSummary(List<ImportRowDTO> rows) {

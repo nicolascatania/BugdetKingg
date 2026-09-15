@@ -5,6 +5,7 @@ import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
+import com.veritech.BudgetKing.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -17,7 +18,6 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -26,7 +26,8 @@ import java.util.List;
  * <p>The output uses the exact same column layout expected by
  * {@link TransactionImportService}
  * ({@code date,description,amount,type,category,counterparty,account,destination_account}),
- * so a file exported here can be re-imported unchanged.</p>
+ * so a file exported here can be re-imported unchanged. Dates are written as
+ * {@code dd/MM/yyyy HH:mm}, the same format the UI shows.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -64,7 +65,7 @@ public class TransactionExportService {
 
             for (Transaction t : transactions) {
                 printer.printRecord(
-                        t.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                        t.getDate().format(DateUtils.CSV_DATE_TIME),
                         t.getDescription(),
                         t.getAmount(),
                         t.getType().name(),

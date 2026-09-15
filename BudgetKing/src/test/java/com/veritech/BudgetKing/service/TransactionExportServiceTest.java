@@ -72,7 +72,7 @@ class TransactionExportServiceTest {
         String csv = new String(result, StandardCharsets.UTF_8);
 
         assertTrue(csv.startsWith("date,description,amount,type,category,counterparty,account"));
-        assertTrue(csv.contains("2026-01-15T10:30"));
+        assertTrue(csv.contains("15/01/2026 10:30"), () -> "Dates must be human-readable, not ISO");
         assertTrue(csv.contains("Supermarket"));
         assertTrue(csv.contains("42.9"));
         assertTrue(csv.contains("EXPENSE"));
