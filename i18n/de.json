@@ -442,6 +442,18 @@
     "exportError": "Fehler beim Exportieren der Kategorien",
     "saved": "Kategorie erfolgreich gespeichert",
     "saveError": "Fehler beim Speichern der Kategorie",
+    "spending": {
+      "title": "Ausgaben der Kategorie",
+      "subtitle": "Nur Ausgaben; Einnahmen und Überweisungen bleiben außen vor.",
+      "open": "Ausgaben ansehen",
+      "previousMonth": "Vormonat",
+      "nextMonth": "Nächster Monat",
+      "thisMonth": "Dieser Monat",
+      "allTime": "Gesamt",
+      "expenseCount": "{{count}} Ausgaben",
+      "movements": "Ausgaben in diesem Monat",
+      "empty": "Keine Ausgaben in diesem Monat."
+    },
     "form": {
       "createTitle": "Neue Kategorie",
       "editTitle": "Kategorie bearbeiten",
@@ -487,7 +499,10 @@
     },
     "transactions": {
       "title": "Buchungen aus CSV importieren",
-      "hint": "destination_account ist nur für TRANSFER-Zeilen erforderlich (muss ein bestehendes Konto sein, verschieden von account). category ist bei TRANSFER optional.",
+      "hint": "destination_account ist nur bei TRANSFER-Zeilen erforderlich (muss ein bestehendes Konto sein, verschieden von account). category ist bei TRANSFER optional; eine noch nicht vorhandene Kategorie wird automatisch mit dem Standardsymbol angelegt.",
+      "newCategories": "{{count}} neue Kategorien werden angelegt:",
+      "newCategory": "Neu",
+      "newCategoryHint": "Diese Kategorie existiert noch nicht und wird beim Import angelegt",
       "done": "{{count}} Buchungen erfolgreich importiert.",
       "importError": "Fehler beim Importieren der Buchungen"
     }
@@ -529,6 +544,10 @@
     "new": "Neues Budget",
     "ofLimit": "von {{limit}}",
     "usage": "{{percent}}% verbraucht · {{remaining}} übrig",
+    "recurring": "Wiederholt sich monatlich",
+    "recurringSince": "Monatlich seit {{month}}/{{year}}",
+    "recurringHint": "Dieses Limit gilt Monat für Monat weiter, bis ein anderes Budget für die Kategorie übernimmt. Bearbeiten oder Löschen wirkt sich auf alle Monate aus.",
+    "overBy": "{{percent}}% verbraucht · {{over}} über dem Limit",
     "status": {
       "OK": "OK",
       "WARNING": "Achtung",
@@ -543,7 +562,9 @@
       "createTitle": "Neues Budget",
       "editTitle": "Budget bearbeiten",
       "selectCategory": "Kategorie wählen",
-      "limitAmount": "Limitbetrag"
+      "limitAmount": "Limitbetrag",
+      "recurring": "Jeden Monat wiederholen",
+      "recurringHint": "Der Monat oben wird zum Start. Das Limit gilt für alle folgenden Monate, bis du ein weiteres Budget für diese Kategorie anlegst."
     },
     "tutorial": {
       "title": "So funktionieren Budgets",
@@ -561,8 +582,8 @@
         "body": "Grün (OK), solange du unter 80 % liegst, gelb (Achtung) ab 80 %, rot (Überschritten), sobald du das Limit übersteigst."
       },
       "s4": {
-        "heading": "4. Budgets gelten pro Monat",
-        "body": "Wechsle oben die Monats-/Jahresauswahl, um einen vergangenen Zeitraum anzusehen oder die Limits für den nächsten Monat vorab einzurichten."
+        "heading": "4. Budgets gelten pro Monat – oder wiederkehrend",
+        "body": "Wechsle oben die Monats-/Jahresauswahl, um einen vergangenen Zeitraum anzusehen oder die Limits für den nächsten Monat vorab einzurichten. Aktiviere „Jeden Monat wiederholen“, um ein festes Limit einmalig zu setzen: Es gilt weiter, bis ein neueres Budget für diese Kategorie übernimmt."
       }
     }
   },
@@ -643,7 +664,7 @@
     "addMoney": "Geld hinzufügen",
     "withdraw": "Abheben",
     "close": "Schließen",
-    "closeHint": "Alles auf ein Konto zurückbuchen und das Ziel einfrieren",
+    "closeHint": "Geld als ausgegeben markieren oder auf ein Konto zurückbuchen und das Ziel einfrieren",
     "deleteBlocked": "Hebe ab oder schließe das Ziel, bevor du es löschst",
     "deleteGoal": "Ziel löschen",
     "emptyTitle": "Noch keine Sparziele",
@@ -666,8 +687,16 @@
       "withdrawTitle": "Vom Ziel abheben",
       "closeTitle": "Ziel schließen",
       "savedOf": "{{saved}} gespart von {{target}}",
-      "closeWithMoney": "Alles, was das Ziel enthält ({{amount}}), geht auf das gewählte Konto zurück. Das Ziel wird dann schreibgeschützt.",
+      "closeWithMoney": "Das Ziel enthält {{amount}}. Wähle, was damit passiert ist; das Ziel wird danach schreibgeschützt.",
       "closeEmpty": "Dieses Ziel enthält kein Geld. Beim Schließen bleibt es als Verlauf erhalten und wird schreibgeschützt.",
+      "outcomeLabel": "Was passiert mit dem Geld?",
+      "outcomeSpend": "Ich habe es für das Ziel ausgegeben",
+      "outcomeSpendHint": "Eine Ausgabe über {{amount}} wird erfasst; die Kontostände bleiben unverändert.",
+      "outcomeReturn": "Auf ein Konto zurückbuchen",
+      "outcomeReturnHint": "{{amount}} geht auf das gewählte Konto zurück.",
+      "spendAccount": "Ausgabe buchen auf",
+      "spendCategory": "Kategorie der Ausgabe",
+      "spendCategoryNone": "Keine Kategorie",
       "fromAccount": "Von Konto",
       "toAccount": "Auf Konto",
       "available": "Verfügbar: {{amount}}",

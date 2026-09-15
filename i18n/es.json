@@ -442,6 +442,18 @@
     "exportError": "Error al exportar categorías",
     "saved": "Categoría guardada correctamente",
     "saveError": "Error al guardar la categoría",
+    "spending": {
+      "title": "Gastos de la categoría",
+      "subtitle": "Solo gastos; ingresos y transferencias quedan afuera.",
+      "open": "Ver gastos",
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "thisMonth": "Este mes",
+      "allTime": "Desde siempre",
+      "expenseCount": "{{count}} gastos",
+      "movements": "Gastos del mes",
+      "empty": "Sin gastos en este mes."
+    },
     "form": {
       "createTitle": "Nueva categoría",
       "editTitle": "Editar categoría",
@@ -487,7 +499,10 @@
     },
     "transactions": {
       "title": "Importar movimientos desde CSV",
-      "hint": "destination_account solo es obligatorio para filas TRANSFER (debe ser una cuenta existente, distinta de account). category es opcional para TRANSFER.",
+      "hint": "destination_account solo es obligatorio en filas TRANSFER (debe ser una cuenta existente, distinta de account). category es opcional en TRANSFER; una categoría que todavía no existe se crea automáticamente con el ícono por defecto.",
+      "newCategories": "Se van a crear {{count}} categorías nuevas:",
+      "newCategory": "Nueva",
+      "newCategoryHint": "Esta categoría todavía no existe y se crea al importar",
       "done": "{{count}} movimientos importados correctamente.",
       "importError": "Error al importar movimientos"
     }
@@ -529,6 +544,10 @@
     "new": "Nuevo presupuesto",
     "ofLimit": "de {{limit}}",
     "usage": "{{percent}}% usado · quedan {{remaining}}",
+    "recurring": "Se repite cada mes",
+    "recurringSince": "Se repite desde {{month}}/{{year}}",
+    "recurringHint": "Este límite se arrastra mes a mes hasta que otro presupuesto de la categoría lo reemplace. Editarlo o borrarlo afecta todos los meses.",
+    "overBy": "{{percent}}% usado · {{over}} por encima del límite",
     "status": {
       "OK": "OK",
       "WARNING": "Atención",
@@ -543,7 +562,9 @@
       "createTitle": "Nuevo presupuesto",
       "editTitle": "Editar presupuesto",
       "selectCategory": "Elegí una categoría",
-      "limitAmount": "Monto límite"
+      "limitAmount": "Monto límite",
+      "recurring": "Repetir todos los meses",
+      "recurringHint": "El mes de arriba pasa a ser el inicio. El límite aplica a todos los meses siguientes hasta que crees otro presupuesto para esta categoría."
     },
     "tutorial": {
       "title": "Cómo funcionan los presupuestos",
@@ -561,8 +582,8 @@
         "body": "Verde (OK) mientras estás por debajo del 80% gastado, ámbar (Atención) desde el 80%, rojo (Excedido) cuando superás el límite."
       },
       "s4": {
-        "heading": "4. Los presupuestos son por mes",
-        "body": "Cambiá el selector de mes/año arriba para revisar un período pasado o dejar preparados los límites del mes que viene."
+        "heading": "4. Los presupuestos son por mes, o recurrentes",
+        "body": "Cambiá el selector de mes/año arriba para revisar un período pasado o dejar preparados los límites del mes que viene. Marcá “Repetir todos los meses” para fijar un límite una sola vez: se arrastra hasta que un presupuesto más nuevo de esa categoría lo reemplace."
       }
     }
   },
@@ -643,7 +664,7 @@
     "addMoney": "Agregar plata",
     "withdraw": "Retirar",
     "close": "Cerrar",
-    "closeHint": "Devolver todo a una cuenta y congelar la meta",
+    "closeHint": "Marcar la plata como gastada o devolverla a una cuenta, y congelar la meta",
     "deleteBlocked": "Retirá o cerrá la meta antes de eliminarla",
     "deleteGoal": "Eliminar meta",
     "emptyTitle": "Todavía no hay metas de ahorro",
@@ -666,8 +687,16 @@
       "withdrawTitle": "Retirar de la meta",
       "closeTitle": "Cerrar meta",
       "savedOf": "{{saved}} ahorrados de {{target}}",
-      "closeWithMoney": "Todo lo que tiene la meta ({{amount}}) vuelve a la cuenta que elijas. Después la meta queda en solo lectura.",
+      "closeWithMoney": "La meta tiene {{amount}}. Elegí qué pasó con esa plata; después la meta queda en solo lectura.",
       "closeEmpty": "Esta meta no tiene plata. Cerrarla la conserva como historial y la deja en solo lectura.",
+      "outcomeLabel": "¿Qué pasa con la plata?",
+      "outcomeSpend": "La gasté en la meta",
+      "outcomeSpendHint": "Se registra un gasto de {{amount}}; los saldos de las cuentas no cambian.",
+      "outcomeReturn": "Devolverla a una cuenta",
+      "outcomeReturnHint": "{{amount}} vuelve a la cuenta que elijas.",
+      "spendAccount": "Registrar el gasto en",
+      "spendCategory": "Categoría del gasto",
+      "spendCategoryNone": "Sin categoría",
       "fromAccount": "Desde la cuenta",
       "toAccount": "A la cuenta",
       "available": "Disponible: {{amount}}",

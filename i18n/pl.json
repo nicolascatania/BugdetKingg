@@ -442,6 +442,18 @@
     "exportError": "Błąd eksportu kategorii",
     "saved": "Kategoria została zapisana",
     "saveError": "Błąd zapisu kategorii",
+    "spending": {
+      "title": "Wydatki kategorii",
+      "subtitle": "Tylko wydatki; przychody i przelewy są pomijane.",
+      "open": "Zobacz wydatki",
+      "previousMonth": "Poprzedni miesiąc",
+      "nextMonth": "Następny miesiąc",
+      "thisMonth": "Ten miesiąc",
+      "allTime": "Od początku",
+      "expenseCount": "Wydatki: {{count}}",
+      "movements": "Wydatki w tym miesiącu",
+      "empty": "Brak wydatków w tym miesiącu."
+    },
     "form": {
       "createTitle": "Nowa kategoria",
       "editTitle": "Edytuj kategorię",
@@ -487,7 +499,10 @@
     },
     "transactions": {
       "title": "Importuj transakcje z CSV",
-      "hint": "destination_account jest wymagane tylko dla wierszy TRANSFER (musi być istniejącym kontem, innym niż account). category jest opcjonalne dla TRANSFER.",
+      "hint": "destination_account jest wymagane tylko w wierszach TRANSFER (musi być istniejącym kontem, innym niż account). category jest opcjonalne dla TRANSFER; nieistniejąca kategoria zostanie utworzona automatycznie z domyślną ikoną.",
+      "newCategories": "Zostaną utworzone {{count}} nowe kategorie:",
+      "newCategory": "Nowa",
+      "newCategoryHint": "Ta kategoria jeszcze nie istnieje i zostanie utworzona podczas importu",
       "done": "Zaimportowano {{count}} transakcji.",
       "importError": "Błąd importu transakcji"
     }
@@ -529,6 +544,10 @@
     "new": "Nowy budżet",
     "ofLimit": "z {{limit}}",
     "usage": "Wykorzystano {{percent}}% · zostało {{remaining}}",
+    "recurring": "Powtarza się co miesiąc",
+    "recurringSince": "Powtarza się od {{month}}/{{year}}",
+    "recurringHint": "Ten limit przenosi się z miesiąca na miesiąc, dopóki inny budżet tej kategorii go nie zastąpi. Edycja lub usunięcie dotyczy wszystkich miesięcy.",
+    "overBy": "Wykorzystano {{percent}}% · {{over}} ponad limit",
     "status": {
       "OK": "OK",
       "WARNING": "Uwaga",
@@ -543,7 +562,9 @@
       "createTitle": "Nowy budżet",
       "editTitle": "Edytuj budżet",
       "selectCategory": "Wybierz kategorię",
-      "limitAmount": "Kwota limitu"
+      "limitAmount": "Kwota limitu",
+      "recurring": "Powtarzaj co miesiąc",
+      "recurringHint": "Miesiąc powyżej staje się początkiem. Limit obowiązuje w każdym kolejnym miesiącu, dopóki nie utworzysz innego budżetu dla tej kategorii."
     },
     "tutorial": {
       "title": "Jak działają budżety",
@@ -561,8 +582,8 @@
         "body": "Zielony (OK), dopóki wydałeś mniej niż 80%, bursztynowy (Uwaga) od 80%, czerwony (Przekroczony), gdy przekroczysz limit."
       },
       "s4": {
-        "heading": "4. Budżety są miesięczne",
-        "body": "Zmień selektor miesiąca/roku u góry, aby przejrzeć miniony okres lub z wyprzedzeniem ustawić limity na kolejny miesiąc."
+        "heading": "4. Budżety są miesięczne lub cykliczne",
+        "body": "Zmień selektor miesiąca/roku u góry, aby przejrzeć miniony okres lub z wyprzedzeniem ustawić limity na kolejny miesiąc. Zaznacz „Powtarzaj co miesiąc”, aby ustawić stały limit raz: obowiązuje, dopóki nowszy budżet tej kategorii go nie zastąpi."
       }
     }
   },
@@ -643,7 +664,7 @@
     "addMoney": "Dodaj pieniądze",
     "withdraw": "Wypłać",
     "close": "Zamknij",
-    "closeHint": "Zwróć wszystko na konto i zamroź cel",
+    "closeHint": "Oznacz pieniądze jako wydane lub zwróć je na konto, a potem zamroź cel",
     "deleteBlocked": "Wypłać środki lub zamknij cel przed usunięciem",
     "deleteGoal": "Usuń cel",
     "emptyTitle": "Nie ma jeszcze celów oszczędnościowych",
@@ -666,8 +687,16 @@
       "withdrawTitle": "Wypłać z celu",
       "closeTitle": "Zamknij cel",
       "savedOf": "Zaoszczędzono {{saved}} z {{target}}",
-      "closeWithMoney": "Wszystko, co zawiera cel ({{amount}}), wraca na wybrane konto. Cel staje się wtedy tylko do odczytu.",
+      "closeWithMoney": "Cel zawiera {{amount}}. Wybierz, co się z tym stało; cel stanie się potem tylko do odczytu.",
       "closeEmpty": "Ten cel nie zawiera pieniędzy. Zamknięcie zachowa go jako historię i ustawi tylko do odczytu.",
+      "outcomeLabel": "Co dzieje się z pieniędzmi?",
+      "outcomeSpend": "Wydałem je na cel",
+      "outcomeSpendHint": "Zostanie zapisany wydatek na {{amount}}; salda kont się nie zmienią.",
+      "outcomeReturn": "Zwróć je na konto",
+      "outcomeReturnHint": "{{amount}} wraca na wybrane konto.",
+      "spendAccount": "Zapisz wydatek na koncie",
+      "spendCategory": "Kategoria wydatku",
+      "spendCategoryNone": "Bez kategorii",
       "fromAccount": "Z konta",
       "toAccount": "Na konto",
       "available": "Dostępne: {{amount}}",

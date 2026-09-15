@@ -442,6 +442,18 @@
     "exportError": "Error exporting categories",
     "saved": "Category saved successfully",
     "saveError": "Error saving category",
+    "spending": {
+      "title": "Category spending",
+      "subtitle": "Expenses only; income and transfers are left out.",
+      "open": "View spending",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "thisMonth": "This month",
+      "allTime": "All time",
+      "expenseCount": "{{count}} expenses",
+      "movements": "Expenses this month",
+      "empty": "No expenses in this month."
+    },
     "form": {
       "createTitle": "New category",
       "editTitle": "Edit category",
@@ -487,7 +499,10 @@
     },
     "transactions": {
       "title": "Import transactions from CSV",
-      "hint": "destination_account is only required for TRANSFER rows (must be an existing account, different from account). category is optional for TRANSFER.",
+      "hint": "destination_account is only required for TRANSFER rows (must be an existing account, different from account). category is optional for TRANSFER; a category that does not exist yet is created automatically with the default icon.",
+      "newCategories": "{{count}} new categories will be created:",
+      "newCategory": "New",
+      "newCategoryHint": "This category does not exist yet and will be created when you import",
       "done": "{{count}} transactions imported successfully.",
       "importError": "Error importing transactions"
     }
@@ -529,6 +544,10 @@
     "new": "New budget",
     "ofLimit": "of {{limit}}",
     "usage": "{{percent}}% used · {{remaining}} remaining",
+    "recurring": "Repeats every month",
+    "recurringSince": "Repeats monthly since {{month}}/{{year}}",
+    "recurringHint": "This limit carries over month after month until another budget for the category takes over. Editing or deleting it affects every month.",
+    "overBy": "{{percent}}% used · {{over}} over the limit",
     "status": {
       "OK": "OK",
       "WARNING": "Warning",
@@ -543,7 +562,9 @@
       "createTitle": "New budget",
       "editTitle": "Edit budget",
       "selectCategory": "Select category",
-      "limitAmount": "Limit amount"
+      "limitAmount": "Limit amount",
+      "recurring": "Repeat every month",
+      "recurringHint": "The month above becomes the start. The limit applies to every later month until you create another budget for this category."
     },
     "tutorial": {
       "title": "How budgets work",
@@ -561,8 +582,8 @@
         "body": "Green (OK) while you are under 80% spent, amber (Warning) from 80% up, red (Exceeded) once you go over the limit."
       },
       "s4": {
-        "heading": "4. Budgets are per month",
-        "body": "Switch the month/year selector at the top to review a past period or set up next month's limits ahead of time."
+        "heading": "4. Budgets are per month, or recurring",
+        "body": "Switch the month/year selector at the top to review a past period or set up next month's limits ahead of time. Tick “Repeat every month” to set a fixed limit once: it carries over until a newer budget for that category takes over."
       }
     }
   },
@@ -643,7 +664,7 @@
     "addMoney": "Add money",
     "withdraw": "Withdraw",
     "close": "Close",
-    "closeHint": "Send everything back to an account and freeze the goal",
+    "closeHint": "Mark the money as spent or send it back to an account, then freeze the goal",
     "deleteBlocked": "Withdraw or close the goal before deleting it",
     "deleteGoal": "Delete goal",
     "emptyTitle": "No savings goals yet",
@@ -666,8 +687,16 @@
       "withdrawTitle": "Withdraw from goal",
       "closeTitle": "Close goal",
       "savedOf": "{{saved}} saved of {{target}}",
-      "closeWithMoney": "Everything the goal holds ({{amount}}) goes back to the account you choose. The goal then becomes read-only.",
+      "closeWithMoney": "The goal holds {{amount}}. Choose what happened with it; the goal then becomes read-only.",
       "closeEmpty": "This goal holds no money. Closing it keeps it as history and makes it read-only.",
+      "outcomeLabel": "What happens with the money?",
+      "outcomeSpend": "I spent it on the goal",
+      "outcomeSpendHint": "An expense for {{amount}} is recorded; account balances stay as they are.",
+      "outcomeReturn": "Send it back to an account",
+      "outcomeReturnHint": "{{amount}} goes back to the account you choose.",
+      "spendAccount": "Record the expense on",
+      "spendCategory": "Expense category",
+      "spendCategoryNone": "No category",
       "fromAccount": "From account",
       "toAccount": "To account",
       "available": "Available: {{amount}}",
