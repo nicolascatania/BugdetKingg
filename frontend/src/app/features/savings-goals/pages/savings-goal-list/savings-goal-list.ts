@@ -133,6 +133,20 @@ export class SavingsGoalList implements OnInit {
     }
   }
 
+  /** Progress bar fill per derived state, mirroring the badge colors. */
+  barColor(state: SavingsGoalDTO['state']): string {
+    switch (state) {
+      case 'ACHIEVED':
+        return 'bg-positive';
+      case 'OVERDUE':
+        return 'bg-negative';
+      case 'CLOSED':
+        return 'bg-subtle';
+      default:
+        return 'bg-brand';
+    }
+  }
+
   deleteGoal(goal: SavingsGoalDTO): void {
     if (this.deletingId()) return;
 
