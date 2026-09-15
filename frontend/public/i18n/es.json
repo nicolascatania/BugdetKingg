@@ -544,6 +544,9 @@
     "new": "Nuevo presupuesto",
     "ofLimit": "de {{limit}}",
     "usage": "{{percent}}% usado · quedan {{remaining}}",
+    "recurring": "Se repite cada mes",
+    "recurringSince": "Se repite desde {{month}}/{{year}}",
+    "recurringHint": "Este límite se arrastra mes a mes hasta que otro presupuesto de la categoría lo reemplace. Editarlo o borrarlo afecta todos los meses.",
     "overBy": "{{percent}}% usado · {{over}} por encima del límite",
     "status": {
       "OK": "OK",
@@ -559,7 +562,9 @@
       "createTitle": "Nuevo presupuesto",
       "editTitle": "Editar presupuesto",
       "selectCategory": "Elegí una categoría",
-      "limitAmount": "Monto límite"
+      "limitAmount": "Monto límite",
+      "recurring": "Repetir todos los meses",
+      "recurringHint": "El mes de arriba pasa a ser el inicio. El límite aplica a todos los meses siguientes hasta que crees otro presupuesto para esta categoría."
     },
     "tutorial": {
       "title": "Cómo funcionan los presupuestos",
@@ -577,8 +582,8 @@
         "body": "Verde (OK) mientras estás por debajo del 80% gastado, ámbar (Atención) desde el 80%, rojo (Excedido) cuando superás el límite."
       },
       "s4": {
-        "heading": "4. Los presupuestos son por mes",
-        "body": "Cambiá el selector de mes/año arriba para revisar un período pasado o dejar preparados los límites del mes que viene."
+        "heading": "4. Los presupuestos son por mes, o recurrentes",
+        "body": "Cambiá el selector de mes/año arriba para revisar un período pasado o dejar preparados los límites del mes que viene. Marcá “Repetir todos los meses” para fijar un límite una sola vez: se arrastra hasta que un presupuesto más nuevo de esa categoría lo reemplace."
       }
     }
   },

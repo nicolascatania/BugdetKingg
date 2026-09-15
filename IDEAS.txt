@@ -20,8 +20,8 @@
 	Voice notes need a speech-to-text step first; then an NLP/parsing step to extract account, amount, description, type and counterparty from the free text (or transcript).
 	OPEN QUESTION: microservice or integrated into the monolith? Weigh shared domain coupling (needs Transaction/Account/Category from the monolith) against independent scaling/deploys (webhook traffic, WhatsApp API rate limits, retry storms shouldn't affect the main app). Leaning monolith first, extract later if it proves noisy — but decide before building.
 14. Multi-currency: currency per account, base currency per user for reports, FX provider. See docs/proposals/multi-currency.md. medium
-15. CSV export/import: write dates in a human-readable format instead of ISO. low
-16. Transaction CSV import: create missing categories on the fly (currently unknown category names are errors). medium
-17. Category detail modal: clicking a category opens a modal with its expenses for the current month and its all-time total. medium
-18. Recurring budgets: a budget that carries over month to month (today one row per category per month; a fixed monthly limit means re-creating it every month). high
+15. DONE. CSV export/import: write dates in a human-readable format instead of ISO. low
+16. DONE. Transaction CSV import: create missing categories on the fly (currently unknown category names are errors). medium
+17. DONE. Category detail modal: clicking a category opens a modal with its expenses for the current month and its all-time total. medium
+18. DONE. Recurring budgets: a budget that carries over month to month (today one row per category per month; a fixed monthly limit means re-creating it every month). high
 19. Versioning: release tagging / version shown in the app, changelog. low

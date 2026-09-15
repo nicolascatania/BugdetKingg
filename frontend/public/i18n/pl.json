@@ -544,6 +544,9 @@
     "new": "Nowy budżet",
     "ofLimit": "z {{limit}}",
     "usage": "Wykorzystano {{percent}}% · zostało {{remaining}}",
+    "recurring": "Powtarza się co miesiąc",
+    "recurringSince": "Powtarza się od {{month}}/{{year}}",
+    "recurringHint": "Ten limit przenosi się z miesiąca na miesiąc, dopóki inny budżet tej kategorii go nie zastąpi. Edycja lub usunięcie dotyczy wszystkich miesięcy.",
     "overBy": "Wykorzystano {{percent}}% · {{over}} ponad limit",
     "status": {
       "OK": "OK",
@@ -559,7 +562,9 @@
       "createTitle": "Nowy budżet",
       "editTitle": "Edytuj budżet",
       "selectCategory": "Wybierz kategorię",
-      "limitAmount": "Kwota limitu"
+      "limitAmount": "Kwota limitu",
+      "recurring": "Powtarzaj co miesiąc",
+      "recurringHint": "Miesiąc powyżej staje się początkiem. Limit obowiązuje w każdym kolejnym miesiącu, dopóki nie utworzysz innego budżetu dla tej kategorii."
     },
     "tutorial": {
       "title": "Jak działają budżety",
@@ -577,8 +582,8 @@
         "body": "Zielony (OK), dopóki wydałeś mniej niż 80%, bursztynowy (Uwaga) od 80%, czerwony (Przekroczony), gdy przekroczysz limit."
       },
       "s4": {
-        "heading": "4. Budżety są miesięczne",
-        "body": "Zmień selektor miesiąca/roku u góry, aby przejrzeć miniony okres lub z wyprzedzeniem ustawić limity na kolejny miesiąc."
+        "heading": "4. Budżety są miesięczne lub cykliczne",
+        "body": "Zmień selektor miesiąca/roku u góry, aby przejrzeć miniony okres lub z wyprzedzeniem ustawić limity na kolejny miesiąc. Zaznacz „Powtarzaj co miesiąc”, aby ustawić stały limit raz: obowiązuje, dopóki nowszy budżet tej kategorii go nie zastąpi."
       }
     }
   },

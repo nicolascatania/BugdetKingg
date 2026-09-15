@@ -15,6 +15,11 @@ import java.util.UUID;
  * <p>A budget is always scoped to one user, one category and one calendar
  * period (year + month). The unique constraint enforces that pairing at the
  * database level, so a category can never hold two limits for the same month.</p>
+ *
+ * <p>A {@link #isRecurring() recurring} budget treats its period as a start: it
+ * also applies to every later month that has no budget of its own for the same
+ * category. That is how a fixed monthly limit is set once instead of once per
+ * month. See {@code BudgetService#getProgress} for the resolution rules.</p>
  */
 @Entity
 @Table(
@@ -57,4 +62,12 @@ public class Budget extends AuditedEntity {
     /** Maximum amount the user intends to spend on this category during the period. */
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal limitAmount;
+
+    /**
+     * When {@code true}, the limit carries over to every month after {@code year}/{@code month}
+     * until a later budget for the same category takes over.
+     */
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean recurring = false;
 }

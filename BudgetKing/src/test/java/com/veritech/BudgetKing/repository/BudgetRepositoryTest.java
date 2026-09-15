@@ -131,4 +131,43 @@ class BudgetRepositoryTest extends BaseRepositoryTest {
         assertEquals(2, firstPage.getTotalPages(), () -> "Three budgets over a page size of two");
         assertNotNull(savedGroceriesBudget.getId(), () -> "Fixtures should have been persisted with an ID");
     }
+
+    @Test
+    @DisplayName("Should list recurring budgets starting on or before a period, newest start first")
+    void shouldFindRecurringStartingOnOrBefore() {
+        Budget olderRecurring = entityManager.persistFlushFind(Budget.builder()
+                .category(savedGroceriesCategory)
+                .user(savedUser)
+                .year(YEAR - 1)
+                .month(12)
+                .limitAmount(new BigDecimal("200.00"))
+                .recurring(true)
+                .build());
+        Budget newerRecurring = entityManager.persistFlushFind(Budget.builder()
+                .category(savedCategory)
+                .user(savedUser)
+                .year(YEAR)
+                .month(MONTH - 2)
+                .limitAmount(new BigDecimal("120.00"))
+                .recurring(true)
+                .build());
+        // Starts after the queried period, so it must be left out.
+        entityManager.persistFlushFind(Budget.builder()
+                .category(savedGroceriesCategory)
+                .user(savedUser)
+                .year(YEAR)
+                .month(MONTH + 3)
+                .limitAmount(new BigDecimal("999.00"))
+                .recurring(true)
+                .build());
+        entityManager.flush();
+        entityManager.clear();
+
+        List<Budget> result = budgetRepository.findRecurringStartingOnOrBefore(savedUser, YEAR, MONTH);
+
+        assertEquals(2, result.size(), () -> "Only recurring budgets that already started apply");
+        assertEquals(newerRecurring.getId(), result.get(0).getId(), () -> "Newest start must come first");
+        assertEquals(olderRecurring.getId(), result.get(1).getId(), () -> "Older start must come last");
+        assertTrue(result.stream().allMatch(Budget::isRecurring), () -> "Non-recurring fixtures must be excluded");
+    }
 }

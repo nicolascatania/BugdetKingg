@@ -29,6 +29,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -127,6 +128,7 @@ public class BudgetService implements ICrudService<BudgetDTO, UUID, BudgetFilter
         found.setYear(dto.year());
         found.setMonth(dto.month());
         found.setLimitAmount(dto.limitAmount());
+        found.setRecurring(dto.recurring());
 
         return budgetMapper.toDto(budgetRepository.save(found));
     }
@@ -189,12 +191,18 @@ public class BudgetService implements ICrudService<BudgetDTO, UUID, BudgetFilter
     }
 
     /**
-     * Compares every budget of a period against what the user actually spent on
-     * each budgeted category during that same period.
+     * Compares every budget that applies to a period against what the user actually
+     * spent on each budgeted category during that same period.
+     *
+     * <p>Which budget applies to a category is resolved as: the budget created for
+     * that exact period if there is one, otherwise the recurring budget with the
+     * latest start on or before the period. So a recurring limit set once carries
+     * over month after month, and a budget created for a specific month overrides
+     * it for that month only.</p>
      *
      * @param year  calendar year of the period
      * @param month calendar month of the period, 1 through 12
-     * @return one progress reading per budget defined for the period
+     * @return one progress reading per category budgeted for the period
      */
     public List<BudgetProgressDTO> getProgress(int year, int month) {
         AppUser user = securityUtils.getCurrentUser();
@@ -205,13 +213,31 @@ public class BudgetService implements ICrudService<BudgetDTO, UUID, BudgetFilter
 
         Map<String, BigDecimal> spentByCategory = expensesByCategoryName(user, start, end);
 
-        return budgetRepository.findByUserAndYearAndMonth(user, year, month)
+        return resolveBudgetsFor(user, year, month)
                 .stream()
                 .map(budget -> toProgress(
                         budget,
                         spentByCategory.getOrDefault(budget.getCategory().getName(), BigDecimal.ZERO)
                 ))
                 .toList();
+    }
+
+    /**
+     * One budget per category for the period: exact-period budgets first, then the
+     * newest recurring budget for every category not already covered.
+     */
+    private List<Budget> resolveBudgetsFor(AppUser user, int year, int month) {
+        Map<UUID, Budget> byCategory = new LinkedHashMap<>();
+
+        for (Budget exact : budgetRepository.findByUserAndYearAndMonth(user, year, month)) {
+            byCategory.put(exact.getCategory().getId(), exact);
+        }
+        // Sorted newest start first, so putIfAbsent keeps the most recent one per category.
+        for (Budget recurring : budgetRepository.findRecurringStartingOnOrBefore(user, year, month)) {
+            byCategory.putIfAbsent(recurring.getCategory().getId(), recurring);
+        }
+
+        return List.copyOf(byCategory.values());
     }
 
     /**
@@ -252,6 +278,9 @@ public class BudgetService implements ICrudService<BudgetDTO, UUID, BudgetFilter
                 category.getId(),
                 category.getName(),
                 category.getIcon(),
+                budget.getYear(),
+                budget.getMonth(),
+                budget.isRecurring(),
                 limitAmount,
                 spentAmount,
                 limitAmount.subtract(spentAmount),

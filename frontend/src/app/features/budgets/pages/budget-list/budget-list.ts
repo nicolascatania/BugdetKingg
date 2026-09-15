@@ -81,15 +81,16 @@ export class BudgetList implements OnInit {
   }
 
   openEditBudgetModal(p: BudgetProgressDTO): void {
-    const { year, month } = this.periodForm.value;
     this.selectedBudget.set({
       id: p.budgetId,
       category: p.categoryId,
       categoryName: p.categoryName,
       categoryIcon: p.categoryIcon,
-      year,
-      month,
+      // A recurring budget carrying over keeps its own start period; editing must not move it.
+      year: p.year,
+      month: p.month,
       limitAmount: p.limitAmount,
+      recurring: p.recurring,
     });
     this.isModalOpen.set(true);
   }
@@ -109,6 +110,12 @@ export class BudgetList implements OnInit {
         this.ns.error(err?.error?.message ?? this.transloco.translate('budgets.deleteError'));
       },
     });
+  }
+
+  /** True when the reading comes from a recurring budget that started in an earlier period. */
+  isCarriedOver(p: BudgetProgressDTO): boolean {
+    const { year, month } = this.periodForm.value;
+    return p.recurring && (p.year !== Number(year) || p.month !== Number(month));
   }
 
   onModalClosed(saved: boolean): void {

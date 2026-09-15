@@ -49,6 +49,7 @@ export class EditBudget {
       year: [this.defaultYear(), [Validators.required, Validators.min(2000)]],
       month: [this.defaultMonth(), [Validators.required, Validators.min(1), Validators.max(12)]],
       limitAmount: [null, [Validators.required, Validators.min(0.01)]],
+      recurring: [false],
     });
 
     this.categoryService.getOptions().subscribe({
@@ -65,6 +66,7 @@ export class EditBudget {
           year: b.year,
           month: b.month,
           limitAmount: b.limitAmount,
+          recurring: b.recurring,
         });
       } else {
         this.form.reset({
@@ -73,6 +75,7 @@ export class EditBudget {
           year: this.defaultYear(),
           month: this.defaultMonth(),
           limitAmount: null,
+          recurring: false,
         });
       }
     });

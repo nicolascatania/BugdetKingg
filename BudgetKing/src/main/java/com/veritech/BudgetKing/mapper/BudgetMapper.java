@@ -22,7 +22,8 @@ public class BudgetMapper implements ICrudMapper<Budget, BudgetDTO, BudgetRelate
                 category != null ? category.getIcon() : null,
                 entity.getYear(),
                 entity.getMonth(),
-                entity.getLimitAmount()
+                entity.getLimitAmount(),
+                entity.isRecurring()
         );
     }
 
@@ -35,6 +36,7 @@ public class BudgetMapper implements ICrudMapper<Budget, BudgetDTO, BudgetRelate
                 .year(dto.year())
                 .month(dto.month())
                 .limitAmount(dto.limitAmount())
+                .recurring(dto.recurring())
                 .build();
     }
 }

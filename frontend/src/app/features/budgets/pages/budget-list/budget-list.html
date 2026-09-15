@@ -78,7 +78,19 @@
               <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
                 <i class="fa-solid text-sm" [ngClass]="p.categoryIcon || 'fa-tags'"></i>
               </span>
-              <h3 class="truncate text-sm font-bold">{{ p.categoryName }}</h3>
+              <div class="min-w-0">
+                <h3 class="truncate text-sm font-bold">{{ p.categoryName }}</h3>
+                @if (p.recurring) {
+                  <p class="flex items-center gap-1 text-[11px] text-muted" [title]="t('budgets.recurringHint')">
+                    <i class="fa-solid fa-repeat text-[10px] text-brand"></i>
+                    @if (isCarriedOver(p)) {
+                      {{ t('budgets.recurringSince', { month: (p.month | number: '2.0-0'), year: p.year }) }}
+                    } @else {
+                      {{ t('budgets.recurring') }}
+                    }
+                  </p>
+                }
+              </div>
             </div>
             <span [ngClass]="statusChip(p.status)">{{ t('budgets.status.' + p.status) }}</span>
           </div>

@@ -12,6 +12,10 @@ import java.util.UUID;
  * <p>{@code categoryName} and {@code categoryIcon} are denormalised for the UI
  * and ignored on the way in — the category is always resolved from
  * {@code category}, the identifier.</p>
+ *
+ * <p>{@code recurring} makes {@code year}/{@code month} a starting period: the
+ * limit then applies to every later month that has no budget of its own for the
+ * category. Omitted in the request body means {@code false}.</p>
  */
 public record BudgetDTO(
         UUID id,
@@ -22,7 +26,8 @@ public record BudgetDTO(
         int year,
         int month,
         @NotNull(message = "Limit amount is mandatory")
-        BigDecimal limitAmount
+        BigDecimal limitAmount,
+        boolean recurring
 ) {
 
     /** A budget must land on a real calendar month. */

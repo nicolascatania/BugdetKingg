@@ -544,6 +544,9 @@
     "new": "New budget",
     "ofLimit": "of {{limit}}",
     "usage": "{{percent}}% used · {{remaining}} remaining",
+    "recurring": "Repeats every month",
+    "recurringSince": "Repeats monthly since {{month}}/{{year}}",
+    "recurringHint": "This limit carries over month after month until another budget for the category takes over. Editing or deleting it affects every month.",
     "overBy": "{{percent}}% used · {{over}} over the limit",
     "status": {
       "OK": "OK",
@@ -559,7 +562,9 @@
       "createTitle": "New budget",
       "editTitle": "Edit budget",
       "selectCategory": "Select category",
-      "limitAmount": "Limit amount"
+      "limitAmount": "Limit amount",
+      "recurring": "Repeat every month",
+      "recurringHint": "The month above becomes the start. The limit applies to every later month until you create another budget for this category."
     },
     "tutorial": {
       "title": "How budgets work",
@@ -577,8 +582,8 @@
         "body": "Green (OK) while you are under 80% spent, amber (Warning) from 80% up, red (Exceeded) once you go over the limit."
       },
       "s4": {
-        "heading": "4. Budgets are per month",
-        "body": "Switch the month/year selector at the top to review a past period or set up next month's limits ahead of time."
+        "heading": "4. Budgets are per month, or recurring",
+        "body": "Switch the month/year selector at the top to review a past period or set up next month's limits ahead of time. Tick “Repeat every month” to set a fixed limit once: it carries over until a newer budget for that category takes over."
       }
     }
   },

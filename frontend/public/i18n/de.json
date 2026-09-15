@@ -544,6 +544,9 @@
     "new": "Neues Budget",
     "ofLimit": "von {{limit}}",
     "usage": "{{percent}}% verbraucht · {{remaining}} übrig",
+    "recurring": "Wiederholt sich monatlich",
+    "recurringSince": "Monatlich seit {{month}}/{{year}}",
+    "recurringHint": "Dieses Limit gilt Monat für Monat weiter, bis ein anderes Budget für die Kategorie übernimmt. Bearbeiten oder Löschen wirkt sich auf alle Monate aus.",
     "overBy": "{{percent}}% verbraucht · {{over}} über dem Limit",
     "status": {
       "OK": "OK",
@@ -559,7 +562,9 @@
       "createTitle": "Neues Budget",
       "editTitle": "Budget bearbeiten",
       "selectCategory": "Kategorie wählen",
-      "limitAmount": "Limitbetrag"
+      "limitAmount": "Limitbetrag",
+      "recurring": "Jeden Monat wiederholen",
+      "recurringHint": "Der Monat oben wird zum Start. Das Limit gilt für alle folgenden Monate, bis du ein weiteres Budget für diese Kategorie anlegst."
     },
     "tutorial": {
       "title": "So funktionieren Budgets",
@@ -577,8 +582,8 @@
         "body": "Grün (OK), solange du unter 80 % liegst, gelb (Achtung) ab 80 %, rot (Überschritten), sobald du das Limit übersteigst."
       },
       "s4": {
-        "heading": "4. Budgets gelten pro Monat",
-        "body": "Wechsle oben die Monats-/Jahresauswahl, um einen vergangenen Zeitraum anzusehen oder die Limits für den nächsten Monat vorab einzurichten."
+        "heading": "4. Budgets gelten pro Monat – oder wiederkehrend",
+        "body": "Wechsle oben die Monats-/Jahresauswahl, um einen vergangenen Zeitraum anzusehen oder die Limits für den nächsten Monat vorab einzurichten. Aktiviere „Jeden Monat wiederholen“, um ein festes Limit einmalig zu setzen: Es gilt weiter, bis ein neueres Budget für diese Kategorie übernimmt."
       }
     }
   },
