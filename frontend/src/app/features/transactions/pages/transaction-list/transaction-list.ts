@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { CommonModule, DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -51,12 +53,15 @@ import { TransactionImportExportService } from '../../services/transaction-impor
     MonthQuickPicker,
     RevealDirective,
     ImportTransactions,
+    TranslocoDirective,
   ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionList {
+  private readonly transloco = inject(TranslocoService);
+
   private transactionService = inject(TransactionService);
   private fb = inject(FormBuilder);
   private accountsService = inject(AccountService);
@@ -233,12 +238,12 @@ export class TransactionList {
       next: () => {
         this.deleting.set(false);
         this.transactionToDelete.set(null);
-        this.ns.success('Transaction deleted.');
+        this.ns.success(this.transloco.translate('transactions.deleted'));
         this.onSearch();
       },
       error: (err) => {
         this.deleting.set(false);
-        this.ns.error(err?.error?.message ?? 'Error deleting transaction');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('transactions.deleteError'));
       },
     });
   }
@@ -278,7 +283,7 @@ export class TransactionList {
       },
       error: (err) => {
         this.exporting.set(false);
-        this.ns.error(err?.error?.message ?? 'Error exporting transactions');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('transactions.exportError'));
       },
     });
   }

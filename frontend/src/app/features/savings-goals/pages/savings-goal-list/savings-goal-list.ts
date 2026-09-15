@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SavingsGoalService } from '../../service/savings-goal-service';
@@ -17,12 +19,14 @@ import { TutorialModal, TutorialSection } from '../../../../shared/components/tu
 @Component({
   selector: 'app-savings-goal-list',
   standalone: true,
-  imports: [CommonModule, EditSavingsGoal, ContributeSavingsGoal, PaginationComponent, RevealDirective, TutorialModal],
+  imports: [CommonModule, EditSavingsGoal, ContributeSavingsGoal, PaginationComponent, RevealDirective, TutorialModal, TranslocoDirective],
   templateUrl: './savings-goal-list.html',
   styleUrl: './savings-goal-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SavingsGoalList implements OnInit {
+  private readonly transloco = inject(TranslocoService);
+
   private savingsGoalService = inject(SavingsGoalService);
   private ns = inject(NotificationService);
 
@@ -44,26 +48,10 @@ export class SavingsGoalList implements OnInit {
 
   isTutorialOpen = signal(false);
   readonly tutorialSections: TutorialSection[] = [
-    {
-      icon: 'fa-bullseye',
-      heading: '1. Name a target',
-      body: 'Give the goal a name, an icon, how much you need to reach it, and the date you want to reach it by.',
-    },
-    {
-      icon: 'fa-piggy-bank',
-      heading: '2. Set money aside',
-      body: 'Use "Add money" to move an amount from one of your accounts into the goal. That money leaves your regular balance and shows up under Savings instead — it is really set aside. "Withdraw" brings some of it back whenever you need it.',
-    },
-    {
-      icon: 'fa-chart-line',
-      heading: '3. Progress is calculated for you',
-      body: 'Progress %, remaining amount, monthly amount required and days left all derive from what the goal holds and its target date. The optional linked account is just the default source when you add money.',
-    },
-    {
-      icon: 'fa-flag-checkered',
-      heading: '4. When the date arrives',
-      body: 'Nothing moves on its own. A goal shows "Achieved" once it holds the target, or "Overdue" if the date passed first. Either way you decide: extend the date, keep adding, or "Close" it to send everything back to an account.',
-    },
+    { icon: 'fa-bullseye', headingKey: 'savings.tutorial.s1.heading', bodyKey: 'savings.tutorial.s1.body' },
+    { icon: 'fa-piggy-bank', headingKey: 'savings.tutorial.s2.heading', bodyKey: 'savings.tutorial.s2.body' },
+    { icon: 'fa-chart-line', headingKey: 'savings.tutorial.s3.heading', bodyKey: 'savings.tutorial.s3.body' },
+    { icon: 'fa-flag-checkered', headingKey: 'savings.tutorial.s4.heading', bodyKey: 'savings.tutorial.s4.body' },
   ];
 
   ngOnInit(): void {
@@ -158,7 +146,7 @@ export class SavingsGoalList implements OnInit {
       },
       error: (err) => {
         this.deletingId.set(null);
-        this.ns.error(err?.error?.message ?? 'Error deleting savings goal');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('savings.deleteError'));
       },
     });
   }

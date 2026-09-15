@@ -1,25 +1,26 @@
+<ng-container *transloco="let t">
 <div class="mx-auto w-full max-w-screen-2xl space-y-6">
   <!-- Header -->
   <div appReveal class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
       <div class="flex items-center gap-2">
-        <h1 class="page-title">Savings goals</h1>
+        <h1 class="page-title">{{ t('savings.title') }}</h1>
         <button
           type="button"
           class="btn-icon !min-h-0 h-9 w-9 text-muted hover:text-brand"
           (click)="isTutorialOpen.set(true)"
-          aria-label="How savings goals work"
-          title="How savings goals work"
+          [attr.aria-label]="t('savings.tutorial.title')"
+          [title]="t('savings.tutorial.title')"
         >
           <i class="fa-solid fa-circle-info text-sm"></i>
         </button>
       </div>
-      <p class="mt-1 text-sm text-muted">What you're saving for, and how close you are.</p>
+      <p class="mt-1 text-sm text-muted">{{ t('savings.subtitle') }}</p>
     </div>
 
     <button type="button" class="btn-primary" (click)="openNewModal()">
       <i class="fa-solid fa-plus text-xs"></i>
-      New goal
+      {{ t('savings.new') }}
     </button>
   </div>
 
@@ -27,19 +28,19 @@
   @if (summary(); as s) {
     <section appReveal [revealDelay]="60" class="card grid grid-cols-2 gap-4 p-4 sm:grid-cols-4 sm:p-5">
       <div>
-        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">Total saved</p>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">{{ t('savings.totalSaved') }}</p>
         <p class="tabular text-lg font-bold text-positive">{{ s.totalSaved | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
       </div>
       <div>
-        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">Total target</p>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">{{ t('savings.totalTarget') }}</p>
         <p class="tabular text-lg font-bold">{{ s.totalTarget | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
       </div>
       <div>
-        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">Progress</p>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">{{ t('savings.progress') }}</p>
         <p class="tabular text-lg font-bold">{{ s.progressPercentage | number: '1.0-0' }}%</p>
       </div>
       <div>
-        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">Goals achieved</p>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">{{ t('savings.goalsAchieved') }}</p>
         <p class="tabular text-lg font-bold">{{ s.achievedGoals }} / {{ s.totalGoals }}</p>
       </div>
     </section>
@@ -89,9 +90,9 @@
             @if (stateChip(goal.state); as chip) {
               <span [ngClass]="chip" class="shrink-0">
                 @switch (goal.state) {
-                  @case ('ACHIEVED') { <i class="fa-solid fa-check text-[10px]"></i> Achieved }
-                  @case ('OVERDUE') { <i class="fa-solid fa-clock text-[10px]"></i> Overdue }
-                  @case ('CLOSED') { <i class="fa-solid fa-lock text-[10px]"></i> Closed }
+                  @case ('ACHIEVED') { <i class="fa-solid fa-check text-[10px]"></i> {{ t('savings.state.ACHIEVED') }} }
+                  @case ('OVERDUE') { <i class="fa-solid fa-clock text-[10px]"></i> {{ t('savings.state.OVERDUE') }} }
+                  @case ('CLOSED') { <i class="fa-solid fa-lock text-[10px]"></i> {{ t('savings.state.CLOSED') }} }
                 }
               </span>
             }
@@ -100,7 +101,7 @@
           <div class="mt-4 space-y-1.5">
             <div class="flex items-baseline justify-between text-sm">
               <span class="tabular font-bold">{{ goal.currentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
-              <span class="tabular text-xs text-muted">of {{ goal.targetAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+              <span class="tabular text-xs text-muted">{{ t('savings.ofTarget', { target: (goal.targetAmount | currency: 'ARS' : 'symbol' : '1.2-2') }) }}</span>
             </div>
 
             <div class="h-2 w-full overflow-hidden rounded-full bg-surface-2">
@@ -110,24 +111,24 @@
               ></div>
             </div>
 
-            <p class="tabular text-xs text-muted">{{ goal.progressPercentage | number: '1.0-0' }}% set aside</p>
+            <p class="tabular text-xs text-muted">{{ t('savings.percentSetAside', { percent: (goal.progressPercentage | number: '1.0-0') }) }}</p>
           </div>
 
           <div class="mt-4 grid grid-cols-2 gap-3 border-t border-line pt-3 text-xs">
             <div>
-              <p class="text-subtle">Remaining</p>
+              <p class="text-subtle">{{ t('savings.remaining') }}</p>
               <p class="tabular font-semibold">{{ goal.remainingAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
             </div>
             <div>
-              <p class="text-subtle">Monthly needed</p>
+              <p class="text-subtle">{{ t('savings.monthlyNeeded') }}</p>
               <p class="tabular font-semibold">{{ goal.monthlyRequired | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
             </div>
             <div>
-              <p class="text-subtle">Target date</p>
+              <p class="text-subtle">{{ t('savings.targetDate') }}</p>
               <p class="tabular font-semibold">{{ goal.targetDate }}</p>
             </div>
             <div>
-              <p class="text-subtle">Days left</p>
+              <p class="text-subtle">{{ t('savings.daysLeft') }}</p>
               <p class="tabular font-semibold">{{ goal.daysRemaining }}</p>
             </div>
           </div>
@@ -135,7 +136,7 @@
           @if (goal.linkedAccountName) {
             <p class="mt-3 flex items-center gap-1.5 text-[11px] text-subtle">
               <i class="fa-solid fa-link text-[10px]"></i>
-              Adds from {{ goal.linkedAccountName }} by default
+              {{ t('savings.linkedDefault', { account: goal.linkedAccountName }) }}
             </p>
           }
 
@@ -144,7 +145,7 @@
             <div class="mt-4 grid grid-cols-2 gap-2 border-t border-line pt-3">
               <button type="button" class="btn-primary !min-h-0 h-10 text-xs" (click)="openContribution(goal, 'deposit')">
                 <i class="fa-solid fa-plus text-[10px]"></i>
-                Add money
+                {{ t('savings.addMoney') }}
               </button>
               <button
                 type="button"
@@ -153,7 +154,7 @@
                 [disabled]="goal.currentAmount <= 0"
               >
                 <i class="fa-solid fa-arrow-turn-down text-[10px]"></i>
-                Withdraw
+                {{ t('savings.withdraw') }}
               </button>
             </div>
           }
@@ -162,16 +163,16 @@
             @if (goal.state !== 'CLOSED') {
               <button type="button" class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:text-brand" (click)="openEditModal(goal)">
                 <i class="fa-solid fa-pen text-[10px]"></i>
-                Edit
+                {{ t('common.edit') }}
               </button>
               <button
                 type="button"
                 class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:text-brand"
                 (click)="openContribution(goal, 'close')"
-                title="Send everything back to an account and freeze the goal"
+                [title]="t('savings.closeHint')"
               >
                 <i class="fa-solid fa-flag-checkered text-[10px]"></i>
-                Close
+                {{ t('savings.close') }}
               </button>
             }
             <button
@@ -179,14 +180,14 @@
               class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:bg-negative/10 hover:text-negative"
               (click)="deleteGoal(goal)"
               [disabled]="deletingId() === goal.id || goal.currentAmount > 0"
-              [title]="goal.currentAmount > 0 ? 'Withdraw or close the goal before deleting it' : 'Delete goal'"
+              [title]="goal.currentAmount > 0 ? t('savings.deleteBlocked') : t('savings.deleteGoal')"
             >
               @if (deletingId() === goal.id) {
                 <i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>
-                <span>Deleting…</span>
+                <span>{{ t('common.deleting') }}</span>
               } @else {
                 <i class="fa-solid fa-trash text-[10px]"></i>
-                <span>Delete</span>
+                <span>{{ t('common.delete') }}</span>
               }
             </button>
           </div>
@@ -194,8 +195,8 @@
       } @empty {
         <div class="card col-span-full p-12 text-center">
           <i class="fa-solid fa-piggy-bank mb-3 block text-3xl text-subtle"></i>
-          <p class="text-sm font-semibold">No savings goals yet</p>
-          <p class="mt-1 text-xs text-muted">Set a target and start tracking your progress.</p>
+          <p class="text-sm font-semibold">{{ t('savings.emptyTitle') }}</p>
+          <p class="mt-1 text-xs text-muted">{{ t('savings.emptyHint') }}</p>
         </div>
       }
     }
@@ -224,9 +225,10 @@
 
 @if (isTutorialOpen()) {
   <app-tutorial-modal
-    title="How savings goals work"
-    intro="Savings goals let you set real money aside for something specific. What you add to a goal leaves your regular balance and is tracked under Savings until you take it back."
+    [title]="t('savings.tutorial.title')"
+    [intro]="t('savings.tutorial.intro')"
     [sections]="tutorialSections"
     (closed)="isTutorialOpen.set(false)"
   />
 }
+</ng-container>

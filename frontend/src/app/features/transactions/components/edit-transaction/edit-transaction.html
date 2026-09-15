@@ -1,7 +1,8 @@
+<ng-container *transloco="let t">
 <ui-modal
   [open]="true"
   maxWidth="max-w-2xl"
-  [title]="transaction ? 'Edit transaction' : 'New transaction'"
+  [title]="transaction ? t('transactions.form.editTitle') : t('transactions.form.createTitle')"
   (closed)="close(false)"
 >
   <div modal-body>
@@ -10,8 +11,8 @@
       <div
         class="grid grid-cols-3 gap-1.5 rounded-2xl border border-line bg-surface-2 p-1.5"
         role="radiogroup"
-        aria-label="Transaction type"
-        [title]="transaction ? 'Type cannot be changed once created — delete and recreate instead' : null"
+        [attr.aria-label]="t('fields.type')"
+        [title]="transaction ? t('transactions.form.typeLocked') : null"
       >
         <button
           type="button"
@@ -26,7 +27,7 @@
               : 'text-muted hover:bg-surface-3 hover:text-body'
           "
         >
-          Expense
+          {{ t('transactionType.EXPENSE') }}
         </button>
 
         <button
@@ -42,7 +43,7 @@
               : 'text-muted hover:bg-surface-3 hover:text-body'
           "
         >
-          Income
+          {{ t('transactionType.INCOME') }}
         </button>
 
         <button
@@ -58,14 +59,14 @@
               : 'text-muted hover:bg-surface-3 hover:text-body'
           "
         >
-          Transfer
+          {{ t('transactionType.TRANSFER') }}
         </button>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <!-- Amount + quick add buttons -->
         <div>
-          <label for="tx-amount" class="field-label">Amount</label>
+          <label for="tx-amount" class="field-label">{{ t('fields.amount') }}</label>
           <div
             class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
                    focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
@@ -95,12 +96,12 @@
         </div>
 
         <div>
-          <label for="tx-origin" class="field-label">Origin account</label>
+          <label for="tx-origin" class="field-label">{{ t('transactions.form.originAccount') }}</label>
           <select
             id="tx-origin"
             formControlName="account"
             class="field-select"
-            [title]="transaction ? 'Account cannot be changed once created — delete and recreate instead' : null"
+            [title]="transaction ? t('transactions.form.accountLocked') : null"
           >
             @for (account of accounts(); track account.id) {
               <option [value]="account.id">{{ getAccountLabel(account) }}</option>
@@ -112,12 +113,12 @@
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         @if (form.get('type')?.value === 'TRANSFER') {
           <div class="animate-fade-in">
-            <label for="tx-destination" class="field-label">Destination account</label>
+            <label for="tx-destination" class="field-label">{{ t('transactions.form.destinationAccount') }}</label>
             <select
               id="tx-destination"
               formControlName="destinationAccount"
               class="field-select"
-              [title]="transaction ? 'Destination account cannot be changed once created — delete and recreate instead' : null"
+              [title]="transaction ? t('transactions.form.destinationLocked') : null"
             >
               @for (account of filteredDestinationAccounts(); track account.id) {
                 <option [value]="account.id">{{ getAccountLabel(account) }}</option>
@@ -126,9 +127,9 @@
           </div>
         } @else {
           <div class="animate-fade-in">
-            <label for="tx-category" class="field-label">Category</label>
+            <label for="tx-category" class="field-label">{{ t('fields.category') }}</label>
             <select id="tx-category" formControlName="category" class="field-select">
-              <option value="">Select category</option>
+              <option value="">{{ t('transactions.form.selectCategory') }}</option>
               @for (category of categories; track category.id) {
                 <option [value]="category.id">{{ category.value }}</option>
               }
@@ -137,30 +138,30 @@
         }
 
         <div>
-          <label for="tx-date" class="field-label">Date</label>
+          <label for="tx-date" class="field-label">{{ t('fields.date') }}</label>
           <input id="tx-date" type="datetime-local" formControlName="date" class="field-input" />
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="tx-counterparty-field" class="field-label">Counterparty</label>
+          <label for="tx-counterparty-field" class="field-label">{{ t('fields.counterparty') }}</label>
           <input
             id="tx-counterparty-field"
             type="text"
             formControlName="counterparty"
-            placeholder="e.g. Supermarket, Employer"
+            [placeholder]="t('transactions.form.counterpartyPlaceholder')"
             class="field-input"
           />
         </div>
 
         <div>
-          <label for="tx-description-field" class="field-label">Description</label>
+          <label for="tx-description-field" class="field-label">{{ t('fields.description') }}</label>
           <input
             id="tx-description-field"
             type="text"
             formControlName="description"
-            placeholder="Transaction details"
+            [placeholder]="t('transactions.form.descriptionPlaceholder')"
             class="field-input"
           />
         </div>
@@ -169,21 +170,22 @@
   </div>
 
   <div modal-footer class="flex w-full justify-end gap-3">
-    <button type="button" class="btn-secondary" (click)="close(false)">Cancel</button>
+    <button type="button" class="btn-secondary" (click)="close(false)">{{ t('common.cancel') }}</button>
 
     <button
       type="button"
       class="btn-primary min-w-[7rem]"
       (click)="submit()"
       [disabled]="form.invalid || saving()"
-      [title]="form.invalid ? 'Complete all required fields first' : null"
+      [title]="form.invalid ? t('transactions.form.completeFields') : null"
     >
       @if (saving()) {
         <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-        <span>Saving…</span>
+        <span>{{ t('common.saving') }}</span>
       } @else {
-        <span>{{ transaction ? 'Update' : 'Create' }}</span>
+        <span>{{ transaction ? t('common.update') : t('common.create') }}</span>
       }
     </button>
   </div>
 </ui-modal>
+</ng-container>

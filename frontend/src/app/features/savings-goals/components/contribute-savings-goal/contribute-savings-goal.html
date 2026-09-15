@@ -1,4 +1,5 @@
-<ui-modal [open]="true" [title]="title()" (closed)="close()">
+<ng-container *transloco="let t">
+<ui-modal [open]="true" [title]="t(titleKey())" (closed)="close()">
   <div modal-body>
     <!-- Goal context: what the movement is about and where it stands right now. -->
     <div class="mb-5 flex items-center gap-3 rounded-2xl border border-line bg-surface-2 p-3.5">
@@ -8,8 +9,10 @@
       <div class="min-w-0 flex-1">
         <p class="truncate text-sm font-bold">{{ goal().name }}</p>
         <p class="tabular text-xs text-muted">
-          {{ goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}
-          saved of {{ goal().targetAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}
+          {{ t('savings.contribute.savedOf', {
+            saved: (goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2'),
+            target: (goal().targetAmount | currency: 'ARS' : 'symbol' : '1.2-2')
+          }) }}
         </p>
       </div>
     </div>
@@ -17,11 +20,9 @@
     @if (isClose()) {
       <p class="mb-5 text-sm text-muted">
         @if (needsAccount()) {
-          Everything the goal holds
-          (<span class="tabular font-bold text-body">{{ goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>)
-          goes back to the account you choose. The goal then becomes read-only.
+          {{ t('savings.contribute.closeWithMoney', { amount: (goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2') }) }}
         } @else {
-          This goal holds no money. Closing it keeps it as history and makes it read-only.
+          {{ t('savings.contribute.closeEmpty') }}
         }
       </p>
     }
@@ -29,7 +30,7 @@
     <form [formGroup]="form" class="space-y-5">
       @if (needsAccount()) {
         <div>
-          <label for="contrib-account" class="field-label">{{ accountLabel() }}</label>
+          <label for="contrib-account" class="field-label">{{ t(accountLabelKey()) }}</label>
           <select id="contrib-account" formControlName="accountId" class="field-select">
             @for (account of accounts(); track account.id) {
               <option [value]="account.id">
@@ -40,7 +41,7 @@
           @if (isDeposit()) {
             @if (selectedAccount(); as account) {
               <p class="field-hint tabular">
-                Available: {{ account.balance | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                {{ t('savings.contribute.available', { amount: (account.balance | currency: 'ARS' : 'symbol' : '1.2-2') }) }}
               </p>
             }
           }
@@ -49,7 +50,7 @@
 
       @if (!isClose()) {
         <div>
-          <label for="contrib-amount" class="field-label">Amount</label>
+          <label for="contrib-amount" class="field-label">{{ t('fields.amount') }}</label>
           <div
             class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
                    focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
@@ -70,29 +71,29 @@
                 class="btn-ghost !min-h-0 h-8 px-2.5 text-xs font-bold text-brand"
                 (click)="useMax()"
               >
-                Max
+                {{ t('savings.contribute.max') }}
               </button>
             }
           </div>
           @if (isWithdraw()) {
             <p class="field-hint tabular">
-              Up to {{ goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2' }} can be withdrawn.
+              {{ t('savings.contribute.upTo', { amount: (goal().currentAmount | currency: 'ARS' : 'symbol' : '1.2-2') }) }}
             </p>
           }
         </div>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label for="contrib-date" class="field-label">Date</label>
+            <label for="contrib-date" class="field-label">{{ t('fields.date') }}</label>
             <input id="contrib-date" type="datetime-local" formControlName="date" class="field-input" />
           </div>
           <div>
-            <label for="contrib-note" class="field-label">Note (optional)</label>
+            <label for="contrib-note" class="field-label">{{ t('savings.contribute.note') }}</label>
             <input
               id="contrib-note"
               type="text"
               formControlName="note"
-              placeholder="e.g. January share"
+              [placeholder]="t('savings.contribute.notePlaceholder')"
               class="field-input"
             />
           </div>
@@ -102,7 +103,7 @@
   </div>
 
   <div modal-footer class="flex w-full justify-end gap-3">
-    <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+    <button type="button" class="btn-secondary" (click)="close()">{{ t('common.cancel') }}</button>
     <button
       type="button"
       [ngClass]="isClose() ? 'btn-danger' : 'btn-primary'"
@@ -112,10 +113,11 @@
     >
       @if (saving()) {
         <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-        <span>Working…</span>
+        <span>{{ t('common.working') }}</span>
       } @else {
-        <span>{{ submitLabel() }}</span>
+        <span>{{ t(submitLabelKey()) }}</span>
       }
     </button>
   </div>
 </ui-modal>
+</ng-container>

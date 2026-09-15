@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
@@ -10,12 +12,14 @@ type Step = 'select' | 'preview' | 'done';
 @Component({
   selector: 'app-import-accounts',
   standalone: true,
-  imports: [UiModalComponent, CommonModule],
+  imports: [UiModalComponent, CommonModule, TranslocoDirective],
   templateUrl: './import-accounts.html',
   styleUrl: './import-accounts.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportAccounts {
+  private readonly transloco = inject(TranslocoService);
+
   private importExportService = inject(AccountImportExportService);
   private ns = inject(NotificationService);
 
@@ -44,7 +48,7 @@ export class ImportAccounts {
         this.loading.set(false);
       },
       error: (err) => {
-        this.ns.error(err?.error?.message ?? 'Error reading CSV file');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('csvImport.readError'));
         this.loading.set(false);
       },
     });
@@ -60,10 +64,10 @@ export class ImportAccounts {
         this.preview.set(result);
         this.step.set('done');
         this.loading.set(false);
-        this.ns.success(`${result.validRows} accounts imported`);
+        this.ns.success(this.transloco.translate('csvImport.accounts.done', { count: result.validRows }));
       },
       error: (err) => {
-        this.ns.error(err?.error?.message ?? 'Error importing accounts');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('csvImport.accounts.importError'));
         this.loading.set(false);
       },
     });

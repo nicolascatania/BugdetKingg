@@ -1,43 +1,44 @@
-<ui-modal [open]="true" [title]="account ? 'Edit account' : 'Create account'" (closed)="close(false)">
+<ng-container *transloco="let t">
+<ui-modal [open]="true" [title]="account ? t('accounts.form.editTitle') : t('accounts.form.createTitle')" (closed)="close(false)">
   <div modal-body>
     <form [formGroup]="form" class="space-y-5">
       <div>
-        <label for="account-name" class="field-label">Name</label>
+        <label for="account-name" class="field-label">{{ t('accounts.form.name') }}</label>
         <input
           id="account-name"
           type="text"
           formControlName="name"
-          placeholder="e.g. Bank, Cash, Crypto"
+          [placeholder]="t('accounts.form.namePlaceholder')"
           class="field-input"
         />
       </div>
 
       <div>
-        <label for="account-description" class="field-label">Description</label>
+        <label for="account-description" class="field-label">{{ t('accounts.form.description') }}</label>
         <textarea
           id="account-description"
           formControlName="description"
-          placeholder="Optional details…"
+          [placeholder]="t('accounts.form.descriptionPlaceholder')"
           rows="3"
           class="field-input resize-none"
         ></textarea>
       </div>
 
       <div>
-        <span class="field-label">Account icon</span>
+        <span class="field-label">{{ t('accounts.form.icon') }}</span>
 
         <div class="grid grid-cols-4 gap-2 rounded-2xl border border-line bg-surface-2 p-2.5 sm:grid-cols-6">
           @for (option of iconOptions; track option.value) {
             <button
               type="button"
               (click)="form.patchValue({ icon: option.value })"
-              [title]="option.label"
-              [attr.aria-label]="option.label"
-              [attr.aria-pressed]="form.get('icon')?.value === option.value"
+              [title]="t(option.labelKey)"
+              [attr.aria-label]="t(option.labelKey)"
+              [attr.aria-pressed]="form.get('accounts.form.icon')?.value === option.value"
               class="flex aspect-square items-center justify-center rounded-xl border text-base
                      transition-all duration-200 ease-spring hover:-translate-y-0.5"
               [ngClass]="
-                form.get('icon')?.value === option.value
+                form.get('accounts.form.icon')?.value === option.value
                   ? 'border-brand bg-brand/12 text-brand shadow-soft'
                   : 'border-line bg-surface text-muted hover:border-line-strong hover:text-body'
               "
@@ -51,14 +52,15 @@
   </div>
 
   <div modal-footer class="flex w-full justify-end gap-3">
-    <button type="button" class="btn-secondary" (click)="close(false)">Cancel</button>
+    <button type="button" class="btn-secondary" (click)="close(false)">{{ t('common.cancel') }}</button>
     <button type="button" class="btn-primary min-w-[6rem]" (click)="submit()" [disabled]="form.invalid || saving()">
       @if (saving()) {
         <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-        <span>Saving…</span>
+        <span>{{ t('common.saving') }}</span>
       } @else {
-        <span>Save</span>
+        <span>{{ t('common.save') }}</span>
       }
     </button>
   </div>
 </ui-modal>
+</ng-container>

@@ -1,7 +1,8 @@
+<ng-container *transloco="let t">
 <ui-modal
   [open]="true"
   maxWidth="max-w-2xl"
-  [title]="isEdit() ? 'Edit recurring transaction' : 'New recurring transaction'"
+  [title]="isEdit() ? t('recurring.form.editTitle') : t('recurring.form.createTitle')"
   (closed)="close()"
 >
   <div modal-body>
@@ -10,7 +11,7 @@
       <div
         class="grid grid-cols-3 gap-1.5 rounded-2xl border border-line bg-surface-2 p-1.5"
         role="radiogroup"
-        aria-label="Transaction type"
+        [attr.aria-label]="t('fields.type')"
       >
         <button
           type="button"
@@ -24,7 +25,7 @@
               : 'text-muted hover:bg-surface-3 hover:text-body'
           "
         >
-          Expense
+          {{ t('transactionType.EXPENSE') }}
         </button>
         <button
           type="button"
@@ -38,7 +39,7 @@
               : 'text-muted hover:bg-surface-3 hover:text-body'
           "
         >
-          Income
+          {{ t('transactionType.INCOME') }}
         </button>
         <button
           type="button"
@@ -52,13 +53,13 @@
               : 'text-muted hover:bg-surface-3 hover:text-body'
           "
         >
-          Transfer
+          {{ t('transactionType.TRANSFER') }}
         </button>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="rt-amount" class="field-label">Amount</label>
+          <label for="rt-amount" class="field-label">{{ t('fields.amount') }}</label>
           <div
             class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
                    focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
@@ -75,7 +76,7 @@
         </div>
 
         <div>
-          <label for="rt-account" class="field-label">Account</label>
+          <label for="rt-account" class="field-label">{{ t('fields.account') }}</label>
           <select id="rt-account" formControlName="account" class="field-select">
             @for (account of accounts(); track account.id) {
               <option [value]="account.id">{{ account.value }}</option>
@@ -87,7 +88,7 @@
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         @if (form.get('type')?.value === 'TRANSFER') {
           <div class="animate-fade-in">
-            <label for="rt-destination" class="field-label">Destination account</label>
+            <label for="rt-destination" class="field-label">{{ t('transactions.form.destinationAccount') }}</label>
             <select id="rt-destination" formControlName="destinationAccount" class="field-select">
               @for (account of filteredDestinationAccounts(); track account.id) {
                 <option [value]="account.id">{{ account.value }}</option>
@@ -96,9 +97,9 @@
           </div>
         } @else {
           <div class="animate-fade-in">
-            <label for="rt-category" class="field-label">Category</label>
+            <label for="rt-category" class="field-label">{{ t('fields.category') }}</label>
             <select id="rt-category" formControlName="category" class="field-select">
-              <option value="">Select category</option>
+              <option value="">{{ t('transactions.form.selectCategory') }}</option>
               @for (category of categories(); track category.id) {
                 <option [value]="category.id">{{ category.value }}</option>
               }
@@ -107,10 +108,10 @@
         }
 
         <div>
-          <label for="rt-frequency" class="field-label">Frequency</label>
+          <label for="rt-frequency" class="field-label">{{ t('recurring.frequency') }}</label>
           <select id="rt-frequency" formControlName="frequency" class="field-select">
             @for (f of frequencies; track f) {
-              <option [value]="f">{{ f }}</option>
+              <option [value]="f">{{ t('frequency.' + f) }}</option>
             }
           </select>
         </div>
@@ -118,35 +119,35 @@
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="rt-next-run" class="field-label">Next run date</label>
+          <label for="rt-next-run" class="field-label">{{ t('recurring.form.nextRunDate') }}</label>
           <input id="rt-next-run" type="date" formControlName="nextRunDate" class="field-input" />
         </div>
 
         <div>
-          <label for="rt-end-date" class="field-label">End date (optional)</label>
+          <label for="rt-end-date" class="field-label">{{ t('recurring.form.endDate') }}</label>
           <input id="rt-end-date" type="date" formControlName="endDate" class="field-input" />
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="rt-counterparty" class="field-label">Counterparty</label>
+          <label for="rt-counterparty" class="field-label">{{ t('fields.counterparty') }}</label>
           <input
             id="rt-counterparty"
             type="text"
             formControlName="counterparty"
-            placeholder="e.g. Landlord, Netflix"
+            [placeholder]="t('recurring.form.counterpartyPlaceholder')"
             class="field-input"
           />
         </div>
 
         <div>
-          <label for="rt-description" class="field-label">Description</label>
+          <label for="rt-description" class="field-label">{{ t('fields.description') }}</label>
           <input
             id="rt-description"
             type="text"
             formControlName="description"
-            placeholder="Template details"
+            [placeholder]="t('recurring.form.descriptionPlaceholder')"
             class="field-input"
           />
         </div>
@@ -155,20 +156,21 @@
   </div>
 
   <div modal-footer class="flex w-full justify-end gap-3">
-    <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+    <button type="button" class="btn-secondary" (click)="close()">{{ t('common.cancel') }}</button>
     <button
       type="button"
       class="btn-primary min-w-[7rem]"
       (click)="submit()"
       [disabled]="form.invalid || saving()"
-      [title]="form.invalid ? 'Complete all required fields first' : null"
+      [title]="form.invalid ? t('transactions.form.completeFields') : null"
     >
       @if (saving()) {
         <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-        <span>Saving…</span>
+        <span>{{ t('common.saving') }}</span>
       } @else {
-        <span>{{ isEdit() ? 'Update' : 'Create' }}</span>
+        <span>{{ isEdit() ? t('common.update') : t('common.create') }}</span>
       }
     </button>
   </div>
 </ui-modal>
+</ng-container>

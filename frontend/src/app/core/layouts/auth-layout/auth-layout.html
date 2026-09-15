@@ -1,4 +1,4 @@
-<div class="relative min-h-screen w-full overflow-hidden bg-app text-body">
+<div class="relative min-h-screen w-full overflow-hidden bg-app text-body" *transloco="let t">
   <!--
     Animated backdrop shared by every auth screen: two drifting brand washes,
     a faint grid and a slow conic sweep. Purely decorative, so it is hidden
@@ -44,7 +44,8 @@
   </div>
 
   <!-- Theme switch stays reachable before sign-in. -->
-  <div class="absolute right-4 top-4 z-20 sm:right-6 sm:top-6">
+  <div class="absolute right-4 top-4 z-20 flex items-center gap-2 sm:right-6 sm:top-6">
+    <app-language-switcher />
     <app-theme-toggle />
   </div>
 
@@ -59,15 +60,13 @@
     -->
     <aside
       role="note"
-      aria-label="Demo hosting notice"
+      [attr.aria-label]="t('auth.coldStart.label')"
       class="cold-start-note flex w-full max-w-lg items-start gap-3 rounded-2xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-body backdrop-blur-sm"
     >
       <i class="fa-solid fa-mug-hot mt-0.5 shrink-0 text-warning" aria-hidden="true"></i>
       <p class="m-0 leading-snug">
-        <strong class="font-semibold">Heads up:</strong> this is a demo hosted on a free tier.
-        The server sleeps when idle, so your first sign-in or sign-up may take
-        <strong class="font-semibold">up to a couple of minutes</strong> while it wakes up.
-        Nothing is broken &mdash; hang tight.
+        <strong class="font-semibold">{{ t('auth.coldStart.headsUp') }}</strong> {{ t('auth.coldStart.body') }}
+        <strong class="font-semibold">{{ t('auth.coldStart.duration') }}</strong> {{ t('auth.coldStart.tail') }}
       </p>
     </aside>
 

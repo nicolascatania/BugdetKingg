@@ -1,7 +1,7 @@
-<section>
+<section *transloco="let t">
   <div class="mb-4 flex items-center justify-between gap-4">
-    <h2 class="section-title">Accounts</h2>
-    <span class="chip-neutral">{{ accounts().length }} registered</span>
+    <h2 class="section-title">{{ t('home.accounts.title') }}</h2>
+    <span class="chip-neutral">{{ t('home.accounts.registered', { count: accounts().length }) }}</span>
   </div>
 
   @if (loading()) {
@@ -23,7 +23,7 @@
   } @else if (accounts().length === 0) {
     <div class="rounded-2xl border border-dashed border-line bg-surface/50 p-10 text-center">
       <i class="fa-solid fa-wallet mb-3 text-2xl text-subtle"></i>
-      <p class="text-sm text-muted">No accounts registered yet.</p>
+      <p class="text-sm text-muted">{{ t('home.accounts.empty') }}</p>
     </div>
   } @else {
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

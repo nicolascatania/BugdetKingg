@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,12 +26,14 @@ import { CATEGORY_ICONS } from '../../../icons/interfaces/iconsenum.interace';
 @Component({
   selector: 'app-edit-category',
   standalone: true,
-  imports: [UiModalComponent, ReactiveFormsModule, CommonModule],
+  imports: [UiModalComponent, ReactiveFormsModule, CommonModule, TranslocoDirective],
   templateUrl: './edit-category.html',
   styleUrl: './edit-category.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditCategory {
+  private readonly transloco = inject(TranslocoService);
+
   private categoryService = inject(CategoryService);
   private fb = inject(FormBuilder);
   private ns = inject(NotificationService);
@@ -45,10 +49,11 @@ export class EditCategory {
   /** Disables the form and shows progress while the request is in flight. */
   readonly saving = signal(false);
 
+  /** Matches the query against the icon's translated name, so a Spanish user can search in Spanish. */
   filteredIcons = computed(() => {
     const query = this.searchQuery().toLowerCase();
     return CATEGORY_ICONS.filter((icon) =>
-      icon.label.toLowerCase().includes(query),
+      this.transloco.translate(icon.labelKey).toLowerCase().includes(query),
     );
   });
 
@@ -82,11 +87,11 @@ export class EditCategory {
       next: () => {
         this.saving.set(false);
         this.submitEvent.emit(true);
-        this.ns.success('Category saved successfully');
+        this.ns.success(this.transloco.translate('categories.saved'));
       },
       error: (err) => {
         this.saving.set(false);
-        this.ns.error(err?.error?.message ?? 'Error saving category');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('categories.saveError'));
         this.submitEvent.emit(false);
       },
     });

@@ -1,4 +1,4 @@
-<div class="card overflow-hidden">
+<div class="card overflow-hidden" *transloco="let t">
   <!-- Desktop / tablet: full table -->
   <div class="custom-scroll hidden max-h-[440px] overflow-auto md:block">
     <table class="w-full text-left text-sm">
@@ -6,13 +6,13 @@
         class="sticky top-0 z-10 bg-surface-2/95 text-[11px] font-bold uppercase tracking-wider text-muted backdrop-blur"
       >
         <tr>
-          <th class="px-5 py-3.5 font-bold">Date</th>
-          <th class="px-5 py-3.5 font-bold">Account</th>
-          <th class="px-5 py-3.5 font-bold">Type</th>
-          <th class="px-5 py-3.5 font-bold">Category</th>
-          <th class="px-5 py-3.5 text-right font-bold">Amount</th>
-          <th class="px-5 py-3.5 font-bold">Description</th>
-          <th class="px-5 py-3.5 text-right font-bold">Counterparty</th>
+          <th class="px-5 py-3.5 font-bold">{{ t('fields.date') }}</th>
+          <th class="px-5 py-3.5 font-bold">{{ t('fields.account') }}</th>
+          <th class="px-5 py-3.5 font-bold">{{ t('fields.type') }}</th>
+          <th class="px-5 py-3.5 font-bold">{{ t('fields.category') }}</th>
+          <th class="px-5 py-3.5 text-right font-bold">{{ t('fields.amount') }}</th>
+          <th class="px-5 py-3.5 font-bold">{{ t('fields.description') }}</th>
+          <th class="px-5 py-3.5 text-right font-bold">{{ t('fields.counterparty') }}</th>
         </tr>
       </thead>
 
@@ -34,7 +34,7 @@
                 <span
                   [ngClass]="typeChip(tx.type)"
                 >
-                  {{ typeLabel(tx.type) }}
+                  {{ t(typeLabel(tx.type)) }}
                 </span>
               </td>
               <td class="px-5 py-3.5 text-muted">{{ tx.category }}</td>
@@ -54,7 +54,7 @@
           } @empty {
             <tr>
               <td colspan="7" class="px-5 py-10 text-center text-sm text-subtle">
-                No movements this month yet.
+                {{ t('home.lastMoves.empty') }}
               </td>
             </tr>
           }
@@ -102,7 +102,7 @@
                 class="mt-1 inline-block"
                 [ngClass]="typeChip(tx.type)"
                 >
-                  {{ typeLabel(tx.type) }}
+                  {{ t(typeLabel(tx.type)) }}
               </span>
             </div>
           </div>
@@ -112,7 +112,7 @@
           }
         </article>
       } @empty {
-        <p class="py-10 text-center text-sm text-subtle">No movements this month yet.</p>
+        <p class="py-10 text-center text-sm text-subtle">{{ t('home.lastMoves.empty') }}</p>
       }
     }
   </div>

@@ -1,3 +1,6 @@
+import { LOCALE_ID } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -8,17 +11,19 @@ import { EditBudget } from '../../components/edit-budget/edit-budget';
 import { NotificationService } from '../../../../core/services/NotificationService';
 import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 import { TutorialModal, TutorialSection } from '../../../../shared/components/tutorial-modal/tutorial-modal';
-import { MONTHS } from '../../../../shared/models/months.const';
+import { monthOptions } from '../../../../shared/models/months.const';
 
 @Component({
   selector: 'app-budget-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, EditBudget, RevealDirective, TutorialModal],
+  imports: [CommonModule, ReactiveFormsModule, EditBudget, RevealDirective, TutorialModal, TranslocoDirective],
   templateUrl: './budget-list.html',
   styleUrl: './budget-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetList implements OnInit {
+  private readonly transloco = inject(TranslocoService);
+
   private budgetService = inject(BudgetService);
   private ns = inject(NotificationService);
   private fb = inject(FormBuilder);
@@ -34,30 +39,14 @@ export class BudgetList implements OnInit {
 
   isTutorialOpen = signal(false);
   readonly tutorialSections: TutorialSection[] = [
-    {
-      icon: 'fa-tags',
-      heading: '1. Set a limit per category',
-      body: 'Pick a category, a month and year, and how much you want to spend at most on it during that period.',
-    },
-    {
-      icon: 'fa-chart-pie',
-      heading: '2. Watch it fill up automatically',
-      body: 'Every expense you log against that category counts toward the limit — there is nothing else to do. The progress bar and the spent/remaining numbers update on their own.',
-    },
-    {
-      icon: 'fa-triangle-exclamation',
-      heading: '3. Colors tell you the status',
-      body: 'Green (OK) while you are under 80% spent, amber (WARNING) from 80% up, red (EXCEEDED) once you go over the limit.',
-    },
-    {
-      icon: 'fa-calendar',
-      heading: '4. Budgets are per month',
-      body: 'Switch the month/year selector at the top to review a past period or set up next month\'s limits ahead of time.',
-    },
+    { icon: 'fa-tags', headingKey: 'budgets.tutorial.s1.heading', bodyKey: 'budgets.tutorial.s1.body' },
+    { icon: 'fa-chart-pie', headingKey: 'budgets.tutorial.s2.heading', bodyKey: 'budgets.tutorial.s2.body' },
+    { icon: 'fa-triangle-exclamation', headingKey: 'budgets.tutorial.s3.heading', bodyKey: 'budgets.tutorial.s3.body' },
+    { icon: 'fa-calendar', headingKey: 'budgets.tutorial.s4.heading', bodyKey: 'budgets.tutorial.s4.body' },
   ];
 
   readonly years = this.buildYearRange();
-  readonly months = MONTHS;
+  readonly months = monthOptions(inject(LOCALE_ID));
 
   periodForm: FormGroup = this.fb.group({
     year: [new Date().getFullYear()],
@@ -117,7 +106,7 @@ export class BudgetList implements OnInit {
       },
       error: (err) => {
         this.deletingId.set(null);
-        this.ns.error(err?.error?.message ?? 'Error deleting budget');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('budgets.deleteError'));
       },
     });
   }

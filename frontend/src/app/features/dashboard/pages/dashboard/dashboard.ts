@@ -1,3 +1,5 @@
+import { Inject, LOCALE_ID } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -45,6 +47,7 @@ Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
     ExpensesIncomeEachMonth,
     MonthQuickPicker,
     RevealDirective,
+    TranslocoDirective,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
@@ -79,6 +82,7 @@ export class Dashboard implements OnInit {
     private transactionService: TransactionService,
     private accountService: AccountService,
     private themeService: ThemeService,
+    @Inject(LOCALE_ID) private readonly locale: string,
   ) {
     effect(() => {
       this.filterTrigger();
@@ -252,7 +256,7 @@ export class Dashboard implements OnInit {
               callbacks: {
                 label: (context) => {
                   const value = context.raw as number;
-                  return ` $${value.toLocaleString('es-AR')}`;
+                  return ` $${value.toLocaleString(this.locale)}`;
                 },
               },
             },

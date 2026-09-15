@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ThemeService } from '../../../core/services/theme.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 /**
  * Light/dark switch.
@@ -11,14 +12,15 @@ import { ThemeService } from '../../../core/services/theme.service';
 @Component({
   selector: 'app-theme-toggle',
   standalone: true,
+  imports: [TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
       type="button"
       (click)="theme.toggle()"
-      [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+      [attr.aria-label]="(theme.isDark() ? 'theme.switchToLight' : 'theme.switchToDark') | transloco"
       [attr.aria-pressed]="theme.isDark()"
-      [title]="theme.isDark() ? 'Light theme' : 'Dark theme'"
+      [title]="(theme.isDark() ? 'theme.light' : 'theme.dark') | transloco"
       class="group relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden
              rounded-xl border border-line bg-surface-2 text-muted
              transition-all duration-300 ease-smooth
@@ -46,7 +48,7 @@ import { ThemeService } from '../../../core/services/theme.service';
       ></i>
 
       @if (showLabel()) {
-        <span class="sr-only">Toggle theme</span>
+        <span class="sr-only">{{ 'theme.toggle' | transloco }}</span>
       }
     </button>
   `,

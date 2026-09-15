@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 export interface MultiSelectOption {
   [key: string]: any;
@@ -9,7 +10,7 @@ export interface MultiSelectOption {
 @Component({
   selector: 'app-multiselect',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslocoDirective],
   templateUrl: './multiselect.html',
   styleUrl: './multiselect.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,7 +19,8 @@ export class MultiSelectComponent implements AfterViewInit {
   @Input() options: MultiSelectOption[] = [];
   @Input() labelField: string = 'name';
   @Input() valueField: string = 'id';
-  @Input() placeholder: string = 'Select items...';
+  /** Placeholder shown while nothing is selected; defaults to the translated "Select items…". */
+  @Input() placeholder?: string;
   @Input() label?: string;
   @Output() selectedChange = new EventEmitter<MultiSelectOption[]>();
 

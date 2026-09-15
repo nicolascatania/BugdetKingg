@@ -1,3 +1,4 @@
+import { TranslocoDirective } from '@jsverse/transloco';
 import { ChangeDetectionStrategy, Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TransactionService } from '../../../transactions/services/transaction-service';
@@ -12,7 +13,7 @@ import {
 @Component({
   selector: 'last-moves',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoDirective],
   templateUrl: './last-moves.html',
   styleUrl: './last-moves.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

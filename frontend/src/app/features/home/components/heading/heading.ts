@@ -1,3 +1,4 @@
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,7 +20,7 @@ import { SavingsGoalService } from '../../../savings-goals/service/savings-goal-
 @Component({
   selector: 'heading',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoDirective],
   templateUrl: './heading.html',
   styleUrl: './heading.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

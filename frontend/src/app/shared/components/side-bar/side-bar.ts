@@ -11,10 +11,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgClass } from '@angular/common';
 import { AuthService } from '../../../core/services/auth';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher';
 
 /** A single entry of the primary navigation. */
 interface NavItem {
-  readonly label: string;
+  /** Translation key of the visible label (`nav.*`). */
+  readonly labelKey: string;
   readonly route: string;
   readonly icon: string;
   /** Only match the route exactly (used for the root-like "Home" entry). */
@@ -26,7 +29,15 @@ interface NavItem {
 @Component({
   selector: 'side-bar',
   standalone: true,
-  imports: [RouterLinkActive, RouterLink, MatTooltipModule, NgClass, ThemeToggleComponent],
+  imports: [
+    RouterLinkActive,
+    RouterLink,
+    MatTooltipModule,
+    NgClass,
+    ThemeToggleComponent,
+    TranslocoDirective,
+    LanguageSwitcherComponent,
+  ],
   templateUrl: './side-bar.html',
   styleUrl: './side-bar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,15 +63,15 @@ export class SideBar {
 
   /** Navigation model — keeps the template free of repeated markup. */
   private readonly allItems: readonly NavItem[] = [
-    { label: 'Home', route: '/home', icon: 'fa-house', exact: true },
-    { label: 'Transactions', route: '/transactions', icon: 'fa-arrow-right-arrow-left' },
-    { label: 'Recurring', route: '/recurring-transactions', icon: 'fa-rotate' },
-    { label: 'Budgets', route: '/budgets', icon: 'fa-chart-pie' },
-    { label: 'Savings Goals', route: '/savings-goals', icon: 'fa-piggy-bank' },
-    { label: 'Dashboard', route: '/dashboard', icon: 'fa-chart-line' },
-    { label: 'Accounts', route: '/accounts', icon: 'fa-wallet' },
-    { label: 'Categories', route: '/categories', icon: 'fa-tags' },
-    { label: 'Users', route: '/users', icon: 'fa-users', adminOnly: true },
+    { labelKey: 'nav.home', route: '/home', icon: 'fa-house', exact: true },
+    { labelKey: 'nav.transactions', route: '/transactions', icon: 'fa-arrow-right-arrow-left' },
+    { labelKey: 'nav.recurring', route: '/recurring-transactions', icon: 'fa-rotate' },
+    { labelKey: 'nav.budgets', route: '/budgets', icon: 'fa-chart-pie' },
+    { labelKey: 'nav.savingsGoals', route: '/savings-goals', icon: 'fa-piggy-bank' },
+    { labelKey: 'nav.dashboard', route: '/dashboard', icon: 'fa-chart-line' },
+    { labelKey: 'nav.accounts', route: '/accounts', icon: 'fa-wallet' },
+    { labelKey: 'nav.categories', route: '/categories', icon: 'fa-tags' },
+    { labelKey: 'nav.users', route: '/users', icon: 'fa-users', adminOnly: true },
   ];
 
   /** Entries the current user is allowed to see. */

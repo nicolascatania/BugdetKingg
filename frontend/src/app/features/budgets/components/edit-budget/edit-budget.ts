@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, LOCALE_ID, computed, effect, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
@@ -7,17 +9,19 @@ import { BudgetService } from '../../service/budget-service';
 import { CategoryService } from '../../../categories/service/category-service';
 import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
-import { MONTHS } from '../../../../shared/models/months.const';
+import { monthOptions } from '../../../../shared/models/months.const';
 
 @Component({
   selector: 'app-edit-budget',
   standalone: true,
-  imports: [UiModalComponent, ReactiveFormsModule, CommonModule],
+  imports: [UiModalComponent, ReactiveFormsModule, CommonModule, TranslocoDirective],
   templateUrl: './edit-budget.html',
   styleUrl: './edit-budget.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditBudget {
+  private readonly transloco = inject(TranslocoService);
+
   private fb = inject(FormBuilder);
   private budgetService = inject(BudgetService);
   private categoryService = inject(CategoryService);
@@ -29,7 +33,7 @@ export class EditBudget {
   submitEvent = output<boolean>();
 
   categories = signal<OptionDTO[]>([]);
-  months = MONTHS;
+  months = monthOptions(inject(LOCALE_ID));
 
   form: FormGroup;
 
@@ -85,12 +89,12 @@ export class EditBudget {
     request$.subscribe({
       next: () => {
         this.saving.set(false);
-        this.ns.success('Budget saved successfully');
+        this.ns.success(this.transloco.translate('budgets.saved'));
         this.submitEvent.emit(true);
       },
       error: (err) => {
         this.saving.set(false);
-        this.ns.error(err?.error?.message ?? 'Error saving budget');
+        this.ns.error(err?.error?.message ?? this.transloco.translate('budgets.saveError'));
         this.submitEvent.emit(false);
       },
     });

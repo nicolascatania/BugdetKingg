@@ -1,10 +1,11 @@
-<ui-modal [open]="true" [title]="isEdit() ? 'Edit budget' : 'New budget'" (closed)="close()">
+<ng-container *transloco="let t">
+<ui-modal [open]="true" [title]="isEdit() ? t('budgets.form.editTitle') : t('budgets.form.createTitle')" (closed)="close()">
   <div modal-body>
     <form [formGroup]="form" class="space-y-5">
       <div>
-        <label for="budget-category" class="field-label">Category</label>
+        <label for="budget-category" class="field-label">{{ t('fields.category') }}</label>
         <select id="budget-category" formControlName="category" class="field-select">
-          <option value="">Select category</option>
+          <option value="">{{ t('budgets.form.selectCategory') }}</option>
           @for (category of categories(); track category.id) {
             <option [value]="category.id">{{ category.value }}</option>
           }
@@ -13,7 +14,7 @@
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="budget-month" class="field-label">Month</label>
+          <label for="budget-month" class="field-label">{{ t('fields.month') }}</label>
           <select id="budget-month" formControlName="month" class="field-select">
             @for (m of months; track m.value) {
               <option [value]="m.value">{{ m.label }}</option>
@@ -22,13 +23,13 @@
         </div>
 
         <div>
-          <label for="budget-year" class="field-label">Year</label>
+          <label for="budget-year" class="field-label">{{ t('fields.year') }}</label>
           <input id="budget-year" type="number" formControlName="year" class="field-input" />
         </div>
       </div>
 
       <div>
-        <label for="budget-limit" class="field-label">Limit amount</label>
+        <label for="budget-limit" class="field-label">{{ t('budgets.form.limitAmount') }}</label>
         <div
           class="flex items-center gap-2 rounded-xl border border-line bg-surface-2 pr-2 transition-all duration-200
                  focus-within:border-brand focus-within:bg-surface focus-within:ring-4 focus-within:ring-brand/15"
@@ -47,14 +48,15 @@
   </div>
 
   <div modal-footer class="flex w-full justify-end gap-3">
-    <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+    <button type="button" class="btn-secondary" (click)="close()">{{ t('common.cancel') }}</button>
     <button type="button" class="btn-primary min-w-[7rem]" (click)="submit()" [disabled]="form.invalid || saving()">
       @if (saving()) {
         <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-        <span>Saving…</span>
+        <span>{{ t('common.saving') }}</span>
       } @else {
-        <span>{{ isEdit() ? 'Update' : 'Create' }}</span>
+        <span>{{ isEdit() ? t('common.update') : t('common.create') }}</span>
       }
     </button>
   </div>
 </ui-modal>
+</ng-container>

@@ -1,30 +1,30 @@
-<div class="mx-auto w-full max-w-4xl space-y-6">
+<div class="mx-auto w-full max-w-4xl space-y-6" *transloco="let t">
   <!-- Header -->
   <div appReveal class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h1 class="page-title">Categories</h1>
-      <p class="mt-1 text-sm text-muted">How your spending gets grouped.</p>
+      <h1 class="page-title">{{ t('categories.title') }}</h1>
+      <p class="mt-1 text-sm text-muted">{{ t('categories.subtitle') }}</p>
     </div>
 
     <div class="flex items-center gap-3">
       <button type="button" class="btn-secondary" (click)="exportCsv()" [disabled]="exporting()">
         @if (exporting()) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-          <span>Exporting…</span>
+          <span>{{ t('csv.exporting') }}</span>
         } @else {
           <i class="fa-solid fa-file-export text-xs"></i>
-          <span>Export CSV</span>
+          <span>{{ t('csv.export') }}</span>
         }
       </button>
 
       <button type="button" class="btn-secondary" (click)="openImportModal()">
         <i class="fa-solid fa-file-import text-xs"></i>
-        Import CSV
+        {{ t('csv.import') }}
       </button>
 
       <button type="button" (click)="openCategoryModal(null)" class="btn-primary">
         <i class="fa-solid fa-plus text-xs"></i>
-        New category
+        {{ t('categories.newCategory') }}
       </button>
     </div>
   </div>
@@ -66,7 +66,7 @@
               class="btn-ghost !min-h-0 h-9 px-3 text-xs hover:text-brand"
             >
               <i class="fa-solid fa-pen text-[10px]"></i>
-              Edit
+              {{ t('common.edit') }}
             </button>
             <button
               type="button"
@@ -76,10 +76,10 @@
             >
               @if (deletingId() === category.id) {
                 <i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>
-                <span>Deleting…</span>
+                <span>{{ t('common.deleting') }}</span>
               } @else {
                 <i class="fa-solid fa-trash text-[10px]"></i>
-                <span>Delete</span>
+                <span>{{ t('common.delete') }}</span>
               }
             </button>
           </div>
@@ -87,8 +87,8 @@
       } @empty {
         <div class="p-12 text-center">
           <i class="fa-solid fa-tags mb-3 block text-3xl text-subtle"></i>
-          <p class="text-sm font-semibold">No categories defined</p>
-          <p class="mt-1 text-xs text-muted">Categories make your dashboard actually useful.</p>
+          <p class="text-sm font-semibold">{{ t('categories.emptyTitle') }}</p>
+          <p class="mt-1 text-xs text-muted">{{ t('categories.emptyHint') }}</p>
         </div>
       }
     }

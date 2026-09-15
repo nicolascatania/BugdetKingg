@@ -1,4 +1,4 @@
-<div class="multi-select-dropdown relative w-full" (document:click)="onDocumentClick($event)">
+<div class="multi-select-dropdown relative w-full" (document:click)="onDocumentClick($event)" *transloco="let t">
   @if (label) {
     <label class="field-label">{{ label }}</label>
   }
@@ -18,7 +18,7 @@
           type="button"
           (click)="$event.stopPropagation(); removeItem(item)"
           class="flex h-4 w-4 items-center justify-center rounded transition-colors hover:bg-brand/20"
-          [attr.aria-label]="'Remove ' + item[labelField]"
+          [attr.aria-label]="t('multiselect.remove', { item: item[labelField] })"
         >
           <i class="fa-solid fa-xmark text-[9px]"></i>
         </button>
@@ -27,7 +27,7 @@
 
     <input
       type="text"
-      [placeholder]="selectedItems().length ? '' : placeholder"
+      [placeholder]="selectedItems().length ? '' : (placeholder ?? t('multiselect.placeholder'))"
       class="min-w-[100px] flex-1 bg-transparent text-sm text-body outline-none placeholder:text-subtle"
       [(ngModel)]="searchTerm"
       (focus)="onFocus()"
@@ -59,7 +59,7 @@
           }
         </li>
       } @empty {
-        <li class="px-3 py-3 text-center text-xs text-subtle">No options available.</li>
+        <li class="px-3 py-3 text-center text-xs text-subtle">{{ t('multiselect.empty') }}</li>
       }
     </ul>
   }

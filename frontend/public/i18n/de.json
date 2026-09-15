@@ -1,0 +1,730 @@
+{
+  "common": {
+    "language": "Sprache",
+    "brandHome": "BudgetKing Startseite",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "delete": "Löschen",
+    "deleting": "Wird gelöscht…",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "all": "Alle",
+    "back": "Zurück",
+    "actions": "Aktionen",
+    "create": "Erstellen",
+    "update": "Aktualisieren",
+    "none": "Keines",
+    "working": "Wird verarbeitet…",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
+  "nav": {
+    "mainNavigation": "Hauptnavigation",
+    "home": "Start",
+    "transactions": "Buchungen",
+    "recurring": "Wiederkehrend",
+    "budgets": "Budgets",
+    "savingsGoals": "Sparziele",
+    "dashboard": "Dashboard",
+    "accounts": "Konten",
+    "categories": "Kategorien",
+    "users": "Benutzer",
+    "collapseSidebar": "Seitenleiste einklappen",
+    "expandSidebar": "Seitenleiste ausklappen",
+    "logOut": "Abmelden",
+    "openNavigation": "Navigation öffnen",
+    "closeNavigation": "Navigation schließen"
+  },
+  "theme": {
+    "toggle": "Design wechseln",
+    "switchToLight": "Zum hellen Design wechseln",
+    "switchToDark": "Zum dunklen Design wechseln",
+    "light": "Helles Design",
+    "dark": "Dunkles Design"
+  },
+  "modal": {
+    "close": "Dialog schließen"
+  },
+  "tutorial": {
+    "gotIt": "Verstanden"
+  },
+  "pagination": {
+    "label": "Seitennavigation",
+    "showing": "Zeige",
+    "of": "von",
+    "results": "Ergebnissen",
+    "previous": "Vorherige Seite",
+    "next": "Nächste Seite"
+  },
+  "multiselect": {
+    "placeholder": "Elemente auswählen…",
+    "remove": "{{item}} entfernen",
+    "empty": "Keine Optionen verfügbar."
+  },
+  "monthPicker": {
+    "quickSelect": "Monat schnell auswählen",
+    "month": "Monat",
+    "hint": "Wählt den gesamten Monatszeitraum für {{year}}"
+  },
+  "public": {
+    "primaryNav": "Hauptmenü",
+    "features": "Funktionen",
+    "terms": "Bedingungen",
+    "signIn": "Anmelden",
+    "openApp": "App öffnen"
+  },
+  "footer": {
+    "brandHome": "BudgetKing Startseite",
+    "tagline": "Persönliche Finanzen ohne Lärm. Konten, Buchungen, Budgets und Sparziele an einem Ort — kostenlos, und der Quellcode liegt auf GitHub.",
+    "product": "Produkt",
+    "signIn": "Anmelden",
+    "features": "Funktionen",
+    "terms": "Bedingungen & Datenschutz",
+    "sourceCode": "Quellcode",
+    "author": "Autor",
+    "builtBy": "Entwickelt von",
+    "builtIn": "Entwickelt in Argentinien.",
+    "freeTier": "Demo auf kostenlosen Tarifen gehostet — die erste Anfrage kann einen Moment dauern.",
+    "home": "Start"
+  },
+  "auth": {
+    "coldStart": {
+      "label": "Hinweis zum Demo-Hosting",
+      "headsUp": "Hinweis:",
+      "body": "dies ist eine Demo auf einem kostenlosen Tarif. Der Server schläft bei Inaktivität, daher kann deine erste Anmeldung oder Registrierung",
+      "duration": "bis zu ein paar Minuten",
+      "tail": "dauern, während er aufwacht. Nichts ist kaputt — bitte kurz warten."
+    },
+    "login": {
+      "welcome": "Willkommen zurück. Dein Geld wartet.",
+      "secureSignIn": "Sichere Anmeldung",
+      "signingIn": "Anmeldung läuft…",
+      "privacyNote": "Wir lesen nur deinen Namen, deine E-Mail und dein Foto, um dein Konto zu identifizieren. BudgetKing sieht nie dein Google-Passwort.",
+      "termsLink": "Bedingungen & Datenschutz",
+      "orWithEmail": "Oder mit E-Mail",
+      "emailLabel": "E-Mail-Adresse",
+      "emailPlaceholder": "du@beispiel.de",
+      "emailInvalid": "Gib eine gültige E-Mail-Adresse ein.",
+      "passwordLabel": "Passwort",
+      "passwordRequired": "Passwort ist erforderlich.",
+      "hidePassword": "Passwort verbergen",
+      "showPassword": "Passwort anzeigen",
+      "signIn": "Anmelden",
+      "newHere": "Neu hier?",
+      "createAccount": "Konto erstellen",
+      "tagline": "Konten, Kategorien und jede Bewegung — alles an einem Ort.",
+      "googleLoadFailed": "Google-Anmeldung konnte nicht geladen werden. Bitte lade die Seite neu.",
+      "googleNotConfigured": "Google-Anmeldung ist nicht konfiguriert.",
+      "googleFailed": "Google-Anmeldung fehlgeschlagen, bitte versuche es erneut",
+      "loginFailed": "Anmeldefehler, bitte kontaktiere einen Administrator"
+    },
+    "register": {
+      "titleStart": "Erstelle dein",
+      "titleHighlight": "Konto",
+      "subtitle": "Zwei Minuten jetzt, volle Kontrolle über dein Budget danach.",
+      "nameLabel": "Vorname",
+      "namePlaceholder": "Maria",
+      "nameRequired": "Vorname ist erforderlich.",
+      "lastNameLabel": "Nachname",
+      "lastNamePlaceholder": "Müller",
+      "lastNameRequired": "Nachname ist erforderlich.",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "du@beispiel.de",
+      "emailInvalid": "Gib eine gültige E-Mail-Adresse ein.",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Mindestens 8 Zeichen",
+      "passwordInvalid": "Verwende mindestens 8 Zeichen mit einem Buchstaben und einer Ziffer.",
+      "passwordHint": "Mindestens 8 Zeichen, inklusive eines Buchstabens und einer Ziffer.",
+      "hidePassword": "Passwort verbergen",
+      "showPassword": "Passwort anzeigen",
+      "creating": "Konto wird erstellt…",
+      "create": "Konto erstellen",
+      "alreadyMember": "Schon registriert?",
+      "signIn": "Anmelden",
+      "failed": "Registrierung fehlgeschlagen, bitte versuche es später erneut"
+    }
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "Persönliche Finanzen, ohne Lärm",
+      "titleStart": "Wisse, wohin dein",
+      "titleHighlight": "Geld",
+      "titleEnd": "geht.",
+      "lead": "BudgetKing hält deine Konten, Buchungen, Budgets und Sparziele an einem Ort. Kostenlos, ohne Werbung, ohne Analytics — melde dich mit Google an und leg los.",
+      "signInGoogle": "Mit Google anmelden",
+      "openApp": "App öffnen",
+      "seeSource": "Quellcode ansehen",
+      "perkFree": "Kostenlos nutzbar",
+      "perkGoogle": "Nur Google-Anmeldung, kein Passwort",
+      "perkPrivacy": "Deine Daten werden nie verkauft oder geteilt"
+    },
+    "preview": {
+      "totalBalance": "Gesamtsaldo",
+      "bank": "Bank",
+      "wallet": "Geldbörse",
+      "cash": "Bargeld",
+      "budgetLabel": "Essen · September",
+      "supermarket": "Supermarkt",
+      "salary": "Gehalt",
+      "tripFund": "Reisekasse"
+    },
+    "features": {
+      "eyebrow": "Alles, was du brauchst, nichts, was du nicht brauchst",
+      "title": "Gebaut für die Art, wie du wirklich mit Geld umgehst.",
+      "lead": "Keine Gamification, keine Streaks, keine Rangliste. Nur die Werkzeuge, in einer Oberfläche, die auf dem Handy und dem Laptop gleich funktioniert.",
+      "items": {
+        "accounts": {
+          "title": "Konten",
+          "description": "Bargeld, Bank, Geldbörse, Karte — jeder Ort, an dem dein Geld liegt, jeweils mit eigenem Saldo und Symbol."
+        },
+        "transactions": {
+          "title": "Buchungen",
+          "description": "Einnahmen, Ausgaben und Überweisungen zwischen Konten, mit Kategorie, Gegenpartei und Notizen. Filtere und blättere durch Jahre an Verlauf."
+        },
+        "recurring": {
+          "title": "Wiederkehrende Buchungen",
+          "description": "Miete, Gehalt, Abos. Lege die Häufigkeit einmal fest, sieh, was ansteht, und buche jede mit einem Klick, wenn sie fällig ist."
+        },
+        "budgets": {
+          "title": "Monatsbudgets",
+          "description": "Ein Ausgabenlimit pro Kategorie und Monat, mit einem Fortschrittsbalken, der zeigt, wie viel Spielraum bleibt."
+        },
+        "savings": {
+          "title": "Sparziele",
+          "description": "Ein Zielbetrag und -datum, Einzahlungen von einem echten Konto, und ein Status, der von selbst auf erreicht springt."
+        },
+        "dashboard": {
+          "title": "Dashboard",
+          "description": "Einnahmen gegen Ausgaben pro Monat, Ausgaben nach Kategorie und die offiziellen Dollar- und Inflationszahlen für Argentinien."
+        },
+        "csv": {
+          "title": "CSV-Import & -Export",
+          "description": "Konten, Kategorien und Buchungen aus einer Tabelle importieren, vor dem Übernehmen prüfen, und jederzeit wieder exportieren."
+        },
+        "themes": {
+          "title": "Hell & dunkel, jeder Bildschirm",
+          "description": "Ein Designsystem, beide Designs, vom Handy bis zum Desktop. Tabellen werden auf kleinen Bildschirmen zu Karten statt seitlich zu scrollen."
+        }
+      }
+    },
+    "steps": {
+      "eyebrow": "Drei Schritte",
+      "title": "In Minuten startklar.",
+      "items": {
+        "signIn": {
+          "title": "Mit Google anmelden",
+          "description": "Kein Formular, kein Passwort ausdenken. Dein Konto wird bei der ersten Anmeldung erstellt."
+        },
+        "setUp": {
+          "title": "Konten und Kategorien anlegen",
+          "description": "Oder aus einer CSV importieren. Ein paar Minuten und die App spiegelt, wie du dein Geld ohnehin denkst."
+        },
+        "track": {
+          "title": "Buchungen erfassen, Limits setzen, Dashboard beobachten",
+          "description": "Jede Buchung aktualisiert Salden, Budgets und Ziele sofort."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Deine Daten, deine Regeln.",
+      "lead": "Das ist ein persönliches Projekt, kein Datengeschäft. Es gibt keinen Tracking-Pixel, kein Analytics-Skript und nichts zu verkaufen. Was du eingibst, dient nur dazu, dir deine eigenen Zahlen zu zeigen.",
+      "readTerms": "Bedingungen & Datenschutzhinweis lesen",
+      "google": {
+        "title": "Von Google nur drei Dinge",
+        "body": "Dein Name, deine E-Mail und dein Profilfoto, um dein Konto zu identifizieren. Nie dein Passwort."
+      },
+      "stored": {
+        "title": "Gespeichert, nicht geteilt",
+        "body": "Deine Konten und Buchungen liegen in der Datenbank der App und werden nur dir angezeigt."
+      },
+      "export": {
+        "title": "Nimm sie mit",
+        "body": "Exportiere Konten, Kategorien und Buchungen jederzeit als CSV."
+      },
+      "delete": {
+        "title": "Löschung auf Anfrage",
+        "body": "Frag nach, und dein Konto samt allem darin wird endgültig entfernt."
+      }
+    },
+    "cta": {
+      "title": "Fang heute an.",
+      "lead": "Eine Google-Anmeldung und du bist drin. Auf einem kostenlosen Tarif gehostet, gib der ersten Anfrage also einen Moment."
+    }
+  },
+  "terms": {
+    "eyebrow": "Rechtliches",
+    "title": "Nutzungsbedingungen & Datenschutzhinweis",
+    "lead": "Bewusst in einfacher Sprache. Diese Seite erklärt, was BudgetKing ist, was mit den Informationen passiert, die du eingibst, und was du von einem kostenlosen persönlichen Projekt erwarten kannst.",
+    "lastUpdated": "Zuletzt aktualisiert: {{date}}",
+    "onThisPage": "Auf dieser Seite",
+    "englishOnly": "Dieses Dokument wird nur auf Englisch gepflegt. Der englische Text ist die verbindliche Fassung."
+  },
+  "fields": {
+    "date": "Datum",
+    "account": "Konto",
+    "type": "Typ",
+    "category": "Kategorie",
+    "amount": "Betrag",
+    "description": "Beschreibung",
+    "counterparty": "Gegenpartei",
+    "name": "Name",
+    "icon": "Symbol",
+    "month": "Monat",
+    "year": "Jahr",
+    "status": "Status"
+  },
+  "filters": {
+    "title": "Filter",
+    "from": "Von",
+    "to": "Bis",
+    "min": "Min",
+    "max": "Max",
+    "searchDetails": "Details durchsuchen…",
+    "searchCounterparty": "Gegenpartei suchen…",
+    "clear": "Zurücksetzen",
+    "apply": "Filter anwenden",
+    "applying": "Wird angewendet…"
+  },
+  "csv": {
+    "export": "CSV exportieren",
+    "exporting": "Wird exportiert…",
+    "import": "CSV importieren"
+  },
+  "transactionType": {
+    "INCOME": "Einnahme",
+    "EXPENSE": "Ausgabe",
+    "TRANSFER": "Überweisung",
+    "SAVINGS_DEPOSIT": "Ins Sparziel",
+    "SAVINGS_WITHDRAWAL": "Aus Sparziel",
+    "UNKNOWN": "—"
+  },
+  "frequency": {
+    "DAILY": "Täglich",
+    "WEEKLY": "Wöchentlich",
+    "MONTHLY": "Monatlich",
+    "YEARLY": "Jährlich"
+  },
+  "icons": {
+    "wallet": "Geldbörse",
+    "bank": "Bank",
+    "creditCard": "Kreditkarte",
+    "cash": "Bargeld",
+    "savings": "Ersparnisse",
+    "cryptoCoins": "Krypto/Münzen",
+    "investments": "Investitionen",
+    "stocksInvestments": "Aktien / Investitionen",
+    "business": "Geschäft",
+    "restaurants": "Restaurants",
+    "fastFood": "Fast Food",
+    "supermarket": "Supermarkt",
+    "cafe": "Café",
+    "barNightlife": "Bar & Nachtleben",
+    "carExpenses": "Auto / Kosten",
+    "fuel": "Kraftstoff",
+    "publicTransport": "Öffentlicher Verkehr",
+    "travelFlights": "Reisen & Flüge",
+    "motorcycle": "Motorrad",
+    "rentHome": "Miete / Zuhause",
+    "electricityUtilities": "Strom / Nebenkosten",
+    "waterServices": "Wasser",
+    "internetTelecom": "Internet / Telekom",
+    "furnitureDecor": "Möbel / Deko",
+    "cinemaStreaming": "Kino & Streaming",
+    "gaming": "Gaming",
+    "musicConcerts": "Musik & Konzerte",
+    "sportsFootball": "Sport / Fußball",
+    "eventsTickets": "Events / Tickets",
+    "clothingApparel": "Kleidung",
+    "shopping": "Einkaufen",
+    "personalCareBeauty": "Körperpflege & Schönheit",
+    "giftsDonations": "Geschenke & Spenden",
+    "donations": "Spenden",
+    "gymFitness": "Fitnessstudio",
+    "healthMedical": "Gesundheit",
+    "pharmacyMedicine": "Apotheke / Medikamente",
+    "doctorVisit": "Arztbesuch",
+    "booksEducation": "Bücher & Bildung",
+    "tuitionCourses": "Studiengebühren / Kurse",
+    "softwareSubscriptions": "Software / Abos",
+    "loansDebts": "Kredite / Schulden",
+    "salaryIncome": "Gehalt / Einkommen",
+    "othersGeneral": "Sonstiges / Allgemein",
+    "virtualReality": "Virtual Reality",
+    "techHardware": "Technik & Hardware",
+    "programming": "Programmierung",
+    "artsDesign": "Kunst & Design",
+    "photography": "Fotografie",
+    "cycling": "Radfahren",
+    "swimming": "Schwimmen",
+    "pets": "Haustiere",
+    "childcare": "Kinderbetreuung",
+    "gardening": "Garten",
+    "diyRepairs": "Heimwerken / Reparaturen",
+    "legalTaxes": "Recht / Steuern",
+    "insurance": "Versicherung",
+    "socialFamily": "Soziales / Familie",
+    "mobilePlan": "Mobilfunkvertrag",
+    "electronics": "Elektronik",
+    "subscriptions": "Abos",
+    "portfolio": "Portfolio",
+    "crypto": "Krypto",
+    "bondsBank": "Anleihen / Bank",
+    "growth": "Wachstum",
+    "volleyball": "Volleyball",
+    "basketball": "Basketball",
+    "tennis": "Tennis",
+    "running": "Laufen",
+    "awardsCompetitions": "Preise / Wettbewerbe",
+    "government": "Behörden"
+  },
+  "home": {
+    "recentActivity": "Letzte Aktivität",
+    "thisMonth": "Dieser Monat",
+    "heading": {
+      "totalBalance": "Gesamtsaldo",
+      "setAside": "in Sparzielen zurückgelegt",
+      "newTransaction": "Neue Buchung",
+      "newAccount": "Neues Konto",
+      "dollarValue": "Dollarkurs",
+      "liveQuote": "Live-Kurs",
+      "buy": "Ankauf",
+      "sell": "Verkauf",
+      "inflation": "Inflation",
+      "date": "Datum",
+      "value": "Wert"
+    },
+    "accounts": {
+      "title": "Konten",
+      "registered": "{{count}} registriert",
+      "empty": "Noch keine Konten registriert."
+    },
+    "summary": {
+      "title": "Monatsübersicht",
+      "income": "Einnahmen",
+      "outcome": "Ausgaben",
+      "balance": "Saldo"
+    },
+    "lastMoves": {
+      "empty": "Diesen Monat noch keine Buchungen."
+    }
+  },
+  "accounts": {
+    "title": "Meine Konten",
+    "subtitle": "Jeder Ort, an dem dein Geld liegt, in einer Ansicht.",
+    "newAccount": "Neues Konto",
+    "noDescription": "Keine Beschreibung",
+    "balance": "Saldo",
+    "editNamed": "{{name}} bearbeiten",
+    "deleteNamed": "{{name}} löschen",
+    "emptyTitle": "Keine Konten registriert",
+    "emptyHint": "Erstelle dein erstes Konto, um Buchungen zu erfassen.",
+    "deleted": "Konto erfolgreich gelöscht",
+    "exportError": "Fehler beim Exportieren der Konten",
+    "form": {
+      "createTitle": "Konto erstellen",
+      "editTitle": "Konto bearbeiten",
+      "name": "Name",
+      "namePlaceholder": "z. B. Bank, Bargeld, Krypto",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Optionale Details…",
+      "icon": "Kontosymbol",
+      "saveError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+    }
+  },
+  "categories": {
+    "title": "Kategorien",
+    "subtitle": "So werden deine Ausgaben gruppiert.",
+    "newCategory": "Neue Kategorie",
+    "emptyTitle": "Keine Kategorien definiert",
+    "emptyHint": "Kategorien machen dein Dashboard erst richtig nützlich.",
+    "loadError": "Fehler beim Laden der Kategorien",
+    "deleteError": "Fehler beim Löschen der Kategorie",
+    "exportError": "Fehler beim Exportieren der Kategorien",
+    "saved": "Kategorie erfolgreich gespeichert",
+    "saveError": "Fehler beim Speichern der Kategorie",
+    "form": {
+      "createTitle": "Neue Kategorie",
+      "editTitle": "Kategorie bearbeiten",
+      "name": "Name",
+      "namePlaceholder": "z. B. Lieferdienst, Dienstleistungen, Abos",
+      "icon": "Kategoriesymbol",
+      "searchIconPlaceholder": "Symbol suchen (z. B. 'Spiele')…",
+      "searchIcons": "Symbole suchen",
+      "noIcons": "Keine Symbole gefunden.",
+      "create": "Erstellen",
+      "update": "Aktualisieren"
+    }
+  },
+  "csvImport": {
+    "expectedColumns": "Erwartete Spalten, in dieser Reihenfolge:",
+    "file": "CSV-Datei",
+    "valid": "Gültig",
+    "duplicate": "Doppelt",
+    "errors": "Fehler",
+    "error": "Fehler",
+    "line": "Zeile",
+    "status": "Status",
+    "reason": "Grund",
+    "destination": "Ziel",
+    "reading": "Wird gelesen…",
+    "preview": "Vorschau",
+    "importing": "Wird importiert…",
+    "importRows": "{{count}} Zeilen importieren",
+    "done": "Fertig",
+    "skipped": "{{duplicates}} doppelte und {{errors}} ungültige Zeilen wurden übersprungen.",
+    "readError": "Fehler beim Lesen der CSV-Datei",
+    "accounts": {
+      "title": "Konten aus CSV importieren",
+      "hint": "Ein unbekanntes oder leeres Symbol macht eine Zeile nie ungültig — es wird automatisch das Bank-Symbol verwendet. Importierte Konten starten immer mit einem Saldo von $0.",
+      "done": "{{count}} Konten erfolgreich importiert.",
+      "importError": "Fehler beim Importieren der Konten"
+    },
+    "categories": {
+      "title": "Kategorien aus CSV importieren",
+      "hint": "Ein unbekanntes oder leeres Symbol macht eine Zeile nie ungültig — es wird automatisch ein Standardsymbol verwendet.",
+      "done": "{{count}} Kategorien erfolgreich importiert.",
+      "importError": "Fehler beim Importieren der Kategorien"
+    },
+    "transactions": {
+      "title": "Buchungen aus CSV importieren",
+      "hint": "destination_account ist nur für TRANSFER-Zeilen erforderlich (muss ein bestehendes Konto sein, verschieden von account). category ist bei TRANSFER optional.",
+      "done": "{{count}} Buchungen erfolgreich importiert.",
+      "importError": "Fehler beim Importieren der Buchungen"
+    }
+  },
+  "transactions": {
+    "title": "Buchungen",
+    "matchCount": "{{count}} Buchungen entsprechen deinen Filtern.",
+    "new": "Neue Buchung",
+    "newHint": "Neue Buchung erfassen",
+    "importHint": "Buchungen aus einer CSV-Datei importieren",
+    "needAccount": "Erstelle zuerst ein Konto",
+    "editAria": "Buchung bearbeiten",
+    "deleteAria": "Buchung löschen",
+    "empty": "Keine Buchungen entsprechen diesen Filtern.",
+    "deleteTitle": "Buchung löschen",
+    "deleteConfirm": "{{type}} über {{amount}} für \"{{description}}\" löschen? Der Kontosaldo wird entsprechend zurückgesetzt. Das kann nicht rückgängig gemacht werden.",
+    "deleted": "Buchung gelöscht.",
+    "deleteError": "Fehler beim Löschen der Buchung",
+    "exportError": "Fehler beim Exportieren der Buchungen",
+    "form": {
+      "createTitle": "Neue Buchung",
+      "editTitle": "Buchung bearbeiten",
+      "typeLocked": "Der Typ kann nach dem Erstellen nicht geändert werden — lösche die Buchung und lege sie neu an",
+      "accountLocked": "Das Konto kann nach dem Erstellen nicht geändert werden — lösche die Buchung und lege sie neu an",
+      "destinationLocked": "Das Zielkonto kann nach dem Erstellen nicht geändert werden — lösche die Buchung und lege sie neu an",
+      "originAccount": "Quellkonto",
+      "destinationAccount": "Zielkonto",
+      "selectCategory": "Kategorie wählen",
+      "counterpartyPlaceholder": "z. B. Supermarkt, Arbeitgeber",
+      "descriptionPlaceholder": "Details zur Buchung",
+      "completeFields": "Fülle zuerst alle Pflichtfelder aus",
+      "fillRequired": "Bitte fülle alle Pflichtfelder korrekt aus.",
+      "selectDestination": "Bitte wähle ein Zielkonto für die Überweisung."
+    }
+  },
+  "budgets": {
+    "title": "Budgets",
+    "subtitle": "Lege ein Monatslimit pro Kategorie fest und verfolge es live.",
+    "new": "Neues Budget",
+    "ofLimit": "von {{limit}}",
+    "usage": "{{percent}}% verbraucht · {{remaining}} übrig",
+    "status": {
+      "OK": "OK",
+      "WARNING": "Achtung",
+      "EXCEEDED": "Überschritten"
+    },
+    "emptyTitle": "Keine Budgets für diesen Zeitraum",
+    "emptyHint": "Erstelle eines, um die Ausgaben einer Kategorie zu verfolgen.",
+    "deleteError": "Fehler beim Löschen des Budgets",
+    "saved": "Budget erfolgreich gespeichert",
+    "saveError": "Fehler beim Speichern des Budgets",
+    "form": {
+      "createTitle": "Neues Budget",
+      "editTitle": "Budget bearbeiten",
+      "selectCategory": "Kategorie wählen",
+      "limitAmount": "Limitbetrag"
+    },
+    "tutorial": {
+      "title": "So funktionieren Budgets",
+      "intro": "Mit Budgets deckelst du, wie viel du in einem Monat für eine Kategorie ausgibst, und siehst live, wie nah du an der Grenze bist.",
+      "s1": {
+        "heading": "1. Limit pro Kategorie festlegen",
+        "body": "Wähle eine Kategorie, Monat und Jahr, und wie viel du in diesem Zeitraum höchstens dafür ausgeben willst."
+      },
+      "s2": {
+        "heading": "2. Zusehen, wie es sich automatisch füllt",
+        "body": "Jede Ausgabe, die du in dieser Kategorie erfasst, zählt zum Limit — mehr ist nicht zu tun. Fortschrittsbalken und die Zahlen für verbraucht/übrig aktualisieren sich von selbst."
+      },
+      "s3": {
+        "heading": "3. Farben zeigen den Status",
+        "body": "Grün (OK), solange du unter 80 % liegst, gelb (Achtung) ab 80 %, rot (Überschritten), sobald du das Limit übersteigst."
+      },
+      "s4": {
+        "heading": "4. Budgets gelten pro Monat",
+        "body": "Wechsle oben die Monats-/Jahresauswahl, um einen vergangenen Zeitraum anzusehen oder die Limits für den nächsten Monat vorab einzurichten."
+      }
+    }
+  },
+  "recurring": {
+    "title": "Wiederkehrende Buchungen",
+    "configuredCount": "{{count}} Vorlagen eingerichtet.",
+    "new": "Neue Vorlage",
+    "newHint": "Wiederkehrende Vorlage erstellen",
+    "upcoming": "Anstehend in den nächsten 30 Tagen",
+    "frequency": "Häufigkeit",
+    "nextRun": "Nächste Ausführung",
+    "nextShort": "Nächste: {{date}}",
+    "active": "Aktiv",
+    "paused": "Pausiert",
+    "activate": "Vorlage aktivieren",
+    "deactivate": "Vorlage deaktivieren",
+    "activeHint": "Aktiv — klicken zum Pausieren",
+    "pausedHint": "Pausiert — klicken zum Aktivieren",
+    "runNow": "Jetzt ausführen",
+    "run": "Ausführen",
+    "running": "Wird ausgeführt…",
+    "empty": "Keine wiederkehrenden Vorlagen entsprechen diesen Filtern.",
+    "deleteError": "Fehler beim Löschen der Vorlage",
+    "statusError": "Fehler beim Aktualisieren des Vorlagenstatus",
+    "generated": "Buchung erzeugt",
+    "runError": "Fehler beim Ausführen der Vorlage",
+    "saved": "Wiederkehrende Buchung erfolgreich gespeichert",
+    "saveError": "Fehler beim Speichern der wiederkehrenden Buchung",
+    "form": {
+      "createTitle": "Neue wiederkehrende Buchung",
+      "editTitle": "Wiederkehrende Buchung bearbeiten",
+      "nextRunDate": "Datum der nächsten Ausführung",
+      "endDate": "Enddatum (optional)",
+      "counterpartyPlaceholder": "z. B. Vermieter, Netflix",
+      "descriptionPlaceholder": "Details zur Vorlage"
+    },
+    "tutorial": {
+      "title": "So funktionieren wiederkehrende Buchungen",
+      "intro": "Wiederkehrende Buchungen sind Vorlagen für Bewegungen nach Zeitplan — Miete, ein Abo, dein Gehalt — damit du sie nicht jedes Mal von Hand eingeben musst.",
+      "s1": {
+        "heading": "1. Vorlage erstellen",
+        "body": "Eine Vorlage ist eine Buchungsschablone: Betrag, Konto, Kategorie (oder Zielkonto bei Überweisungen), Gegenpartei und wie oft sie sich wiederholt."
+      },
+      "s2": {
+        "heading": "2. Nichts läuft von selbst — noch nicht",
+        "body": "In dieser App läuft kein Hintergrundjob. Eine Vorlage wird erst zur echten Buchung, wenn du „Ausführen“ drückst oder jemand den run-due-Endpunkt aufruft (gedacht für einen externen Scheduler)."
+      },
+      "s3": {
+        "heading": "3. Jetzt ausführen vs. nächste Ausführung",
+        "body": "„Ausführen“ erzeugt sofort eine Buchung, unabhängig vom geplanten Datum, und rückt den Zeiger der Vorlage vor. Die Spalte „Nächste Ausführung“ zeigt, wann sie von selbst laufen würde, sobald ein Scheduler existiert."
+      },
+      "s4": {
+        "heading": "4. Pausieren statt löschen",
+        "body": "Deaktiviere eine Vorlage, damit sie nicht mehr als fällig gilt, ohne ihre Konfiguration zu verlieren — nützlich z. B. für ein pausiertes Abo."
+      }
+    }
+  },
+  "savings": {
+    "title": "Sparziele",
+    "subtitle": "Wofür du sparst, und wie nah du dran bist.",
+    "new": "Neues Ziel",
+    "totalSaved": "Gesamt gespart",
+    "totalTarget": "Gesamtziel",
+    "progress": "Fortschritt",
+    "goalsAchieved": "Erreichte Ziele",
+    "state": {
+      "ACHIEVED": "Erreicht",
+      "OVERDUE": "Überfällig",
+      "CLOSED": "Geschlossen"
+    },
+    "ofTarget": "von {{target}}",
+    "percentSetAside": "{{percent}}% zurückgelegt",
+    "remaining": "Verbleibend",
+    "monthlyNeeded": "Monatlich nötig",
+    "targetDate": "Zieldatum",
+    "daysLeft": "Verbleibende Tage",
+    "linkedDefault": "Standardmäßig von {{account}}",
+    "addMoney": "Geld hinzufügen",
+    "withdraw": "Abheben",
+    "close": "Schließen",
+    "closeHint": "Alles auf ein Konto zurückbuchen und das Ziel einfrieren",
+    "deleteBlocked": "Hebe ab oder schließe das Ziel, bevor du es löschst",
+    "deleteGoal": "Ziel löschen",
+    "emptyTitle": "Noch keine Sparziele",
+    "emptyHint": "Setze ein Ziel und verfolge deinen Fortschritt.",
+    "deleteError": "Fehler beim Löschen des Sparziels",
+    "saved": "Sparziel erfolgreich gespeichert",
+    "saveError": "Fehler beim Speichern des Sparziels",
+    "closed": "Sparziel geschlossen",
+    "updated": "Sparziel aktualisiert",
+    "form": {
+      "createTitle": "Neues Sparziel",
+      "editTitle": "Sparziel bearbeiten",
+      "namePlaceholder": "z. B. Notgroschen, Neuer Laptop",
+      "targetAmount": "Zielbetrag",
+      "linkedAccount": "Standard-Quellkonto (optional)",
+      "linkedAccountHint": "Wird vorausgewählt, wenn du Geld zum Ziel hinzufügst. Der Fortschritt zählt nur, was du tatsächlich zurückgelegt hast."
+    },
+    "contribute": {
+      "depositTitle": "Geld zum Ziel hinzufügen",
+      "withdrawTitle": "Vom Ziel abheben",
+      "closeTitle": "Ziel schließen",
+      "savedOf": "{{saved}} gespart von {{target}}",
+      "closeWithMoney": "Alles, was das Ziel enthält ({{amount}}), geht auf das gewählte Konto zurück. Das Ziel wird dann schreibgeschützt.",
+      "closeEmpty": "Dieses Ziel enthält kein Geld. Beim Schließen bleibt es als Verlauf erhalten und wird schreibgeschützt.",
+      "fromAccount": "Von Konto",
+      "toAccount": "Auf Konto",
+      "available": "Verfügbar: {{amount}}",
+      "max": "Max",
+      "upTo": "Bis zu {{amount}} können abgehoben werden.",
+      "note": "Notiz (optional)",
+      "notePlaceholder": "z. B. Januar-Anteil",
+      "moveError": "Das Geld konnte nicht bewegt werden. Bitte versuche es erneut."
+    },
+    "tutorial": {
+      "title": "So funktionieren Sparziele",
+      "intro": "Mit Sparzielen legst du echtes Geld für etwas Bestimmtes zurück. Was du einem Ziel hinzufügst, verlässt deinen normalen Saldo und wird unter Ersparnisse geführt, bis du es zurückholst.",
+      "s1": {
+        "heading": "1. Ziel benennen",
+        "body": "Gib dem Ziel einen Namen, ein Symbol, den nötigen Betrag und das Datum, bis zu dem du es erreichen willst."
+      },
+      "s2": {
+        "heading": "2. Geld zurücklegen",
+        "body": "Mit „Geld hinzufügen“ bewegst du einen Betrag von einem deiner Konten ins Ziel. Dieses Geld verlässt deinen normalen Saldo und erscheint stattdessen unter Ersparnisse — es ist wirklich zurückgelegt. „Abheben“ holt einen Teil zurück, wann immer du es brauchst."
+      },
+      "s3": {
+        "heading": "3. Der Fortschritt wird für dich berechnet",
+        "body": "Fortschritt in %, Restbetrag, monatlich nötiger Betrag und verbleibende Tage ergeben sich aus dem Zielstand und dem Zieldatum. Das optionale verknüpfte Konto ist nur die Standardquelle beim Hinzufügen."
+      },
+      "s4": {
+        "heading": "4. Wenn das Datum erreicht ist",
+        "body": "Nichts bewegt sich von selbst. Ein Ziel zeigt „Erreicht“, sobald es den Zielbetrag enthält, oder „Überfällig“, wenn das Datum vorher verstrichen ist. So oder so entscheidest du: Datum verlängern, weiter einzahlen oder „Schließen“, um alles auf ein Konto zurückzubuchen."
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Deine Einnahmen, Ausgaben und dein Saldo für den gewählten Zeitraum.",
+    "applyRange": "Zeitraum anwenden",
+    "totalBalance": "Gesamtsaldo",
+    "expenses": "Ausgaben",
+    "income": "Einnahmen",
+    "expense": "Ausgabe",
+    "expensesByCategory": "Ausgaben nach Kategorie",
+    "noExpenses": "Keine Ausgaben in diesem Zeitraum.",
+    "movementsThisMonth": "Buchungen dieses Monats",
+    "chart": {
+      "title": "Einnahmen vs. Ausgaben",
+      "subtitle": "Aktuelles Jahr, Monat für Monat",
+      "filterByAccount": "Nach Konto filtern",
+      "allAccounts": "Alle Konten"
+    }
+  },
+  "users": {
+    "title": "Benutzer",
+    "subtitle": "Zugang zu BudgetKing aktivieren oder deaktivieren.",
+    "enabled": "Aktiv",
+    "disabled": "Deaktiviert",
+    "toggleAccess": "Zugang für {{email}} umschalten",
+    "empty": "Keine Benutzer gefunden.",
+    "loadError": "Fehler beim Laden der Benutzer",
+    "statusUpdated": "Status aktualisiert",
+    "statusError": "Status konnte nicht aktualisiert werden"
+  }
+}

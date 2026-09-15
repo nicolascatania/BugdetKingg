@@ -1,3 +1,5 @@
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,12 +24,14 @@ import { RevealDirective } from '../../../../shared/directives/reveal.directive'
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [PaginationComponent, RevealDirective],
+  imports: [PaginationComponent, RevealDirective, TranslocoDirective],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserList implements OnInit {
+  private readonly transloco = inject(TranslocoService);
+
   private userService = inject(UserService);
   private notificationService = inject(NotificationService);
 
@@ -60,7 +64,7 @@ export class UserList implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.notificationService.error('Error loading users');
+        this.notificationService.error(this.transloco.translate('users.loadError'));
         this.users.set([]);
         this.loading.set(false);
       },
@@ -82,11 +86,11 @@ export class UserList implements OnInit {
 
     this.userService.update({ ...user }).subscribe({
       next: () => {
-        this.notificationService.success('Status updated');
+        this.notificationService.success(this.transloco.translate('users.statusUpdated'));
       },
       error: (err) => {
         user.enabled = previousState;
-        this.notificationService.error('Failed to update status');
+        this.notificationService.error(this.transloco.translate('users.statusError'));
       },
     });
   }

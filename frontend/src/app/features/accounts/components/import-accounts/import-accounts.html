@@ -1,18 +1,16 @@
-<ui-modal [open]="true" maxWidth="max-w-3xl" title="Import accounts from CSV" (closed)="close()">
+<ng-container *transloco="let t">
+<ui-modal [open]="true" maxWidth="max-w-3xl" [title]="t('csvImport.accounts.title')" (closed)="close()">
   <div modal-body>
     @if (step() === 'select') {
       <div class="space-y-5">
         <div class="rounded-xl border border-line bg-surface-2 p-4 text-xs text-muted">
-          <p class="font-semibold text-body">Expected columns, in order:</p>
+          <p class="font-semibold text-body">{{ t('csvImport.expectedColumns') }}</p>
           <p class="tabular mt-1">name, description, icon</p>
-          <p class="mt-2">
-            An unrecognised or blank icon never fails a row — it falls back to the bank icon
-            automatically. Imported accounts always start with a balance of $0.
-          </p>
+          <p class="mt-2">{{ t('csvImport.accounts.hint') }}</p>
         </div>
 
         <div>
-          <label for="import-account-file" class="field-label">CSV file</label>
+          <label for="import-account-file" class="field-label">{{ t('csvImport.file') }}</label>
           <input
             id="import-account-file"
             type="file"
@@ -29,15 +27,15 @@
         <div class="grid grid-cols-3 gap-3">
           <div class="rounded-xl border border-line bg-surface-2 p-3 text-center">
             <p class="text-lg font-bold text-positive">{{ p.validRows }}</p>
-            <p class="text-[11px] text-muted">Valid</p>
+            <p class="text-[11px] text-muted">{{ t('csvImport.valid') }}</p>
           </div>
           <div class="rounded-xl border border-line bg-surface-2 p-3 text-center">
             <p class="text-lg font-bold text-warning">{{ p.duplicateRows }}</p>
-            <p class="text-[11px] text-muted">Duplicate</p>
+            <p class="text-[11px] text-muted">{{ t('csvImport.duplicate') }}</p>
           </div>
           <div class="rounded-xl border border-line bg-surface-2 p-3 text-center">
             <p class="text-lg font-bold text-negative">{{ p.errorRows }}</p>
-            <p class="text-[11px] text-muted">Errors</p>
+            <p class="text-[11px] text-muted">{{ t('csvImport.errors') }}</p>
           </div>
         </div>
 
@@ -45,12 +43,12 @@
           <table class="w-full min-w-[720px] text-left text-xs">
             <thead class="bg-surface-2 text-[10px] font-bold uppercase tracking-wider text-muted">
               <tr>
-                <th class="px-3 py-2">Line</th>
-                <th class="px-3 py-2">Name</th>
-                <th class="px-3 py-2">Description</th>
-                <th class="px-3 py-2">Icon</th>
-                <th class="px-3 py-2">Status</th>
-                <th class="px-3 py-2">Reason</th>
+                <th class="px-3 py-2">{{ t('csvImport.line') }}</th>
+                <th class="px-3 py-2">{{ t('fields.name') }}</th>
+                <th class="px-3 py-2">{{ t('fields.description') }}</th>
+                <th class="px-3 py-2">{{ t('fields.icon') }}</th>
+                <th class="px-3 py-2">{{ t('csvImport.status') }}</th>
+                <th class="px-3 py-2">{{ t('csvImport.reason') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -66,11 +64,11 @@
                   </td>
                   <td class="px-3 py-2">
                     @if (!row.valid) {
-                      <span class="chip-negative">Error</span>
+                      <span class="chip-negative">{{ t('csvImport.error') }}</span>
                     } @else if (row.duplicate) {
-                      <span class="chip-neutral">Duplicate</span>
+                      <span class="chip-neutral">{{ t('csvImport.duplicate') }}</span>
                     } @else {
-                      <span class="chip-positive">Valid</span>
+                      <span class="chip-positive">{{ t('csvImport.valid') }}</span>
                     }
                   </td>
                   <td class="max-w-[220px] truncate px-3 py-2 text-muted" [title]="row.errorMessage ?? ''">
@@ -89,11 +87,9 @@
         <span class="flex h-14 w-14 items-center justify-center rounded-full bg-positive/12 text-positive">
           <i class="fa-solid fa-check text-xl"></i>
         </span>
-        <p class="text-sm font-semibold">{{ p.validRows }} accounts imported successfully.</p>
+        <p class="text-sm font-semibold">{{ t('csvImport.accounts.done', { count: p.validRows }) }}</p>
         @if (p.duplicateRows > 0 || p.errorRows > 0) {
-          <p class="text-xs text-muted">
-            {{ p.duplicateRows }} duplicate and {{ p.errorRows }} invalid rows were skipped.
-          </p>
+          <p class="text-xs text-muted">{{ t('csvImport.skipped', { duplicates: p.duplicateRows, errors: p.errorRows }) }}</p>
         }
       </div>
     }
@@ -101,19 +97,19 @@
 
   <div modal-footer class="flex w-full justify-end gap-3">
     @if (step() === 'select') {
-      <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+      <button type="button" class="btn-secondary" (click)="close()">{{ t('common.cancel') }}</button>
       <button type="button" class="btn-primary min-w-[7rem]" [disabled]="!selectedFile() || loading()" (click)="runPreview()">
         @if (loading()) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-          <span>Reading…</span>
+          <span>{{ t('csvImport.reading') }}</span>
         } @else {
-          <span>Preview</span>
+          <span>{{ t('csvImport.preview') }}</span>
         }
       </button>
     }
 
     @if (step() === 'preview') {
-      <button type="button" class="btn-secondary" (click)="backToSelect()">Back</button>
+      <button type="button" class="btn-secondary" (click)="backToSelect()">{{ t('common.back') }}</button>
       <button
         type="button"
         class="btn-primary min-w-[7rem]"
@@ -122,15 +118,16 @@
       >
         @if (loading()) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-          <span>Importing…</span>
+          <span>{{ t('csvImport.importing') }}</span>
         } @else {
-          <span>Import {{ preview()!.validRows }} rows</span>
+          <span>{{ t('csvImport.importRows', { count: preview()!.validRows }) }}</span>
         }
       </button>
     }
 
     @if (step() === 'done') {
-      <button type="button" class="btn-primary min-w-[7rem]" (click)="close()">Done</button>
+      <button type="button" class="btn-primary min-w-[7rem]" (click)="close()">{{ t('csvImport.done') }}</button>
     }
   </div>
 </ui-modal>
+</ng-container>

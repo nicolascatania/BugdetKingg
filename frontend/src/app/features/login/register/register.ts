@@ -9,6 +9,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../core/services/NotificationService';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 
 /** At least one letter and one digit; length is enforced by the min/max validators. */
 const PASSWORD_PATTERN = /^(?=.*\p{L})(?=.*\d).+$/u;
@@ -16,7 +17,7 @@ const PASSWORD_PATTERN = /^(?=.*\p{L})(?=.*\d).+$/u;
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslocoDirective],
   templateUrl: './register.html',
   styleUrl: './register.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,6 +36,7 @@ export class Register {
     private fb: FormBuilder,
     private router: Router,
     private notificationService: NotificationService,
+    private transloco: TranslocoService,
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
@@ -74,8 +76,7 @@ export class Register {
         const errorMessage =
           typeof err.error === 'string'
             ? err.error
-            : err.error?.message ||
-              'Registration failed, please try again later';
+            : err.error?.message || this.transloco.translate('auth.register.failed');
 
         this.notificationService.error(errorMessage);
       },

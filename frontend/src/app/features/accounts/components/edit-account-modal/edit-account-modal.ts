@@ -1,3 +1,6 @@
+import { inject } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -31,11 +34,13 @@ import { FINANCIAL_ICONS } from '../../../icons/interfaces/iconsenum.interace';
 @Component({
   selector: 'app-edit-account-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, UiModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, UiModalComponent, TranslocoDirective],
   templateUrl: './edit-account-modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditAccountModal implements OnInit {
+  private readonly transloco = inject(TranslocoService);
+
   @Input() account: AccountDTO | null = null;
   @Output() closed = new EventEmitter<boolean>();
 
@@ -94,7 +99,7 @@ export class EditAccountModal implements OnInit {
       next: () => this.close(true),
       error: () => {
         this.saving.set(false);
-        alert('Something went wrong. Please try again.');
+        alert(this.transloco.translate('accounts.form.saveError'));
       },
     });
   }

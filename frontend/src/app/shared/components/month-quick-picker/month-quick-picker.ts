@@ -4,32 +4,21 @@ import {
   Component,
   EventEmitter,
   Input,
+  LOCALE_ID,
   Output,
+  inject,
 } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { getMonthDateRange } from '../../utils/datesUtils';
+import { monthAbbreviations } from '../../models/months.const';
 
 /** Range emitted when a month is picked, ready to patch into a date-range FormGroup. */
 export interface MonthQuickRange {
   from: string;
   to: string;
 }
-
-const MONTH_ABBREVIATIONS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
 
 /**
  * Small button + popover menu that lets the user pick a month abbreviation
@@ -39,7 +28,7 @@ const MONTH_ABBREVIATIONS = [
 @Component({
   selector: 'app-month-quick-picker',
   standalone: true,
-  imports: [CommonModule, MatMenuModule, MatTooltipModule],
+  imports: [CommonModule, MatMenuModule, MatTooltipModule, TranslocoDirective],
   templateUrl: './month-quick-picker.html',
   styleUrl: './month-quick-picker.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,7 +43,8 @@ export class MonthQuickPicker {
 
   @Output() rangeSelected = new EventEmitter<MonthQuickRange>();
 
-  months = MONTH_ABBREVIATIONS;
+  /** Abbreviated month names in the active locale. */
+  months = monthAbbreviations(inject(LOCALE_ID));
 
   // The picker always targets the current year, hence the info tooltip.
   currentYear = new Date().getFullYear();
