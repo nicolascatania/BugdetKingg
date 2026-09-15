@@ -487,7 +487,10 @@
     },
     "transactions": {
       "title": "Buchungen aus CSV importieren",
-      "hint": "destination_account ist nur für TRANSFER-Zeilen erforderlich (muss ein bestehendes Konto sein, verschieden von account). category ist bei TRANSFER optional.",
+      "hint": "destination_account ist nur bei TRANSFER-Zeilen erforderlich (muss ein bestehendes Konto sein, verschieden von account). category ist bei TRANSFER optional; eine noch nicht vorhandene Kategorie wird automatisch mit dem Standardsymbol angelegt.",
+      "newCategories": "{{count}} neue Kategorien werden angelegt:",
+      "newCategory": "Neu",
+      "newCategoryHint": "Diese Kategorie existiert noch nicht und wird beim Import angelegt",
       "done": "{{count}} Buchungen erfolgreich importiert.",
       "importError": "Fehler beim Importieren der Buchungen"
     }

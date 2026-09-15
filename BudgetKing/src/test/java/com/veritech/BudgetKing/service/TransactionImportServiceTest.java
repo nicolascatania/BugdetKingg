@@ -13,6 +13,7 @@ import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -109,19 +110,69 @@ class TransactionImportServiceTest {
     }
 
     @Test
-    @DisplayName("Should flag a row referencing a category that does not exist for the user")
-    void shouldFlagMissingCategory() {
+    @DisplayName("Should keep a row valid when its category does not exist yet and flag it as new")
+    void shouldFlagNewCategory() {
         when(categoryRepository.getByNameAndUser("Unknown Category", mockUser)).thenReturn(Optional.empty());
+        when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
+                .thenReturn(false);
         mockValidAccount();
 
         String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Unknown Category,Cinema,Cash,\n";
 
         ImportPreviewDTO preview = importService.preview(csvFile(csv));
 
-        assertEquals(0, preview.validRows());
-        assertEquals(1, preview.errorRows());
-        assertFalse(preview.rows().get(0).valid());
-        assertTrue(preview.rows().get(0).errorMessage().contains("Category not found"));
+        assertEquals(1, preview.validRows(), () -> "An unknown category must not invalidate the row");
+        assertEquals(0, preview.errorRows());
+        assertTrue(preview.rows().get(0).newCategory(), () -> "Row must be flagged as creating a category");
+        assertEquals(List.of("Unknown Category"), preview.newCategories(), () -> "Preview must list the categories to create");
+        verify(categoryRepository, never()).save(any(Category.class));
+    }
+
+    @Test
+    @DisplayName("Should not flag an existing category as new")
+    void shouldNotFlagExistingCategory() {
+        when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
+        when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
+                .thenReturn(false);
+        mockValidAccount();
+
+        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Entertainment,Cinema,Cash,\n";
+
+        ImportPreviewDTO preview = importService.preview(csvFile(csv));
+
+        assertFalse(preview.rows().get(0).newCategory());
+        assertTrue(preview.newCategories().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should create a missing category once on commit and reuse it for every row naming it")
+    void shouldCreateMissingCategoryOnCommit() {
+        when(categoryRepository.getByNameAndUser("Gifts", mockUser)).thenReturn(Optional.empty());
+        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> {
+            Category c = invocation.getArgument(0);
+            c.setId(UUID.randomUUID());
+            return c;
+        });
+        when(transactionRepository.existsByUserAndDateAndAmountAndDescriptionAndType(any(), any(), any(), any(), any()))
+                .thenReturn(false);
+        when(transactionService.create(any(TransactionDTO.class))).thenReturn(null);
+        mockValidAccount();
+
+        String csv = HEADER
+                + "2026-01-15,Birthday,25.50,EXPENSE,Gifts,Shop,Cash,\n"
+                + "2026-01-16,Wedding,80,EXPENSE,Gifts,Shop,Cash,\n";
+
+        ImportPreviewDTO result = importService.commit(csvFile(csv));
+
+        assertEquals(2, result.validRows());
+        assertEquals(List.of("Gifts"), result.newCategories());
+
+        ArgumentCaptor<Category> captor = ArgumentCaptor.forClass(Category.class);
+        verify(categoryRepository, times(1)).save(captor.capture());
+        assertEquals("Gifts", captor.getValue().getName());
+        assertEquals(CategoryIconCatalog.DEFAULT_ICON, captor.getValue().getIcon(), () -> "New categories get the default icon");
+        assertSame(mockUser, captor.getValue().getUser());
+        verify(transactionService, times(2)).create(argThat(dto -> dto.categoryName().equals("Gifts")));
     }
 
     @Test
@@ -341,10 +392,10 @@ class TransactionImportServiceTest {
     @Test
     @DisplayName("Should not persist anything when every row is invalid")
     void shouldNotPersistWhenAllRowsInvalid() {
-        when(categoryRepository.getByNameAndUser("Ghost", mockUser)).thenReturn(Optional.empty());
+        when(categoryRepository.getByNameAndUser("Entertainment", mockUser)).thenReturn(Optional.of(mockCategory));
         mockValidAccount();
 
-        String csv = HEADER + "2026-01-15,Movie night,25.50,EXPENSE,Ghost,Cinema,Cash,\n";
+        String csv = HEADER + "2026-01-15,Movie night,not-a-number,EXPENSE,Entertainment,Cinema,Cash,\n";
 
         ImportPreviewDTO result = importService.commit(csvFile(csv));
 

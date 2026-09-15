@@ -487,7 +487,10 @@
     },
     "transactions": {
       "title": "Import transactions from CSV",
-      "hint": "destination_account is only required for TRANSFER rows (must be an existing account, different from account). category is optional for TRANSFER.",
+      "hint": "destination_account is only required for TRANSFER rows (must be an existing account, different from account). category is optional for TRANSFER; a category that does not exist yet is created automatically with the default icon.",
+      "newCategories": "{{count}} new categories will be created:",
+      "newCategory": "New",
+      "newCategoryHint": "This category does not exist yet and will be created when you import",
       "done": "{{count}} transactions imported successfully.",
       "importError": "Error importing transactions"
     }

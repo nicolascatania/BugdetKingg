@@ -487,7 +487,10 @@
     },
     "transactions": {
       "title": "Importuj transakcje z CSV",
-      "hint": "destination_account jest wymagane tylko dla wierszy TRANSFER (musi być istniejącym kontem, innym niż account). category jest opcjonalne dla TRANSFER.",
+      "hint": "destination_account jest wymagane tylko w wierszach TRANSFER (musi być istniejącym kontem, innym niż account). category jest opcjonalne dla TRANSFER; nieistniejąca kategoria zostanie utworzona automatycznie z domyślną ikoną.",
+      "newCategories": "Zostaną utworzone {{count}} nowe kategorie:",
+      "newCategory": "Nowa",
+      "newCategoryHint": "Ta kategoria jeszcze nie istnieje i zostanie utworzona podczas importu",
       "done": "Zaimportowano {{count}} transakcji.",
       "importError": "Błąd importu transakcji"
     }

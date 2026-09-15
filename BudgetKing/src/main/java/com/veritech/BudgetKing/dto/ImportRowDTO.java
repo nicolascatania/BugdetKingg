@@ -20,8 +20,11 @@ import java.util.UUID;
  *                          number
  * @param type              transaction type as written in the file (INCOME, EXPENSE or
  *                          TRANSFER)
- * @param category          category name as written in the file; mandatory and must already
- *                          exist for the user, except for TRANSFER rows where it's optional
+ * @param category          category name as written in the file (trimmed); mandatory except
+ *                          for TRANSFER rows where it's optional. It does not need to exist:
+ *                          see {@code newCategory}
+ * @param newCategory       {@code true} when the category does not exist for the user yet and
+ *                          committing the import will create it with the default icon
  * @param counterparty      who was paid / who paid, defaulted when the cell is blank
  * @param account           source account resolved by matching the file's {@code account}
  *                          column against the user's accounts by name
@@ -39,6 +42,7 @@ public record ImportRowDTO(
         BigDecimal amount,
         String type,
         String category,
+        boolean newCategory,
         String counterparty,
         UUID account,
         UUID destinationAccount,

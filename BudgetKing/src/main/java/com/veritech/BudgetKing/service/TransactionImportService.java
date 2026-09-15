@@ -31,7 +31,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -51,7 +53,9 @@ import java.util.UUID;
  * (see {@link ImportRowDTO} for the exact per-column semantics). {@code TRANSFER} rows require
  * {@code destination_account} (matched by name, must exist and differ from {@code account});
  * {@code category} is mandatory for INCOME/EXPENSE and optional for TRANSFER, mirroring
- * {@link TransactionDTO}'s own validation rules.</p>
+ * {@link TransactionDTO}'s own validation rules. A category name that does not exist for the
+ * user is not an error: the preview flags it ({@code newCategory}) and the commit creates it
+ * with {@link CategoryIconCatalog#DEFAULT_ICON} before persisting the row.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -94,21 +98,23 @@ public class TransactionImportService {
 
         List<ImportRowDTO> rows = parseRows(file, user);
 
+        // Categories created during this commit, so several rows naming the same new
+        // category share one row instead of each inserting its own.
+        Map<String, Category> createdCategories = new HashMap<>();
+
         for (ImportRowDTO row : rows) {
             if (row.valid() && !row.duplicate()) {
-                persistRow(row, user);
+                persistRow(row, user, createdCategories);
             }
         }
 
         return buildSummary(rows);
     }
 
-    private void persistRow(ImportRowDTO row, AppUser user) {
+    private void persistRow(ImportRowDTO row, AppUser user, Map<String, Category> createdCategories) {
         Category category = null;
         if (!StringUtils.isBlankOrNUll(row.category())) {
-            category = categoryRepository.getByNameAndUser(row.category(), user)
-                    .orElseThrow(() -> new TransactionImportRuntimeException(
-                            "Category not found: " + row.category()));
+            category = resolveOrCreateCategory(row.category(), user, createdCategories);
         }
 
         TransactionDTO dto = new TransactionDTO(
@@ -201,6 +207,7 @@ public class TransactionImportService {
                     null,
                     safeGet(record, "type"),
                     safeGet(record, "category"),
+                    false,
                     safeGet(record, "counterparty"),
                     null,
                     null,
@@ -269,16 +276,15 @@ public class TransactionImportService {
 
         // Category is mandatory for INCOME/EXPENSE, optional for TRANSFER - mirrors
         // TransactionDTO.isCategoryRequired().
-        Category category = null;
-        if (!isTransfer) {
-            if (StringUtils.isBlankOrNUll(rawCategory)) {
-                errors.add("Category is mandatory");
-            } else {
-                category = categoryRepository.getByNameAndUser(rawCategory.trim(), user).orElse(null);
-                if (category == null) {
-                    errors.add("Category not found: " + rawCategory);
-                }
-            }
+        // A name that does not exist yet is not an error: the commit creates it (default
+        // icon) and the preview flags it so the user knows before confirming.
+        String categoryName = StringUtils.isBlankOrNUll(rawCategory) ? null : rawCategory.trim();
+        boolean newCategory = false;
+        if (!isTransfer && categoryName == null) {
+            errors.add("Category is mandatory");
+        }
+        if (categoryName != null) {
+            newCategory = categoryRepository.getByNameAndUser(categoryName, user).isEmpty();
         }
 
         String counterparty = StringUtils.isBlankOrNUll(rawCounterparty) ? "Unknown" : rawCounterparty.trim();
@@ -332,7 +338,8 @@ public class TransactionImportService {
                 rawDescription,
                 amount,
                 typeOut,
-                rawCategory,
+                categoryName,
+                newCategory,
                 counterparty,
                 account,
                 destinationAccount,
@@ -359,6 +366,32 @@ public class TransactionImportService {
         int duplicateRows = (int) rows.stream().filter(r -> r.valid() && r.duplicate()).count();
         int validRows = totalRows - errorRows - duplicateRows;
 
-        return new ImportPreviewDTO(rows, totalRows, validRows, duplicateRows, errorRows);
+        List<String> newCategories = rows.stream()
+                .filter(r -> r.valid() && !r.duplicate() && r.newCategory())
+                .map(ImportRowDTO::category)
+                .distinct()
+                .toList();
+
+        return new ImportPreviewDTO(rows, totalRows, validRows, duplicateRows, errorRows, newCategories);
+    }
+
+    /**
+     * Finds the user's category by exact name, or creates it with the default icon. Newly
+     * created ones are remembered in {@code createdCategories} for the rest of the commit.
+     */
+    private Category resolveOrCreateCategory(String name, AppUser user, Map<String, Category> createdCategories) {
+        Category cached = createdCategories.get(name);
+        if (cached != null) {
+            return cached;
+        }
+        return categoryRepository.getByNameAndUser(name, user).orElseGet(() -> {
+            Category created = categoryRepository.save(Category.builder()
+                    .name(name)
+                    .icon(CategoryIconCatalog.DEFAULT_ICON)
+                    .user(user)
+                    .build());
+            createdCategories.put(name, created);
+            return created;
+        });
     }
 }

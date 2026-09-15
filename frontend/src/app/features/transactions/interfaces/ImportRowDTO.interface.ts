@@ -5,6 +5,8 @@ export interface ImportRowDTO {
   amount: number | null;
   type: string;
   category: string;
+  /** The category does not exist yet; committing creates it with the default icon. */
+  newCategory: boolean;
   counterparty: string;
   account: string | null;
   destinationAccount: string | null;

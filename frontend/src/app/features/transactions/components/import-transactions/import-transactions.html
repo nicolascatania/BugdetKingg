@@ -39,8 +39,18 @@
           </div>
         </div>
 
+        @if (p.newCategories.length > 0) {
+          <p class="flex items-start gap-2 rounded-xl border border-brand/30 bg-brand/10 p-3 text-xs">
+            <i class="fa-solid fa-tags mt-0.5 text-brand"></i>
+            <span>
+              {{ t('csvImport.transactions.newCategories', { count: p.newCategories.length }) }}
+              <span class="font-semibold">{{ p.newCategories.join(', ') }}</span>
+            </span>
+          </p>
+        }
+
         <div class="custom-scroll max-h-64 overflow-y-auto rounded-xl border border-line">
-          <table class="w-full min-w-[920px] text-left text-xs">
+          <table class="w-full min-w-[1040px] text-left text-xs">
             <thead class="bg-surface-2 text-[10px] font-bold uppercase tracking-wider text-muted">
               <tr>
                 <th class="px-3 py-2">{{ t('csvImport.line') }}</th>
@@ -48,6 +58,7 @@
                 <th class="px-3 py-2">{{ t('fields.description') }}</th>
                 <th class="px-3 py-2 text-right">{{ t('fields.amount') }}</th>
                 <th class="px-3 py-2">{{ t('fields.type') }}</th>
+                <th class="px-3 py-2">{{ t('fields.category') }}</th>
                 <th class="px-3 py-2">{{ t('csvImport.destination') }}</th>
                 <th class="px-3 py-2">{{ t('csvImport.status') }}</th>
                 <th class="px-3 py-2">{{ t('csvImport.reason') }}</th>
@@ -70,6 +81,14 @@
                       }"
                     >
                       {{ row.type }}
+                    </span>
+                  </td>
+                  <td class="max-w-[160px] px-3 py-2">
+                    <span class="inline-flex max-w-full items-center gap-1.5">
+                      <span class="truncate">{{ row.category || '—' }}</span>
+                      @if (row.newCategory) {
+                        <span class="chip-brand shrink-0" [title]="t('csvImport.transactions.newCategoryHint')">{{ t('csvImport.transactions.newCategory') }}</span>
+                      }
                     </span>
                   </td>
                   <td class="max-w-[140px] truncate px-3 py-2 text-muted">

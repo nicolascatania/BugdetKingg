@@ -6,4 +6,6 @@ export interface ImportPreviewDTO {
   validRows: number;
   duplicateRows: number;
   errorRows: number;
+  /** Distinct category names the commit will create, from rows that will be imported. */
+  newCategories: string[];
 }

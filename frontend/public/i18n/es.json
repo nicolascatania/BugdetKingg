@@ -487,7 +487,10 @@
     },
     "transactions": {
       "title": "Importar movimientos desde CSV",
-      "hint": "destination_account solo es obligatorio para filas TRANSFER (debe ser una cuenta existente, distinta de account). category es opcional para TRANSFER.",
+      "hint": "destination_account solo es obligatorio en filas TRANSFER (debe ser una cuenta existente, distinta de account). category es opcional en TRANSFER; una categoría que todavía no existe se crea automáticamente con el ícono por defecto.",
+      "newCategories": "Se van a crear {{count}} categorías nuevas:",
+      "newCategory": "Nueva",
+      "newCategoryHint": "Esta categoría todavía no existe y se crea al importar",
       "done": "{{count}} movimientos importados correctamente.",
       "importError": "Error al importar movimientos"
     }
