@@ -777,6 +777,16 @@
       "title": "Sprache",
       "subtitle": "Menüs, Beschriftungen und Meldungen in deiner Sprache.",
       "reloadHint": "Beim Sprachwechsel wird die Seite neu geladen, damit Datums- und Betragsformate der neuen Region folgen."
+    },
+    "region": {
+      "title": "Region",
+      "subtitle": "Dein Wohnort bestimmt, welche lokalen Kennzahlen BudgetKing anzeigt.",
+      "country": "Land",
+      "none": "Nicht festgelegt",
+      "hint": "Argentinien zeigt den USD-Kurs und die INDEC-Inflation auf der Startseite. Andere Länder zeigen noch keine Marktdaten; weitere folgen.",
+      "saved": "Region gespeichert.",
+      "error": "Deine Region konnte nicht gespeichert werden. Bitte versuche es erneut.",
+      "loadError": "Die Länderliste konnte nicht geladen werden. Bitte lade die Seite neu."
     }
   }
 }

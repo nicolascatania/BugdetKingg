@@ -777,6 +777,16 @@
       "title": "Language",
       "subtitle": "Menus, labels and messages in your language.",
       "reloadHint": "Changing the language reloads the page so dates and amounts follow the new locale."
+    },
+    "region": {
+      "title": "Region",
+      "subtitle": "Where you live decides which local figures BudgetKing shows.",
+      "country": "Country",
+      "none": "Not set",
+      "hint": "Argentina shows the USD quote and INDEC inflation on the home page. Other countries show no market figures yet; more will follow.",
+      "saved": "Region saved.",
+      "error": "Could not save your region. Please try again.",
+      "loadError": "The country list could not be loaded. Please reload the page."
     }
   }
 }

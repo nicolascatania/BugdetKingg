@@ -96,5 +96,47 @@
       {{ t('settings.language.reloadHint') }}
     </p>
   </section>
+
+  <!-- Region: which country-specific data (Argentine dollar quote, INDEC inflation) the home page shows. -->
+  <section appReveal [revealDelay]="180" class="card p-5 sm:p-6">
+    <div class="mb-4 flex items-center gap-3">
+      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+        <i class="fa-solid fa-location-dot text-sm"></i>
+      </span>
+      <div>
+        <h2 class="section-title">{{ t('settings.region.title') }}</h2>
+        <p class="text-xs text-muted">{{ t('settings.region.subtitle') }}</p>
+      </div>
+    </div>
+
+    <label for="settings-country" class="field-label">{{ t('settings.region.country') }}</label>
+    @if (countries() === undefined) {
+      <div class="skeleton h-11 w-full rounded-xl" aria-hidden="true"></div>
+    } @else if (countries() === null) {
+      <p class="flex items-center gap-2 text-sm text-negative" role="alert">
+        <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+        {{ t('settings.region.loadError') }}
+      </p>
+    } @else {
+      <!-- Native select on purpose: ~250 entries, and the browser's own type-ahead and phone picker beat a custom dropdown. -->
+      <select
+        id="settings-country"
+        class="field-select"
+        [disabled]="savingCountry()"
+        (change)="selectCountry($event)"
+      >
+        <!-- selected on the option, not value on the select: the options render after the select does. -->
+        <option value="" [selected]="region.country() === null">{{ t('settings.region.none') }}</option>
+        @for (country of countries(); track country.code) {
+          <option [value]="country.code" [selected]="country.code === region.country()">{{ country.name }}</option>
+        }
+      </select>
+    }
+
+    <p class="mt-3 flex items-start gap-2 text-xs text-subtle">
+      <i class="fa-solid fa-circle-info mt-0.5 text-[10px]"></i>
+      <span>{{ t('settings.region.hint') }}</span>
+    </p>
+  </section>
 </div>
 </ng-container>

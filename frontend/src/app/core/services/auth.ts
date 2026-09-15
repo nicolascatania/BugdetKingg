@@ -7,7 +7,7 @@ import {
   RegisterRequest,
 } from '../../features/login/interfaces/login.interface';
 import { AuthResponse } from '../interfaces/AuthResponse.interface';
-import { UserProfile } from '../interfaces/UserProfile.interface';
+import { UpdateProfileRequest, UserProfile } from '../interfaces/UserProfile.interface';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
 
@@ -117,6 +117,17 @@ export class AuthService {
         this.currentUserRequested = false;
       },
     });
+  }
+
+  /**
+   * Partially updates the signed-in user's profile and refreshes
+   * {@link currentUser} with what the backend stored, so every reader (sidebar,
+   * region-aware widgets) sees the change without a refetch.
+   */
+  updateProfile(patch: UpdateProfileRequest): Observable<UserProfile> {
+    return this.http
+      .patch<UserProfile>(`${environment.apiUrl}/me`, patch)
+      .pipe(tap((profile) => this.currentUserSignal.set(profile)));
   }
 
   getToken(): string | null {
