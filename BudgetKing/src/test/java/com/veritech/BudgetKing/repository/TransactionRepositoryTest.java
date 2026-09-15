@@ -1,8 +1,10 @@
 package com.veritech.BudgetKing.repository;
 
+import com.veritech.BudgetKing.dto.ExpenseTotalDTO;
 import com.veritech.BudgetKing.dto.IncomeExpenseDTO;
 import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.enumerator.TransactionType;
+import com.veritech.BudgetKing.model.Transaction;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -106,5 +108,54 @@ class TransactionRepositoryTest extends BaseRepositoryTest {
         assertEquals(1, januaryReport.month(), () -> "Month mismatch");
         assertEquals(0, expectedIncome.compareTo(januaryReport.income()), () -> "Income mismatch");
         assertEquals(0, expectedExpense.compareTo(januaryReport.expense()), () -> "Expense mismatch");
+    }
+
+    @Test
+    @DisplayName("Should total only the category's expenses within the month, ignoring income")
+    void shouldSumCategoryExpensesForMonth() {
+        ExpenseTotalDTO result = repository.sumExpensesByCategoryBetween(savedUser, savedCategory, start, end);
+
+        assertEquals(0, expectedExpense.compareTo(result.total()), () -> "The 50.00 income must not be counted");
+        assertEquals(1, result.count(), () -> "Only one expense exists in January");
+    }
+
+    @Test
+    @DisplayName("Should return zero, not null, for a month without expenses")
+    void shouldSumZeroForEmptyMonth() {
+        ExpenseTotalDTO result = repository.sumExpensesByCategoryBetween(
+                savedUser, savedCategory, LocalDateTime.of(2024, 3, 1, 0, 0), LocalDateTime.of(2024, 4, 1, 0, 0));
+
+        assertEquals(0, BigDecimal.ZERO.compareTo(result.total()), () -> "Empty month must total zero");
+        assertEquals(0, result.count());
+    }
+
+    @Test
+    @DisplayName("Should total the category's expenses across every period")
+    void shouldSumCategoryExpensesAllTime() {
+        entityManager.persist(Transaction.builder()
+                .amount(new BigDecimal("30.00"))
+                .description("Cinema")
+                .category(savedCategory)
+                .user(savedUser)
+                .account(savedAccount)
+                .type(TransactionType.EXPENSE)
+                .date(LocalDateTime.of(2023, 6, 10, 20, 0))
+                .build());
+        entityManager.flush();
+
+        ExpenseTotalDTO result = repository.sumExpensesByCategory(savedUser, savedCategory);
+
+        assertEquals(0, new BigDecimal("50.00").compareTo(result.total()), () -> "20.00 + 30.00 across both years");
+        assertEquals(2, result.count());
+    }
+
+    @Test
+    @DisplayName("Should list the category's expenses of the month, most recent first")
+    void shouldListCategoryExpensesForMonth() {
+        List<Transaction> result = repository.findExpensesByCategoryBetween(savedUser, savedCategory, start, end);
+
+        assertEquals(1, result.size(), () -> "Only the expense row belongs to the list");
+        assertEquals("Steam Game", result.get(0).getDescription());
+        assertEquals(TransactionType.EXPENSE, result.get(0).getType());
     }
 }

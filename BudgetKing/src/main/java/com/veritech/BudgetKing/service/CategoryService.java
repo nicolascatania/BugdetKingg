@@ -1,15 +1,20 @@
 package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.CategoryDTO;
+import com.veritech.BudgetKing.dto.CategorySpendingDTO;
+import com.veritech.BudgetKing.dto.ExpenseTotalDTO;
+import com.veritech.BudgetKing.dto.LastMovesDTO;
 import com.veritech.BudgetKing.dto.CategoryRelatedEntities;
 import com.veritech.BudgetKing.dto.OptionDTO;
 import com.veritech.BudgetKing.exception.CategoryRuntimeException;
 import com.veritech.BudgetKing.filter.CategoryFilter;
 import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.CategoryMapper;
+import com.veritech.BudgetKing.mapper.TransactionMapper;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.repository.CategoryRepository;
+import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +25,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +37,8 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
     private final CategoryRepository categoryRepository;
     private final SecurityUtils securityUtils;
     private final CategoryMapper categoryMapper;
+    private final TransactionRepository transactionRepository;
+    private final TransactionMapper transactionMapper;
 
     @Override
     public CategoryDTO getById(UUID uuid) {
@@ -109,4 +118,43 @@ public class CategoryService implements ICrudService<CategoryDTO, UUID, Category
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
     }
 
+
+    /**
+     * Spending on one category: the given month in detail (total, count and the
+     * expenses themselves) plus the all-time total. Only {@code EXPENSE} rows count.
+     *
+     * @param id    identifier of the category, must belong to the authenticated user
+     * @param year  calendar year of the month to detail
+     * @param month calendar month to detail, 1 through 12
+     * @throws EntityNotFoundException when the user has no category with that identifier
+     */
+    public CategorySpendingDTO getSpending(UUID id, int year, int month) {
+        AppUser user = securityUtils.getCurrentUser();
+        Category category = getEntityById(id);
+
+        YearMonth period = YearMonth.of(year, month);
+        LocalDateTime start = period.atDay(1).atStartOfDay();
+        LocalDateTime end = period.plusMonths(1).atDay(1).atStartOfDay();
+
+        ExpenseTotalDTO monthTotal = transactionRepository.sumExpensesByCategoryBetween(user, category, start, end);
+        ExpenseTotalDTO allTime = transactionRepository.sumExpensesByCategory(user, category);
+        List<LastMovesDTO> monthTransactions = transactionRepository
+                .findExpensesByCategoryBetween(user, category, start, end)
+                .stream()
+                .map(transactionMapper::toLastMovesDTO)
+                .toList();
+
+        return new CategorySpendingDTO(
+                category.getId(),
+                category.getName(),
+                category.getIcon(),
+                year,
+                month,
+                monthTotal.total(),
+                monthTotal.count(),
+                allTime.total(),
+                allTime.count(),
+                monthTransactions
+        );
+    }
 }

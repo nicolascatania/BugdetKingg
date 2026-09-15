@@ -1,13 +1,19 @@
 package com.veritech.BudgetKing.service;
 
 import com.veritech.BudgetKing.dto.CategoryDTO;
+import com.veritech.BudgetKing.dto.CategorySpendingDTO;
+import com.veritech.BudgetKing.dto.ExpenseTotalDTO;
+import com.veritech.BudgetKing.dto.LastMovesDTO;
 import com.veritech.BudgetKing.dto.OptionDTO;
 import com.veritech.BudgetKing.exception.CategoryRuntimeException;
 import com.veritech.BudgetKing.filter.CategoryFilter;
 import com.veritech.BudgetKing.mapper.CategoryMapper;
+import com.veritech.BudgetKing.mapper.TransactionMapper;
 import com.veritech.BudgetKing.model.AppUser;
 import com.veritech.BudgetKing.model.Category;
+import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.CategoryRepository;
+import com.veritech.BudgetKing.repository.TransactionRepository;
 import com.veritech.BudgetKing.security.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
@@ -17,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +46,12 @@ class CategoryServiceTest {
 
     @Mock
     private CategoryMapper categoryMapper;
+
+    @Mock
+    private TransactionRepository transactionRepository;
+
+    @Mock
+    private TransactionMapper transactionMapper;
 
     @InjectMocks
     private CategoryService categoryService;
@@ -194,5 +208,53 @@ class CategoryServiceTest {
         assertEquals(categoryName, result.get(0).value(), () -> "Option value mismatch");
         verify(categoryRepository).findByUser(mockUser);
         verifyNoInteractions(categoryMapper);
+    }
+
+    @Nested
+    @DisplayName("Spending")
+    class Spending {
+
+        @Test
+        @DisplayName("Should report the month's expenses and the all-time total for an owned category")
+        void shouldReportSpending() {
+            when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+            when(categoryRepository.findByIdAndUser(categoryId, mockUser)).thenReturn(Optional.of(mockCategory));
+
+            LocalDateTime start = LocalDateTime.of(2026, 3, 1, 0, 0);
+            LocalDateTime end = LocalDateTime.of(2026, 4, 1, 0, 0);
+            when(transactionRepository.sumExpensesByCategoryBetween(mockUser, mockCategory, start, end))
+                    .thenReturn(new ExpenseTotalDTO(new BigDecimal("120.50"), 2));
+            when(transactionRepository.sumExpensesByCategory(mockUser, mockCategory))
+                    .thenReturn(new ExpenseTotalDTO(new BigDecimal("980.00"), 14));
+
+            Transaction expense = Transaction.builder().id(UUID.randomUUID()).build();
+            LastMovesDTO move = new LastMovesDTO(expense.getId(), "15/03/2026 10:00", new BigDecimal("70.00"),
+                    "EXPENSE", "Shop", "Groceries", categoryName, "Cash");
+            when(transactionRepository.findExpensesByCategoryBetween(mockUser, mockCategory, start, end))
+                    .thenReturn(List.of(expense));
+            when(transactionMapper.toLastMovesDTO(expense)).thenReturn(move);
+
+            CategorySpendingDTO result = categoryService.getSpending(categoryId, 2026, 3);
+
+            assertEquals(categoryId, result.categoryId(), () -> "Category id mismatch");
+            assertEquals(2026, result.year());
+            assertEquals(3, result.month());
+            assertEquals(new BigDecimal("120.50"), result.monthTotal(), () -> "Month total mismatch");
+            assertEquals(2, result.monthCount(), () -> "Month count mismatch");
+            assertEquals(new BigDecimal("980.00"), result.allTimeTotal(), () -> "All-time total mismatch");
+            assertEquals(14, result.allTimeCount(), () -> "All-time count mismatch");
+            assertEquals(List.of(move), result.monthTransactions(), () -> "Month movements mismatch");
+        }
+
+        @Test
+        @DisplayName("Should throw EntityNotFoundException for a category the user does not own")
+        void shouldRejectForeignCategory() {
+            when(securityUtils.getCurrentUser()).thenReturn(mockUser);
+            when(categoryRepository.findByIdAndUser(categoryId, mockUser)).thenReturn(Optional.empty());
+
+            assertThrows(EntityNotFoundException.class, () -> categoryService.getSpending(categoryId, 2026, 3),
+                    () -> "Spending must be user-scoped");
+            verifyNoInteractions(transactionRepository);
+        }
     }
 }

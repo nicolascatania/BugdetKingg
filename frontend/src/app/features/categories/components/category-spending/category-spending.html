@@ -1,0 +1,105 @@
+<ng-container *transloco="let t">
+<ui-modal [open]="true" [title]="t('categories.spending.title')" maxWidth="max-w-xl" (closed)="close()">
+  <div modal-body class="space-y-5">
+    <!-- Category being inspected -->
+    <div class="flex items-center gap-3">
+      <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand">
+        <i class="fa-solid" [ngClass]="category().icon || 'fa-tags'"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="truncate text-base font-bold">{{ category().name }}</p>
+        <p class="text-xs text-muted">{{ t('categories.spending.subtitle') }}</p>
+      </div>
+    </div>
+
+    <!-- Month stepper -->
+    <div class="flex items-center justify-between rounded-2xl border border-line bg-surface-2 px-2 py-1.5">
+      <button
+        type="button"
+        class="btn-icon !min-h-0 h-9 w-9 text-muted hover:text-brand"
+        (click)="previousMonth()"
+        [disabled]="loading()"
+        [attr.aria-label]="t('categories.spending.previousMonth')"
+      >
+        <i class="fa-solid fa-chevron-left text-xs"></i>
+      </button>
+      <p class="text-sm font-bold">{{ periodLabel() }}</p>
+      <button
+        type="button"
+        class="btn-icon !min-h-0 h-9 w-9 text-muted hover:text-brand disabled:opacity-40"
+        (click)="nextMonth()"
+        [disabled]="loading() || isCurrentMonth()"
+        [attr.aria-label]="t('categories.spending.nextMonth')"
+      >
+        <i class="fa-solid fa-chevron-right text-xs"></i>
+      </button>
+    </div>
+
+    @if (loading()) {
+      <div class="grid grid-cols-2 gap-3" aria-hidden="true">
+        <div class="rounded-2xl border border-line p-4">
+          <div class="skeleton h-2.5 w-20 rounded"></div>
+          <div class="skeleton mt-3 h-6 w-28 rounded"></div>
+        </div>
+        <div class="rounded-2xl border border-line p-4">
+          <div class="skeleton h-2.5 w-20 rounded"></div>
+          <div class="skeleton mt-3 h-6 w-28 rounded"></div>
+        </div>
+      </div>
+      <div class="space-y-2" aria-hidden="true">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="flex items-center justify-between rounded-xl border border-line p-3">
+            <div class="skeleton h-3.5 w-1/2 rounded"></div>
+            <div class="skeleton h-3.5 w-16 rounded"></div>
+          </div>
+        }
+      </div>
+    } @else {
+      @if (spending(); as s) {
+        <!-- Figures -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-2xl border border-line p-4">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">{{ t('categories.spending.thisMonth') }}</p>
+            <p class="tabular mt-1 text-xl font-bold text-negative">{{ s.monthTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
+            <p class="mt-0.5 text-xs text-muted">{{ t('categories.spending.expenseCount', { count: s.monthCount }) }}</p>
+          </div>
+          <div class="rounded-2xl border border-line p-4">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-subtle">{{ t('categories.spending.allTime') }}</p>
+            <p class="tabular mt-1 text-xl font-bold">{{ s.allTimeTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</p>
+            <p class="mt-0.5 text-xs text-muted">{{ t('categories.spending.expenseCount', { count: s.allTimeCount }) }}</p>
+          </div>
+        </div>
+
+        <!-- The month's expenses -->
+        <div>
+          <p class="eyebrow mb-2">{{ t('categories.spending.movements') }}</p>
+          <div class="custom-scroll max-h-72 space-y-2 overflow-y-auto pr-1">
+            @for (move of s.monthTransactions; track move.id) {
+              <div class="flex items-center justify-between gap-3 rounded-xl border border-line p-3">
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold">{{ move.description }}</p>
+                  <p class="truncate text-xs text-muted">
+                    {{ move.date }} · {{ move.counterparty }} · {{ move.accountName }}
+                  </p>
+                </div>
+                <p class="tabular shrink-0 text-sm font-bold text-negative">
+                  {{ move.amount | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                </p>
+              </div>
+            } @empty {
+              <div class="rounded-xl border border-dashed border-line p-6 text-center">
+                <i class="fa-solid fa-receipt mb-2 block text-2xl text-subtle"></i>
+                <p class="text-xs text-muted">{{ t('categories.spending.empty') }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <div modal-footer class="flex w-full justify-end">
+    <button type="button" class="btn-secondary" (click)="close()">{{ t('common.close') }}</button>
+  </div>
+</ui-modal>
+</ng-container>

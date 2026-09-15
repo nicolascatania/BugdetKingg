@@ -49,15 +49,26 @@
         <div
           class="category-row group flex flex-col gap-3 p-4 transition-colors duration-150 hover:bg-brand/[0.04] sm:flex-row sm:items-center sm:justify-between sm:px-6"
         >
-          <div class="flex min-w-0 items-center gap-3">
+          <!-- The identity block opens the spending breakdown; edit/delete stay as separate actions. -->
+          <button
+            type="button"
+            class="flex min-w-0 items-center gap-3 rounded-xl text-left"
+            (click)="openSpendingModal(category)"
+            [title]="t('categories.spending.open')"
+          >
             <span
               class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-brand
                      transition-transform duration-300 ease-spring group-hover:scale-105"
             >
               <i class="fa-solid text-sm" [ngClass]="category.icon || 'fa-tags'"></i>
             </span>
-            <h3 class="truncate text-sm font-semibold">{{ category.name }}</h3>
-          </div>
+            <span class="min-w-0">
+              <h3 class="truncate text-sm font-semibold">{{ category.name }}</h3>
+              <span class="block text-[11px] text-subtle transition-colors duration-150 group-hover:text-brand">
+                <i class="fa-solid fa-chart-simple mr-1 text-[10px]"></i>{{ t('categories.spending.open') }}
+              </span>
+            </span>
+          </button>
 
           <div class="flex items-center justify-end gap-2 border-t border-line pt-3 sm:border-none sm:pt-0">
             <button
@@ -107,6 +118,10 @@
 
 @if (isModalCategoryOpen()) {
   <app-edit-category [category]="selectedCategory()" (submitEvent)="onCategorySaved()"></app-edit-category>
+}
+
+@if (spendingCategory(); as category) {
+  <app-category-spending [category]="category" (closed)="spendingCategory.set(null)" />
 }
 
 @if (isImportModalOpen()) {

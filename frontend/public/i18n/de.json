@@ -442,6 +442,18 @@
     "exportError": "Fehler beim Exportieren der Kategorien",
     "saved": "Kategorie erfolgreich gespeichert",
     "saveError": "Fehler beim Speichern der Kategorie",
+    "spending": {
+      "title": "Ausgaben der Kategorie",
+      "subtitle": "Nur Ausgaben; Einnahmen und Überweisungen bleiben außen vor.",
+      "open": "Ausgaben ansehen",
+      "previousMonth": "Vormonat",
+      "nextMonth": "Nächster Monat",
+      "thisMonth": "Dieser Monat",
+      "allTime": "Gesamt",
+      "expenseCount": "{{count}} Ausgaben",
+      "movements": "Ausgaben in diesem Monat",
+      "empty": "Keine Ausgaben in diesem Monat."
+    },
     "form": {
       "createTitle": "Neue Kategorie",
       "editTitle": "Kategorie bearbeiten",

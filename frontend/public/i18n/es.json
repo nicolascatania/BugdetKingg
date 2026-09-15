@@ -442,6 +442,18 @@
     "exportError": "Error al exportar categorías",
     "saved": "Categoría guardada correctamente",
     "saveError": "Error al guardar la categoría",
+    "spending": {
+      "title": "Gastos de la categoría",
+      "subtitle": "Solo gastos; ingresos y transferencias quedan afuera.",
+      "open": "Ver gastos",
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "thisMonth": "Este mes",
+      "allTime": "Desde siempre",
+      "expenseCount": "{{count}} gastos",
+      "movements": "Gastos del mes",
+      "empty": "Sin gastos en este mes."
+    },
     "form": {
       "createTitle": "Nueva categoría",
       "editTitle": "Editar categoría",

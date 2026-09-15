@@ -442,6 +442,18 @@
     "exportError": "Error exporting categories",
     "saved": "Category saved successfully",
     "saveError": "Error saving category",
+    "spending": {
+      "title": "Category spending",
+      "subtitle": "Expenses only; income and transfers are left out.",
+      "open": "View spending",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "thisMonth": "This month",
+      "allTime": "All time",
+      "expenseCount": "{{count}} expenses",
+      "movements": "Expenses this month",
+      "empty": "No expenses in this month."
+    },
     "form": {
       "createTitle": "New category",
       "editTitle": "Edit category",

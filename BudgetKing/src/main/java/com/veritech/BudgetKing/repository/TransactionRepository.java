@@ -1,10 +1,12 @@
 package com.veritech.BudgetKing.repository;
 
+import com.veritech.BudgetKing.dto.ExpenseTotalDTO;
 import com.veritech.BudgetKing.dto.IncomeExpenseDTO;
 import com.veritech.BudgetKing.dto.MonthlyIncomeExpenseDTO;
 import com.veritech.BudgetKing.dto.MonthlyTransactionReportDTO;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.model.SavingsGoal;
 import com.veritech.BudgetKing.model.Transaction;
 import org.springframework.data.domain.Page;
@@ -168,6 +170,58 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
      * counterparty since those are not always comparable (account is stamped by the client
      * only at commit time).
      */
+    /**
+     * Total and count of the user's expenses on one category within {@code [start, end)}.
+     */
+    @Query("""
+            SELECT new com.veritech.BudgetKing.dto.ExpenseTotalDTO(COALESCE(SUM(t.amount), 0), COUNT(t))
+            FROM Transaction t
+            WHERE t.user = :user
+              AND t.category = :category
+              AND t.type = com.veritech.BudgetKing.enumerator.TransactionType.EXPENSE
+              AND t.date >= :start
+              AND t.date < :end
+            """)
+    ExpenseTotalDTO sumExpensesByCategoryBetween(
+            @Param("user") AppUser user,
+            @Param("category") Category category,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    /**
+     * Total and count of every expense the user ever registered on one category.
+     */
+    @Query("""
+            SELECT new com.veritech.BudgetKing.dto.ExpenseTotalDTO(COALESCE(SUM(t.amount), 0), COUNT(t))
+            FROM Transaction t
+            WHERE t.user = :user
+              AND t.category = :category
+              AND t.type = com.veritech.BudgetKing.enumerator.TransactionType.EXPENSE
+            """)
+    ExpenseTotalDTO sumExpensesByCategory(
+            @Param("user") AppUser user,
+            @Param("category") Category category
+    );
+
+    /** The user's expenses on one category within {@code [start, end)}, most recent first. */
+    @Query("""
+            SELECT t
+            FROM Transaction t
+            WHERE t.user = :user
+              AND t.category = :category
+              AND t.type = com.veritech.BudgetKing.enumerator.TransactionType.EXPENSE
+              AND t.date >= :start
+              AND t.date < :end
+            ORDER BY t.date DESC
+            """)
+    List<Transaction> findExpensesByCategoryBetween(
+            @Param("user") AppUser user,
+            @Param("category") Category category,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
     boolean existsByUserAndDateAndAmountAndDescriptionAndType(
             AppUser user,
             LocalDateTime date,

@@ -442,6 +442,18 @@
     "exportError": "Błąd eksportu kategorii",
     "saved": "Kategoria została zapisana",
     "saveError": "Błąd zapisu kategorii",
+    "spending": {
+      "title": "Wydatki kategorii",
+      "subtitle": "Tylko wydatki; przychody i przelewy są pomijane.",
+      "open": "Zobacz wydatki",
+      "previousMonth": "Poprzedni miesiąc",
+      "nextMonth": "Następny miesiąc",
+      "thisMonth": "Ten miesiąc",
+      "allTime": "Od początku",
+      "expenseCount": "Wydatki: {{count}}",
+      "movements": "Wydatki w tym miesiącu",
+      "empty": "Brak wydatków w tym miesiącu."
+    },
     "form": {
       "createTitle": "Nowa kategoria",
       "editTitle": "Edytuj kategorię",

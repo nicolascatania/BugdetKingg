@@ -21,12 +21,13 @@ import {
 } from '../../../../core/utils/pagination.util';
 import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 import { ImportCategories } from '../../components/import-categories/import-categories';
+import { CategorySpending } from '../../components/category-spending/category-spending';
 import { CategoryImportExportService } from '../../services/category-import-export-service';
 
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [CommonModule, EditCategory, PaginationComponent, RevealDirective, ImportCategories, TranslocoDirective],
+  imports: [CommonModule, EditCategory, PaginationComponent, RevealDirective, ImportCategories, CategorySpending, TranslocoDirective],
   templateUrl: './category-list.html',
   styleUrl: './category-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +42,9 @@ export class CategoryList implements OnInit {
   isModalCategoryOpen = signal(false);
   isImportModalOpen = signal(false);
   selectedCategory = signal<CategoryDTO | null>(null);
+
+  /** Category whose spending breakdown is open, if any. */
+  readonly spendingCategory = signal<CategoryDTO | null>(null);
   categories = signal<CategoryDTO[]>([]);
   loading = signal(true);
   paginationState: PaginationState = createPaginationState(20);
@@ -89,6 +93,10 @@ export class CategoryList implements OnInit {
   onPageChange(newPage: number) {
     this.paginationState.goToPage(newPage);
     this.reloadCategories();
+  }
+
+  openSpendingModal(category: CategoryDTO): void {
+    this.spendingCategory.set(category);
   }
 
   openCategoryModal(category: CategoryDTO | null): void {
