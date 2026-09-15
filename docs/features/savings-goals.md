@@ -7,7 +7,7 @@ Targets like "Vacation - $2000 by December" that hold real money set aside from 
 - CRUD for savings goals (name, icon, target amount, target date, optional default source account).
 - `POST /savings-goal/{id}/deposit` — moves money from one of the user's accounts into the goal.
 - `POST /savings-goal/{id}/withdraw` — moves money from the goal back into an account.
-- `POST /savings-goal/{id}/close` — returns everything the goal holds to a chosen account and freezes it.
+- `POST /savings-goal/{id}/close` — freezes the goal. Body: `accountId`, `outcome` (`RETURN` default, or `SPEND`), optional `categoryId`. `RETURN` sends everything the goal holds back to the account; `SPEND` does the same and then records an `EXPENSE` of the same amount against that account (optionally categorised), so balances net to zero and the purchase shows up in the expense history.
 - `GET /savings-goal/summary` returns an aggregate view (`SavingsGoalSummaryDTO`) across the user's open goals.
 
 ## How it works
@@ -25,7 +25,7 @@ The balance maths for every type live in one place, `TransactionService.applyBal
 
 **Derived figures.** `progressPercentage`, `remainingAmount`, `monthlyRequired`, `daysRemaining` and `achieved` (`currentAmount >= targetAmount`, cached on the entity) are computed from `currentAmount` on every read (`SavingsGoalService.enrich`). The optional `linkedAccount` no longer drives progress: it is only the default source account preselected in the contribution form.
 
-**Lifecycle is manual.** The persisted `status` is `ACTIVE` or `CLOSED`; the DTO also exposes a derived `state`: `CLOSED` > `ACHIEVED` > `OVERDUE` (past `targetDate`, target not reached) > `ACTIVE`. Nothing happens automatically when the date passes — there is no scheduler and money never moves without the user. The user extends the date, keeps contributing, or closes the goal. Closing withdraws the whole balance into the chosen account (optional when the goal is empty) and marks it `CLOSED`; closed goals are read-only and excluded from the summary. Deleting is only allowed when `currentAmount == 0`; the goal's past contributions are detached (`TransactionRepository.unlinkSavingsGoal`) and stay in the account history.
+**Lifecycle is manual.** The persisted `status` is `ACTIVE` or `CLOSED`; the DTO also exposes a derived `state`: `CLOSED` > `ACHIEVED` > `OVERDUE` (past `targetDate`, target not reached) > `ACTIVE`. Nothing happens automatically when the date passes — there is no scheduler and money never moves without the user. The user extends the date, keeps contributing, or closes the goal. Closing marks the goal `CLOSED` and asks what happened with the money (`SavingsGoalCloseOutcome`): `RETURN` withdraws the whole balance into the chosen account; `SPEND` withdraws it and immediately records an `EXPENSE` for the same amount on that account (linked to the goal, optional category) — the account ends where it started and the purchase is what remains in the history. The UI preselects `SPEND` for achieved goals and `RETURN` otherwise; an empty goal needs no account and records nothing. Closed goals are read-only and excluded from the summary. "Cancelling" a goal is therefore close + `RETURN`, never delete. Deleting is only allowed when `currentAmount == 0`; the goal's past contributions are detached (`TransactionRepository.unlinkSavingsGoal`) and stay in the account history.
 
 Validation: target amount > 0; target date can't be in the past on create, and on update only when it changes (so an overdue goal can still be renamed); deposits can't exceed the account balance; withdrawals can't exceed `currentAmount`; amounts must be positive. All of these raise `SavingsGoalRuntimeException` (`409 CONFLICT`).
 
@@ -33,7 +33,7 @@ Schema: `ddl-auto=update` adds `savings_goals.current_amount` and `savings_goals
 
 ## Files
 
-Backend: `controller/SavingsGoalController`, `service/SavingsGoalService`, `service/TransactionService` (balance maths), `repository/SavingsGoalRepository`, `repository/TransactionRepository` (`unlinkSavingsGoal`), `mapper/SavingsGoalMapper`, `filter/SavingsGoalFilter`, `dto/SavingsGoalDTO`, `dto/SavingsGoalContributionDTO`, `dto/SavingsGoalCloseDTO`, `dto/SavingsGoalSummaryDTO`, `model/SavingsGoal`, `enumerator/SavingsGoalStatus`, `enumerator/TransactionType`, `exception/SavingsGoalRuntimeException`.
+Backend: `controller/SavingsGoalController`, `service/SavingsGoalService`, `service/TransactionService` (balance maths), `repository/SavingsGoalRepository`, `repository/TransactionRepository` (`unlinkSavingsGoal`), `mapper/SavingsGoalMapper`, `filter/SavingsGoalFilter`, `dto/SavingsGoalDTO`, `dto/SavingsGoalContributionDTO`, `dto/SavingsGoalCloseDTO`, `dto/SavingsGoalSummaryDTO`, `model/SavingsGoal`, `enumerator/SavingsGoalStatus`, `enumerator/SavingsGoalCloseOutcome`, `enumerator/TransactionType`, `exception/SavingsGoalRuntimeException`.
 
 Frontend: `features/savings-goals/` (list page, `edit-savings-goal`, `contribute-savings-goal` modal with deposit / withdraw / close modes), `features/home/components/heading` (savings figure), `shared/utils/transactionType.util.ts` (badge/sign rules for the new types).
 

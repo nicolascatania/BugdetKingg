@@ -3,6 +3,7 @@ package com.veritech.BudgetKing.service;
 import com.veritech.BudgetKing.dto.SavingsGoalCloseDTO;
 import com.veritech.BudgetKing.dto.SavingsGoalContributionDTO;
 import com.veritech.BudgetKing.dto.SavingsGoalDTO;
+import com.veritech.BudgetKing.enumerator.SavingsGoalCloseOutcome;
 import com.veritech.BudgetKing.enumerator.SavingsGoalStatus;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.exception.SavingsGoalRuntimeException;
@@ -10,6 +11,7 @@ import com.veritech.BudgetKing.filter.SavingsGoalFilter;
 import com.veritech.BudgetKing.mapper.SavingsGoalMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.model.SavingsGoal;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.SavingsGoalRepository;
@@ -66,6 +68,9 @@ class SavingsGoalServiceTest {
 
     @Mock
     private AccountService accountService;
+
+    @Mock
+    private CategoryService categoryService;
 
     @Mock
     private TransactionService transactionService;
@@ -547,6 +552,65 @@ class SavingsGoalServiceTest {
             ArgumentCaptor<Transaction> captor = ArgumentCaptor.forClass(Transaction.class);
             verify(transactionRepository).save(captor.capture());
             assertEquals("Closed savings goal · " + goalName, captor.getValue().getDescription(), () -> "Closing description mismatch");
+        }
+
+        @Test
+        @DisplayName("Should treat a missing outcome as RETURN and record no expense")
+        void shouldDefaultToReturn() {
+            stubOwnedGoal(mockGoal);
+            when(accountService.getEntityById(accountId)).thenReturn(mockAccount);
+            stubMappingRoundTrip();
+
+            savingsGoalService.close(goalId, new SavingsGoalCloseDTO(accountId, null, null));
+
+            verify(transactionService, never()).applyBalanceChanges(eq(TransactionType.EXPENSE), any(), any(), any(), any());
+            verify(transactionRepository, times(1)).save(any(Transaction.class));
+            verifyNoInteractions(categoryService);
+        }
+
+        @Test
+        @DisplayName("Should record the withdrawal plus an expense of the same amount when the goal was spent")
+        void shouldCloseAsSpent() {
+            UUID categoryId = UUID.randomUUID();
+            Category category = Category.builder().id(categoryId).name("Travel").build();
+            stubOwnedGoal(mockGoal);
+            when(accountService.getEntityById(accountId)).thenReturn(mockAccount);
+            when(categoryService.getEntityById(categoryId)).thenReturn(category);
+            stubMappingRoundTrip();
+
+            savingsGoalService.close(goalId, new SavingsGoalCloseDTO(accountId, SavingsGoalCloseOutcome.SPEND, categoryId));
+
+            // Money leaves the goal first, then the same amount is spent from the account.
+            InOrder inOrder = inOrder(transactionService);
+            inOrder.verify(transactionService).applyBalanceChanges(
+                    eq(TransactionType.SAVINGS_WITHDRAWAL), eq(new BigDecimal("500.00")), eq(mockAccount), isNull(), eq(mockGoal));
+            inOrder.verify(transactionService).applyBalanceChanges(
+                    eq(TransactionType.EXPENSE), eq(new BigDecimal("500.00")), eq(mockAccount), isNull(), isNull());
+            assertEquals(SavingsGoalStatus.CLOSED, mockGoal.getStatus(), () -> "Goal must be CLOSED");
+
+            ArgumentCaptor<Transaction> captor = ArgumentCaptor.forClass(Transaction.class);
+            verify(transactionRepository, times(2)).save(captor.capture());
+            Transaction expense = captor.getAllValues().get(1);
+            assertEquals(TransactionType.EXPENSE, expense.getType(), () -> "Second movement must be the expense");
+            assertEquals(new BigDecimal("500.00"), expense.getAmount(), () -> "Expense must match what the goal held");
+            assertSame(category, expense.getCategory(), () -> "Expense must carry the chosen category");
+            assertSame(mockGoal, expense.getSavingsGoal(), () -> "Expense must stay traceable to the goal");
+            assertEquals("Spent savings goal · " + goalName, expense.getDescription(), () -> "Spent description mismatch");
+        }
+
+        @Test
+        @DisplayName("Should record the expense without a category when none is chosen")
+        void shouldCloseAsSpentWithoutCategory() {
+            stubOwnedGoal(mockGoal);
+            when(accountService.getEntityById(accountId)).thenReturn(mockAccount);
+            stubMappingRoundTrip();
+
+            savingsGoalService.close(goalId, new SavingsGoalCloseDTO(accountId, SavingsGoalCloseOutcome.SPEND, null));
+
+            ArgumentCaptor<Transaction> captor = ArgumentCaptor.forClass(Transaction.class);
+            verify(transactionRepository, times(2)).save(captor.capture());
+            assertNull(captor.getAllValues().get(1).getCategory(), () -> "Category is optional for the expense");
+            verifyNoInteractions(categoryService);
         }
 
         @Test

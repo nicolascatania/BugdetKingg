@@ -6,6 +6,7 @@ import com.veritech.BudgetKing.dto.SavingsGoalContributionDTO;
 import com.veritech.BudgetKing.dto.SavingsGoalDTO;
 import com.veritech.BudgetKing.dto.SavingsGoalRelatedEntities;
 import com.veritech.BudgetKing.dto.SavingsGoalSummaryDTO;
+import com.veritech.BudgetKing.enumerator.SavingsGoalCloseOutcome;
 import com.veritech.BudgetKing.enumerator.SavingsGoalStatus;
 import com.veritech.BudgetKing.enumerator.TransactionType;
 import com.veritech.BudgetKing.exception.SavingsGoalRuntimeException;
@@ -14,6 +15,7 @@ import com.veritech.BudgetKing.interfaces.ICrudService;
 import com.veritech.BudgetKing.mapper.SavingsGoalMapper;
 import com.veritech.BudgetKing.model.Account;
 import com.veritech.BudgetKing.model.AppUser;
+import com.veritech.BudgetKing.model.Category;
 import com.veritech.BudgetKing.model.SavingsGoal;
 import com.veritech.BudgetKing.model.Transaction;
 import com.veritech.BudgetKing.repository.SavingsGoalRepository;
@@ -62,6 +64,7 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
     private final SavingsGoalMapper savingsGoalMapper;
     private final SecurityUtils securityUtils;
     private final AccountService accountService;
+    private final CategoryService categoryService;
     private final TransactionService transactionService;
     private final TransactionRepository transactionRepository;
 
@@ -197,8 +200,16 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
     }
 
     /**
-     * Ends the goal: everything it still holds is returned to the chosen account
-     * and the goal becomes read-only. An empty goal needs no destination account.
+     * Ends the goal and makes it read-only. What happens to the money it still
+     * holds depends on {@link SavingsGoalCloseDTO#outcome()}:
+     * <ul>
+     *   <li>{@code RETURN} — the balance goes back to the chosen account.</li>
+     *   <li>{@code SPEND} — the balance goes back to the chosen account and an
+     *       {@code EXPENSE} of the same amount is recorded against it, so the
+     *       account nets to zero and the purchase appears in the expense history
+     *       (optionally under a category).</li>
+     * </ul>
+     * An empty goal needs no destination account and records nothing.
      *
      * @throws SavingsGoalRuntimeException when the goal is already closed or it
      *                                     holds money and no account was given
@@ -216,6 +227,10 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
             Account account = accountService.getEntityById(dto.accountId());
             contribute(goal, account, TransactionType.SAVINGS_WITHDRAWAL, remaining, null,
                     "Closed savings goal · " + goal.getName());
+
+            if (dto.resolvedOutcome() == SavingsGoalCloseOutcome.SPEND) {
+                recordSpentSavings(goal, account, remaining, dto.categoryId());
+            }
         }
 
         goal.setStatus(SavingsGoalStatus.CLOSED);
@@ -287,6 +302,31 @@ public class SavingsGoalService implements ICrudService<SavingsGoalDTO, UUID, Sa
 
         SavingsGoal saved = savingsGoalRepository.save(goal);
         return enrich(savingsGoalMapper.toDto(saved), saved);
+    }
+
+    /**
+     * Records the money a closed goal was spent on as a regular expense. Runs right
+     * after the closing withdrawal, so the account ends where it started and the
+     * expense is what remains in the history. The goal is kept on the transaction
+     * for traceability; balance-wise it behaves like any other expense.
+     */
+    private void recordSpentSavings(SavingsGoal goal, Account account, BigDecimal amount, UUID categoryId) {
+        Category category = categoryId != null ? categoryService.getEntityById(categoryId) : null;
+
+        transactionService.applyBalanceChanges(TransactionType.EXPENSE, amount, account, null, null);
+
+        Transaction expense = Transaction.builder()
+                .date(LocalDateTime.now())
+                .amount(amount)
+                .type(TransactionType.EXPENSE)
+                .description("Spent savings goal · " + goal.getName())
+                .counterparty(goal.getName())
+                .category(category)
+                .account(account)
+                .savingsGoal(goal)
+                .user(goal.getUser())
+                .build();
+        transactionRepository.save(expense);
     }
 
     /** Resolves and validates ownership of the optional default source account. */

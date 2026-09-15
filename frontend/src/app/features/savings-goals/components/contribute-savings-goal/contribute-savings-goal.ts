@@ -9,6 +9,9 @@ import { UiModalComponent } from '../../../../shared/modal/ui-modal/ui-modal';
 import { SavingsGoalDTO } from '../../interfaces/SavingsGoalDTO.interface';
 import { SavingsGoalService } from '../../service/savings-goal-service';
 import { AccountService } from '../../../accounts/services/AccountService';
+import { CategoryService } from '../../../categories/service/category-service';
+import { OptionDTO } from '../../../../shared/models/OptionDTO.interface';
+import { SavingsGoalCloseOutcome } from '../../interfaces/SavingsGoalContributionDTO.interface';
 import { NotificationService } from '../../../../core/services/NotificationService';
 
 /** What the modal does with the money. */
@@ -21,6 +24,8 @@ export type ContributionMode = 'deposit' | 'withdraw' | 'close';
  * account, confirm an amount); `mode` only changes copy, validation and which
  * endpoint is called. Closing always moves the whole balance, so the amount field
  * is hidden and the account is optional when there is nothing left to return.
+ * When closing with money the user says what happened with it: spent on the goal
+ * (an expense is recorded, optionally categorised) or returned to an account.
  */
 @Component({
   selector: 'app-contribute-savings-goal',
@@ -35,6 +40,7 @@ export class ContributeSavingsGoal implements OnInit {
   private fb = inject(FormBuilder);
   private savingsGoalService = inject(SavingsGoalService);
   private accountService = inject(AccountService);
+  private categoryService = inject(CategoryService);
   private ns = inject(NotificationService);
 
   goal = input.required<SavingsGoalDTO>();
@@ -45,6 +51,9 @@ export class ContributeSavingsGoal implements OnInit {
   readonly accounts = this.accountService.accounts;
 
   readonly saving = signal(false);
+
+  /** Category options for the expense recorded when the goal was spent. */
+  readonly categories = signal<OptionDTO[]>([]);
 
   readonly isDeposit = computed(() => this.mode() === 'deposit');
   readonly isWithdraw = computed(() => this.mode() === 'withdraw');
@@ -65,9 +74,11 @@ export class ContributeSavingsGoal implements OnInit {
     }
   });
 
-  readonly accountLabelKey = computed(() =>
-    this.isDeposit() ? 'savings.contribute.fromAccount' : 'savings.contribute.toAccount',
-  );
+  readonly accountLabelKey = computed(() => {
+    if (this.isDeposit()) return 'savings.contribute.fromAccount';
+    if (this.isSpend()) return 'savings.contribute.spendAccount';
+    return 'savings.contribute.toAccount';
+  });
 
   readonly submitLabelKey = computed(() => {
     switch (this.mode()) {
@@ -85,7 +96,16 @@ export class ContributeSavingsGoal implements OnInit {
     amount: [null, [Validators.required, Validators.min(0.01)]],
     date: [this.getLocalDateTimeString(), Validators.required],
     note: ['', Validators.maxLength(255)],
+    outcome: ['RETURN' as SavingsGoalCloseOutcome],
+    categoryId: [''],
   });
+
+  /** Mirrors the outcome control so the close form can swap its copy and fields. */
+  private readonly outcome = toSignal(this.form.get('outcome')!.valueChanges, {
+    initialValue: this.form.get('outcome')!.value as SavingsGoalCloseOutcome,
+  });
+
+  readonly isSpend = computed(() => this.isClose() && this.needsAccount() && this.outcome() === 'SPEND');
 
   /** Mirrors the account control as a signal so derived figures react to it. */
   private readonly selectedAccountId = toSignal(this.form.get('accountId')!.valueChanges, {
@@ -113,8 +133,19 @@ export class ContributeSavingsGoal implements OnInit {
       if (!this.needsAccount()) {
         this.form.get('accountId')?.clearValidators();
         this.form.get('accountId')?.updateValueAndValidity();
+      } else {
+        // A reached goal was most likely spent on its purpose; anything else is usually money coming back.
+        this.form.get('outcome')?.setValue(this.goal().state === 'ACHIEVED' ? 'SPEND' : 'RETURN');
+        this.loadCategories();
       }
     }
+  }
+
+  private loadCategories(): void {
+    this.categoryService.getOptions().subscribe({
+      next: (categories) => this.categories.set(categories),
+      error: (err) => this.ns.error(err),
+    });
   }
 
   /** Fills the amount with the maximum the flow allows. */
@@ -133,7 +164,11 @@ export class ContributeSavingsGoal implements OnInit {
 
     let request$: Observable<SavingsGoalDTO>;
     if (this.isClose()) {
-      request$ = this.savingsGoalService.close(id, { accountId: raw.accountId || null });
+      request$ = this.savingsGoalService.close(id, {
+        accountId: raw.accountId || null,
+        outcome: raw.outcome,
+        categoryId: this.isSpend() ? raw.categoryId || null : null,
+      });
     } else {
       const body = {
         accountId: raw.accountId,
